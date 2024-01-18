@@ -56,13 +56,13 @@ app.post('/employee', function (req, res, ) {
     var eid = req.body.employeeid;
     var ename = req.body.employeename;
     var eemail = req.body.employeeemail;
-    var ephone = req.body.employeephone;
+    var eaddress = req.body.employeeaddress;
     var esalary = req.body.employeesalary;
     console.log(ename);
 
     var sqlins = "INSERT INTO employeetable (dbemployeeid, dbemployeename, dbemployeeemail, "
-        + " dbemployeephone, dbemployeesalary) VALUES (?, ?, ?, ?, ?)";
-    var inserts = [eid, ename, eemail, ephone, esalary];
+        + " dbemployeeaddress, dbemployeesalary) VALUES (?, ?, ?, ?, ?)";
+    var inserts = [eid, ename, eemail, eaddress, esalary];
 
     var sql = mysql.format(sqlins, inserts);
 
@@ -84,6 +84,30 @@ app.get('/getemp/', function (req, res) {
     var sqlsel = 'Select * from employeetable where dbemployeeid Like ? and dbemployeename Like ? and dbemployeephone Like ? '
     + 'and dbemployeeemail Like ? and dbemployeesalary Like ?';
     var inserts = ['%' + eid + '%', '%' + ename + '%', '%' + ephone + '%', '%' + eemail + '%', '%' + esalary + '%'];
+
+    var sql = mysql.format(sqlsel, inserts);
+
+    console.log(sql);
+
+    con.query(sql, function (err, data) {
+        if (err) {
+            console.error(err);
+            process.exit(1);
+        }
+        res.send(JSON.stringify(data));
+    });
+});
+app.get('/getcust/', function (req, res) {
+    var cid = req.query.customerid;
+    var cname = req.query.customername;
+    var caddress = req.query.customeraddress;
+    var czip = req.query.customerzip;
+    var ccredit = req.query.customercredit;
+    var cemail = req.query.customeremail;
+
+    var sqlsel = 'Select * from customertable where dbcustomerid Like ? and dbcustomername Like ? and dbcustomeraddress Like ? '
+    + 'and dbcustomerzip Like ? and dbcustomercredit Like ? and dbcustomeremail Like ?';
+    var inserts = ['%' + cid + '%', '%' + cname + '%', '%' + caddress + '%', '%' + czip + '%', '%' + ccredit + '%', '%' + cemail + '%'];
 
     var sql = mysql.format(sqlsel, inserts);
 
