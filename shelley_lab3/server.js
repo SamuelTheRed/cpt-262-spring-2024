@@ -43,6 +43,20 @@ app.get('/getemptypes/', function (req, res) {
         res.send(JSON.stringify(data));
     });
 });
+app.get('/getcustrewards/', function (req, res) {
+
+    var sqlsel = 'select * from customerrewards';
+    var sql = mysql.format(sqlsel);
+
+    con.query(sql, function (err, data) {
+        if (err) {
+            console.error(err);
+            process.exit(1);
+        }
+
+        res.send(JSON.stringify(data));
+    });
+});
 // --^*v
 app.get('/getemp/', function (req, res) {
     var eid = req.query.employeeid;
@@ -99,10 +113,35 @@ app.get('/getcust/', function (req, res) {
     var czip = req.query.customerzip;
     var ccredit = req.query.customercredit;
     var cemail = req.query.customeremail;
+    var crewards = req.query.customerrewards;
+    var cclub = req.query.customerclub;
 
-    var sqlsel = 'Select * from customertable where dbcustomerid Like ? and dbcustomername Like ? and dbcustomeraddress Like ? '
-    + 'and dbcustomerzip Like ? and dbcustomercredit Like ? and dbcustomeremail Like ?';
-    var inserts = ['%' + cid + '%', '%' + cname + '%', '%' + caddress + '%', '%' + czip + '%', '%' + ccredit + '%', '%' + cemail + '%'];
+    console.log("Club: "+ cclub);
+    console.log("Rewards: "+ crewards);
+    
+    if (cclub == 1 || cclub == 0) {
+        var clubaddon = ' AND dbcustomerclub = ?';
+        var clubaddonvar = cclub;
+    } else {
+        var clubaddon = ' AND dbcustomerclub LIKE ?';
+        var clubaddonvar = '%%';
+    }
+
+    if (crewards > 0) {
+        var rewardsaddon = ' AND dbcustomerreward = ?';
+        var rewardsaddonvar = crewards;
+    } else {
+        var rewardsaddon = ' AND dbcustomerreward LIKE ?';
+        var rewardsaddonvar = '%%';
+    }
+
+    var sqlsel = 'Select customertable.*, customerrewards.dbcustrewardsname FROM customertable '
+    + 'INNER JOIN customerrewards ON customerrewards.dbcustrewardsid = customertable.dbcustomerreward '
+    + 'where dbcustomerid Like ? and dbcustomername Like ? and dbcustomeraddress Like ? '
+    + 'and dbcustomerzip Like ? and dbcustomercredit Like ? and dbcustomeremail Like ?' + clubaddon + rewardsaddon;
+    
+    var inserts = ['%' + cid + '%', '%' + cname + '%', '%' + caddress + '%', '%' 
+    + czip + '%', '%' + ccredit + '%', '%' + cemail + '%', clubaddonvar, rewardsaddonvar];
 
     var sql = mysql.format(sqlsel, inserts);
 

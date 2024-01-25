@@ -5,13 +5,13 @@ var CustomerBox = React.createClass({
     loadCustomersFromServer: function () {
         console.log(customerid.value);
         var cclubvalue = 2;
-        if (cclubdiscount.checked) {
+        if (custclubdiscount.checked) {
             cclubvalue = 1;
         }
-        if (cclubstandard.checked) {
+        if (custclubstandard.checked) {
             cclubvalue = 0;
         }
-
+ 
         $.ajax({
             url: '/getcust',
             data: {
@@ -21,10 +21,9 @@ var CustomerBox = React.createClass({
                 'customeraddress': customeraddress.value,
                 'customercredit': customercredit.value,
                 'customeremail': customeremail.value,
-                'customerreward': customerreward.value,
+                'customerrewards': custrewards.value,
                 'customerclub': cclubvalue
             },
-            
             dataType: 'json',
             cache: false,
             success: function (data) {
@@ -112,8 +111,8 @@ var Customerform = React.createClass({
         var customerzip = this.state.customerzip.trim();
         var customercredit = this.state.customercredit;
         var customeremail = this.state.customeremail.trim();
-        var customerclub = this.state.customerclub.trim();
-        var customerreward = custreward.value;
+        var customerclub = this.state.selectedOption;
+        var customerrewards = custrewards.value;
 
         this.props.onCustomerSubmit({ 
             customerid: customerid, 
@@ -122,7 +121,7 @@ var Customerform = React.createClass({
             customerzip: customerzip, 
             customercredit: customercredit, 
             customeremail: customeremail,
-            customerreward: customerreward,
+            customerrewards: customerrewards,
             customerclub: customerclub
         });
 
@@ -183,26 +182,26 @@ var Customerform = React.createClass({
                                 <input
                                     type="radio"
                                     name="custclub"
-                                    id="custclub"
+                                    id="custclubdiscount"
                                     value="1"
                                     checked={this.state.selectedOption === "1"}
                                     onChange={this.handleOptionChange}
                                     className="form-check-input"
-                                />Yes
+                                />Discount
                                 <input
                                     type="radio"
-                                    name="empmailer"
-                                    id="empmailerno"
+                                    name="custclub"
+                                    id="custclubstandard"
                                     value="0"
                                     checked={this.state.selectedOption === "0"}
                                     onChange={this.handleOptionChange}
                                     className="form-check-input"
-                                />No
+                                />Standard
                             </td>
                         </tr>
                         <tr>
                             <th>
-                                Employee Type
+                                Customer Rewards Status
                             </th>
                             <td>
                                 <SelectList data={this.state.data} />
@@ -223,12 +222,15 @@ var CustomerList = React.createClass({
             //map the data to individual donations
             return (
                 <Customer
+                    key={customer.dbcustomerid}
                     custid={customer.dbcustomerid}
                     custname={customer.dbcustomername}
                     custaddress={customer.dbcustomeraddress}
                     custzip={customer.dbcustomerzip}
                     custcredit={customer.dbcustomercredit}
                     custemail={customer.dbcustomeremail}
+                    custrewards={customer.dbcustrewardsname}
+                    custclub={customer.dbcustomerclub}
                 >
                 </Customer>
             );
@@ -249,6 +251,11 @@ var CustomerList = React.createClass({
 var Customer = React.createClass({
 
     render: function () {
+        if (this.props.custclub == 1) {
+            var theclub = "Discount";
+        } else {
+            var theclub = "Standard";
+        }
         //display an individual donation
         return (
 
@@ -271,11 +278,37 @@ var Customer = React.createClass({
                             <td>
                                 {this.props.custemail}
                             </td>
+                            <td>
+                                {this.props.custrewards}
+                            </td>
+                            <td>
+                                {theclub}
+                            </td>
                 </tr>
         );
     }
 });
 
+var SelectList = React.createClass({
+    render: function () {
+        var optionNodes = this.props.data.map(function (custRewardss) {
+            return (
+                <option 
+                    key={custRewardss.dbcustrewardsid}
+                    value={custRewardss.dbcustrewardsid}
+                >
+                    {custRewardss.dbcustrewardsname}
+                </option>
+            );
+        });
+        return (
+            <select name="custrewards" id="custrewards">
+                <option value = "0"></option>
+                {optionNodes}
+            </select>
+        );
+    }
+});
 
 ReactDOM.render(
     <CustomerBox />,
