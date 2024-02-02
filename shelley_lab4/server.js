@@ -163,8 +163,8 @@ app.post('/customer', function (req, res, ) {
     var czip = req.body.customerzip;
     var ccredit = req.body.customercredit;
     var cemail = req.body.customeremail;
-    var crewards = req.query.customerrewards;
-    var cclub = req.query.customerclub;
+    var crewards = req.body.customerrewards;
+    var cclub = req.body.customerclub;
 
     console.log(cname);
 
