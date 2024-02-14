@@ -39,7 +39,7 @@ app.post('/login/', function (req, res) {
     var inserts = [eemail];
 
     var sql = mysql.format(sqlsel, inserts);
-    console.logg("SQL: " + sql);
+    console.log("SQL: " + sql);
     con.query(sql, function (err, data) {
         if (data.length > 0) {
             console.log("User Name Correct:");
@@ -194,22 +194,35 @@ app.post('/customer', function (req, res, ) {
     var czip = req.body.customerzip;
     var ccredit = req.body.customercredit;
     var cemail = req.body.customeremail;
+    var cpw = req.body.customerpw;
     var crewards = req.body.customerrewards;
     var cclub = req.body.customerclub;
 
-    console.log(cname);
+    console.log('pw' + cpw);
 
-    var sqlins = "INSERT INTO customertable (dbcustomername, dbcustomeraddress, dbcustomerzip, "
-        + " dbcustomercredit, dbcustomeremail, dbcustomerreward, dbcustomerclub) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    var inserts = [cname, caddress, czip, ccredit, cemail, crewards, cclub];
+    var saltRounds = 10;
+    var theHashedPW = '';
+    bcrypt.hash(cpw, saltRounds, function (err, hashedPassword) {
+        if (err) {
+            console.log("Bad");
+            return
+        } else {
+            theHashedPW = hashedPassword;
+            console.log("Password 1: " + theHashedPW + hashedPassword);
+        }
 
-    var sql = mysql.format(sqlins, inserts);
+        var sqlins = "INSERT INTO customertable (dbcustomername, dbcustomeraddress, dbcustomerzip, "
+            + " dbcustomercredit, dbcustomeremail, dbcustomerreward, dbcustomerclub, dbcustomerpassword) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        var inserts = [cname, caddress, czip, ccredit, cemail, crewards, cclub, theHashedPW];
 
-    con.execute(sql, function (err, result) {
-        if (err) throw err;
-        console.log("1 record inserted");
-        res.redirect('insertcustomer.html');
-        res.end();
+        var sql = mysql.format(sqlins, inserts);
+
+        con.execute(sql, function (err, result) {
+            if (err) throw err;
+            console.log("1 record inserted");
+            res.redirect('insertcustomer.html');
+            res.end();
+        });
     });
 });
 

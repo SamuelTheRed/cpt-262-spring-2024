@@ -32,6 +32,8 @@ var Customerform = React.createClass({
             customerzip: "",
             customecredit: "",
             customeremail: "",
+            customerpw: "",
+            customerpw2: "",
             customerclub: "",
             data: [],
         };
@@ -67,8 +69,11 @@ var Customerform = React.createClass({
         var customerzip = this.state.customerzip.trim();
         var customercredit = this.state.customercredit;
         var customeremail = this.state.customeremail.trim();
+        var customerpw = this.state.customerpw.trim();
+        var customerpw2 = this.state.customerpw2.trim();
         var customerclub = this.state.selectedOption;
         var customerrewards = custrewards.value;
+        console.log("PW: " + customerpw);
 
         if (!this.validateEmail(customeremail)) {
             console.log("Bad Email " + this.validateEmail(customeremail));
@@ -76,6 +81,10 @@ var Customerform = React.createClass({
         }
         if (isNaN(customercredit)) {
             console.log("Not a number " + customercredit);
+            return;
+        }
+        if (customerpw != customerpw2) {
+            alert("Passwords do not match!!!");
             return;
         }
 
@@ -91,7 +100,8 @@ var Customerform = React.createClass({
             customercredit: customercredit,
             customeremail: customeremail,
             customerrewards: customerrewards,
-            customerclub: customerclub
+            customerclub: customerclub,
+            customerpw: customerpw
         });
 
     }, // --^
@@ -226,6 +236,40 @@ var Customerform = React.createClass({
                                 <SelectList data={this.state.data} />
                             </td>
                         </tr>
+                        <tr>
+                            <th>Customer Password</th>
+                            <td>
+                                <TextInput
+                                    inputType="password"
+                                    value={this.state.customerpw}
+                                    uniqueName="customerpw"
+                                    textArea={false}
+                                    required={false}
+                                    minCharacters={6}
+                                    validate={this.commonValidate}
+                                    onChange={this.setValue.bind(this, "customerpw")}
+                                    errorMessage="Password is incorrect"
+                                    emptyMessage="Password is required"
+                                />
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Customer Password Confirm</th>
+                            <td>
+                                <TextInput
+                                    inputType="password"
+                                    value={this.state.customerpw2}
+                                    uniqueName="customerpw2"
+                                    textArea={false}
+                                    required={false}
+                                    minCharacters={6}
+                                    validate={this.commonValidate}
+                                    onChange={this.setValue.bind(this, "customerpw2")}
+                                    errorMessage="Password is incorrect"
+                                    emptyMessage="Password is required"
+                                />
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
                 <input type="submit" value="Insert Customer" />
@@ -331,6 +375,7 @@ var TextInput = React.createClass({
             return (
                 <div className={this.props.uniqueName}>
                     <input // --v
+                        type={this.props.inputType}
                         name={this.props.uniqueName}
                         id={this.props.uniqueName} // --^
                         placeholder={this.props.text}
