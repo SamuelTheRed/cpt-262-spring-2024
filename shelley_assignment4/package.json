@@ -1,0 +1,14 @@
+{
+  "name": "assignment_4",
+  "version": "0.0.0",
+  "description": "assignment_4",
+  "main": "server.js",
+  "author": {
+    "name": ""
+  },
+  "dependencies": {
+    "body-parser": "^1.19.1",
+    "express": "^4.17.2",
+    "react": "^16.14.0"
+  }
+}
