@@ -3,7 +3,7 @@ var CustomerBox = React.createClass({
 		return { data: [] };
 	},
 	loadCustomersFromServer: function () {
-		console.log(customerid.value);
+
 		var cclubvalue = 2;
 		if (custclubdiscount.checked) {
 			cclubvalue = 1;
@@ -66,6 +66,7 @@ var CustomerBox = React.createClass({
 				<div id="theresults">
 					<div id="theleft"><table>
 						<thead><tr>
+							<th>Key</th>
 							<th>ID</th>
 							<th>Name</th>
 							<th>Email</th>
@@ -319,37 +320,37 @@ var CustomerUpdateform = React.createClass({
 								<tr>
 									<th>Customer ID</th>
 									<td>
-										<input type="text" name="upcustomerid" id="upcustomerid" value={this.state.upcustomerid} onChange={this.handleChange} />
+										<input type="text" name="upcustid" id="upcustid" value={this.state.upcustomerid} onChange={this.handleChange} />
 									</td>
 								</tr>
 								<tr>
 									<th>Customer Name</th>
 									<td>
-										<input name="upcustomername" id="upcustomername" value={this.state.upcustomername} onChange={this.handleChange} />
+										<input name="upcustname" id="upcustname" value={this.state.upcustomername} onChange={this.handleChange} />
 									</td>
 								</tr>
 								<tr>
 									<th>Customer Address</th>
 									<td>
-										<input name="upcustomeraddress" id="upcustomeraddress" value={this.state.upcustomeraddress} onChange={this.handleChange} />
+										<input name="upcustaddress" id="upcustaddress" value={this.state.upcustomeraddress} onChange={this.handleChange} />
 									</td>
 								</tr>
 								<tr>
 									<th>Customer ZIP</th>
 									<td>
-										<input name="upcustomerzip" id="upcustomerzip" value={this.state.upcustomerzip} onChange={this.handleChange} />
+										<input name="upcustzip" id="upcustzip" value={this.state.upcustomerzip} onChange={this.handleChange} />
 									</td>
 								</tr>
 								<tr>
 									<th>Customer Credit</th>
 									<td>
-										<input name="upcustomercredit" id="upcustomercredit" value={this.state.upcustomercredit} onChange={this.handleChange} />
+										<input name="upcustcredit" id="upcustcredit" value={this.state.upcustomercredit} onChange={this.handleChange} />
 									</td>
 								</tr>
 								<tr>
 									<th>Customer Email</th>
 									<td>
-										<input name="upcustomeremail" id="upcustomeremail" value={this.state.upcustomeremail} onChange={this.handleChange} />
+										<input name="upcustemail" id="upcustemail" value={this.state.upcustomeremail} onChange={this.handleChange} />
 									</td>
 								</tr>
 								<tr>
@@ -360,7 +361,7 @@ var CustomerUpdateform = React.createClass({
 										<input
 											type="radio"
 											name="upcustclub"
-											id="custclubdiscount"
+											id="upcustclubdiscount"
 											value="1"
 											checked={this.state.selectedOption === "1"}
 											onChange={this.handleOptionChange}
@@ -369,7 +370,7 @@ var CustomerUpdateform = React.createClass({
 										<input
 											type="radio"
 											name="upcustclub"
-											id="custclubstandard"
+											id="upcustclubstandard"
 											value="0"
 											checked={this.state.selectedOption === "0"}
 											onChange={this.handleOptionChange}
@@ -382,7 +383,7 @@ var CustomerUpdateform = React.createClass({
 										Customer Rewards Status
 									</th>
 									<td>
-										<SelectList data={this.state.data} />
+										<SelectUpdateList data={this.state.updata} />
 									</td>
 								</tr>
 							</tbody>
@@ -404,6 +405,7 @@ var CustomerList = React.createClass({
 			return (
 				<Customer
 					key={customer.dbcustomerid}
+					custkey={customer.dbcustomerid}
 					custid={customer.dbcustomerid}
 					custname={customer.dbcustomername}
 					custemail={customer.dbcustomeremail}
@@ -425,6 +427,52 @@ var CustomerList = React.createClass({
 
 
 var Customer = React.createClass({
+    getInitialState: function () {
+        return {
+            upcustkey: "",
+            singledata: []
+        };
+    },
+    updateRecord: function (e) {
+        e.preventDefault();
+        var theupcustkey = this.props.custkey;
+
+        this.loadSingleCust(theupcustkey);
+    },
+    loadSingleCust: function (theupcustkey) {
+        $.ajax({
+            url: '/getsinglecust',
+            data: {
+                'upcustkey': theupcustkey
+            },
+            dataType: 'json',
+            cache: false,
+            success: function (data) {
+                this.setState({ singledata: data });
+                console.log(this.state.singledata);
+                var populateCust = this.state.singledata.map(function (customer) {
+                    upcustkey.value = theupcustkey;
+                    upcustemail.value = customer.dbcustomeremail;
+                    upcustid.value = customer.dbcustomerid;
+                    upcustname.value = customer.dbcustomername;
+                    upcustaddress.value = customer.dbcustomeraddress;
+					upcustcredit.value = customer.dbcustomercredit;
+                    upcustzip.value = customer.dbcustomerzip;
+                    if (customer.dbcustomerclub == 1) {
+                        upcustclubdiscount.checked = true;
+                    } else {
+                        upcustclubstandard.checked = true;
+                    }
+                    upcustrewards.value = customer.dbcustomerrewards;
+
+                });
+            }.bind(this),
+            error: function (xhr, status, err) {
+                console.error(this.props.url, status, err.toString());
+            }.bind(this)
+        });
+
+    },
 
 	render: function () {
 		if (this.props.custclub == 1) {
@@ -433,9 +481,12 @@ var Customer = React.createClass({
 			var theclub = "Standard";
 		}
 		//display an individual donation
-		return (
+		return ( 
 
 			<tr>
+			<td>
+				{this.props.custkey}
+			</td>
 				<td>
 					{this.props.custid}
 				</td>
@@ -443,23 +494,13 @@ var Customer = React.createClass({
 					{this.props.custname}
 				</td>
 				<td>
-					{this.props.custaddress}
-				</td>
-				<td>
-					{this.props.custzip}
-				</td>
-				<td>
-					{this.props.custcredit}
-				</td>
-				<td>
 					{this.props.custemail}
 				</td>
-				<td>
-					{this.props.custrewards}
-				</td>
-				<td>
-					{theclub}
-				</td>
+                <td>
+                    <form onSubmit={this.updateRecord}>
+                        <input type="submit" value="Update Record" />
+                    </form>
+                </td>
 			</tr>
 		);
 	}
@@ -467,18 +508,38 @@ var Customer = React.createClass({
 
 var SelectList = React.createClass({
 	render: function () {
-		var optionNodes = this.props.data.map(function (custRewardss) {
+		var optionNodes = this.props.data.map(function (custRewards) {
 			return (
 				<option
-					key={custRewardss.dbcustrewardsid}
-					value={custRewardss.dbcustrewardsid}
+					key={custRewards.dbcustrewardsid}
+					value={custRewards.dbcustrewardsid}
 				>
-					{custRewardss.dbcustrewardsname}
+					{custRewards.dbcustrewardsname}
 				</option>
 			);
 		});
 		return (
 			<select name="custrewards" id="custrewards">
+				<option value="0"></option>
+				{optionNodes}
+			</select>
+		);
+	}
+});
+var SelectUpdateList = React.createClass({
+	render: function () {
+		var optionNodes = this.props.data.map(function (custRewards) {
+			return (
+				<option
+					key={custRewards.dbcustrewardsid}
+					value={custRewards.dbcustrewardsid}
+				>
+					{custRewards.dbcustrewardsname}
+				</option>
+			);
+		});
+		return (
+			<select name="upcustrewards" id="upcustrewards">
 				<option value="0"></option>
 				{optionNodes}
 			</select>

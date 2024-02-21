@@ -30,6 +30,92 @@ app.get('/', function (req, res) {
     res.sendFile(path.join(__dirname + '/public/login.html'));
 });
 
+app.get('/getsingleemp/', function (req, res) {
+    var ekey = req.query.upempkey;
+
+    var sqlsel = 'select * from employeetable where dbemployeekey = ?';
+    var inserts = [ekey];
+
+    var sql = mysql.format(sqlsel, inserts);
+
+    con.query(sql, function (err, data) {
+        if (err) {
+            console.error(err);
+            process.exit(1);
+        }
+
+        res.send(JSON.stringify(data));
+    });
+});
+
+app.post('/updatesingleemp', function (req, res, ){
+    var eid = req.body.upemployeeid;
+    var ename = req.body.upemployeename;
+    var ephone = req.body.upemployeephone;
+    var eemail = req.body.upemployeeemail;
+    var esalary = req.body.upemployeesalary;
+    var emailer = req.body.upemployeemailer;
+    var etype = req.body.upemployeetype;
+    var ekey = req.body.upemployeekey
+
+    var sqlins = "UPDATE employeetable SET dbemployeeid = ?, dbemployeename = ?, dbemployeeemail = ?, " +
+        " dbemployeephone = ?, dbemployeesalary = ?, dbemployeemailer = ?, dbemployeetype = ? " +
+        " WHERE dbemployeekey = ? ";
+    var inserts = [eid, ename, eemail, ephone, esalary, emailer, etype, ekey];
+
+    var sql = mysql.format(sqlins, inserts);
+console.log(sql);
+    con.execute(sql, function (err, result) {
+        if (err) throw err;
+        console.log("1 record updated");
+
+        res.end();
+    });
+});
+
+app.get('/getsinglecust', function (req, res) {
+    var ckey = req.query.upcustkey;
+
+    var sqlsel = 'select * from customertable where dbcustomerid = ?';
+    var inserts = [ckey];
+
+    var sql = mysql.format(sqlsel, inserts);
+
+    con.query(sql, function (err, data) {
+        if (err) {
+            console.error(err);
+            process.exit(1);
+        }
+
+        res.send(JSON.stringify(data));
+    });
+});
+
+app.post('/updatesinglecust', function (req, res, ){
+    
+    var cid = req.query.customerid;
+    var cname = req.query.customername;
+    var caddress = req.query.customeraddress;
+    var czip = req.query.customerzip;
+    var ccredit = req.query.customercredit;
+    var cemail = req.query.customeremail;
+    var crewards = req.query.customerrewards;
+    var cclub = req.query.customerclub;
+
+    var sqlins = "UPDATE customertable SET dbcustomerid = ?, dbcustomername = ?, dbcustomeraddress = ?, " +
+        " dbcustomerzip = ?, dbcustomercredit = ?, dbcustomeremail = ?, dbcustomerreward = ?, dbcustomerclub = ? ";
+    var inserts = [cid, cname, caddress, czip, ccredit, cemail, crewards, cclub];
+
+    var sql = mysql.format(sqlins, inserts);
+console.log(sql);
+    con.execute(sql, function (err, result) {
+        if (err) throw err;
+        console.log("1 record updated");
+
+        res.end();
+    });
+});
+
 app.post('/login/', function (req, res) {
     var eemail = req.body.employeeemail;
     var epw = req.body.employeepw;
