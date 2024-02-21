@@ -262,13 +262,13 @@ var CustomerUpdateform = React.createClass({
 			upselectedOption: e.target.value
 		});
 	},
-	loadCustTypes: function () {
+	loadCustRewards: function () {
 		$.ajax({
-			url: '/getcusttypes',
+			url: '/getcustrewards',
 			dataType: 'json',
 			cache: false,
 			success: function (data) {
-				this.setState({ update: data });
+				this.setState({ updata: data });
 			}.bind(this),
 			error: function (xhr, status, err) {
 				console.error(this.props.url, status, err.toString());
@@ -276,7 +276,7 @@ var CustomerUpdateform = React.createClass({
 		});
 	},
 	componentDidMount: function () {
-		this.loadCustTypes();
+		this.loadCustRewards();
 
 	},
 	handleUpSubmit: function (e) {
