@@ -60,10 +60,12 @@ app.post("/course/", function (req, res) {
 
   var sql = mysql.format(checkid);
 
-//   con.query(sql, function (err, data) {
-//     if (err) throw err;
+  con.query(sql, function (err, data) {
+    if (err) throw err;
 
-    // if (data.keys() > 0) {
+    if (data.length > 0) {
+      console.log(data[0]["courseid"]);
+
       var sqlins =
         "INSERT INTO epicschedule (schedulesemester, scheduleyear, facultyID, " +
         " courseID) VALUES (?, ?, ?, ?)";
@@ -76,13 +78,13 @@ app.post("/course/", function (req, res) {
       con.execute(sql, function (err, result) {
         if (err) throw err;
         console.log("1 record inserted");
-        res.redirect("insertfaculty.html");
+        res.redirect("insertcourse.html");
         res.end();
       });
-    // } else {
-    //     console.log("Course Does Not Exist");
-    // }
-//   });
+    } else {
+      console.log("Course ID Does Not Exist");
+    }
+  });
 });
 
 app.get("/getfac/", function (req, res) {

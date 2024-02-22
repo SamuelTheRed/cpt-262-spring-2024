@@ -28,6 +28,7 @@ var Courseform = React.createClass({
     return {
       coursesemester: "",
       courseyear: "",
+      facultyid: "",
       data: []
     };
   },
@@ -62,6 +63,7 @@ var Courseform = React.createClass({
     var coursesection = this.state.coursesection.trim();
     var coursesemester = this.state.coursesemester.trim();
     var courseyear = this.state.courseyear.trim();
+    var facultyid = facnum.value;
 
     if (!coursesemester || !courseyear) {
       console.log("Field Missing");
@@ -75,6 +77,7 @@ var Courseform = React.createClass({
       coursesection: coursesection,
       coursesemester: coursesemester,
       courseyear: courseyear,
+      facultyid: facultyid
     });
   },
 
@@ -206,7 +209,7 @@ var Courseform = React.createClass({
             </tr>
           </tbody>
         </table>
-        <input type="submit" value="Insert Course" />
+        <input type="submit" value="Insert Course"/>
       </form>
     );
   },
