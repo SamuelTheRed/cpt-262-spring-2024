@@ -10,7 +10,7 @@ var CourseBox = React.createClass({
       }.bind(this),
       error: function (xhr, status, err) {
         console.error(this.props.url, status, err.toString());
-      }.bind(this)
+      }.bind(this),
     });
   },
   render: function () {
@@ -28,30 +28,43 @@ var Courseform = React.createClass({
     return {
       coursesemester: "",
       courseyear: "",
-      data: []
+      data: [],
     };
   },
   handleOptionChange: function (e) {
     this.setState({
-      selectedOption: e.target.value
+      selectedOption: e.target.value,
     });
   },
-  loadFac: function () {
+  loadDara: function () {
     $.ajax({
-      url: '/getfac',
-      dataType: 'json',
+      url: "/getcourses",
+      dataType: "json",
       cache: false,
       success: function (data) {
         this.setState({ data: data });
       }.bind(this),
       error: function (xhr, status, err) {
         console.error(this.props.url, status, err.toString());
-      }.bind(this)
+      }.bind(this),
+    });
+  },
+  loadFac: function () {
+    $.ajax({
+      url: "/getfac",
+      dataType: "json",
+      cache: false,
+      success: function (data) {
+        this.setState({ data: data });
+      }.bind(this),
+      error: function (xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this),
     });
   },
   componentDidMount: function () {
     this.loadFac();
-
+    this.loadCourses();
   },
   handleSubmit: function (e) {
     e.preventDefault();
@@ -102,66 +115,9 @@ var Courseform = React.createClass({
         <table>
           <tbody>
             <tr>
-              <th>Course ID</th>
+              <th>Course Select</th>
               <td>
-                <TextInput
-                  value={this.state.courseid}
-                  uniqueName="courseid"
-                  textArea={false}
-                  required={true}
-                  minCharacters={0}
-                  validate={this.commonValidate}
-                  onChange={this.setValue.bind(this, "courseid")}
-                  errorMessage="Course ID is invalid"
-                  emptyMessage="Course ID is required"
-                />
-              </td>
-            </tr>
-            <tr>
-              <th>Course Prefix</th>
-              <td>
-                <TextInput
-                  value={this.state.courseprefix}
-                  uniqueName="courseprefix"
-                  textArea={false}
-                  required={true}
-                  minCharacters={3}
-                  validate={this.commonValidate}
-                  onChange={this.setValue.bind(this, "courseprefix")}
-                  errorMessage="Course Name is invalid"
-                  emptyMessage="Course Name is Required"
-                />
-              </td>
-            </tr>
-            <tr>
-              <th>Course Number</th>
-              <td>
-                <TextInput
-                  value={this.state.coursenumber}
-                  uniqueName="coursenumber"
-                  textArea={false}
-                  required={true}
-                  minCharacters={2}
-                  validate={this.commonValidate}
-                  onChange={this.setValue.bind(this, "coursenumber")}
-                  errorMessage="Invalid Course Number"
-                  emptyMessage="Course Number is Required"
-                />
-              </td>
-            </tr>
-            <tr>
-              <th>Course Section</th>
-              <td>
-                <TextInput
-                  value={this.state.coursesection}
-                  uniqueName="coursesection"
-                  textArea={false}
-                  required={false}
-                  minCharacters={3}
-                  validate={this.commonValidate}
-                  onChange={this.setValue.bind(this, "coursesection")}
-                  errorMessage="Course Section is invalid"
-                />
+                <CourseSelectList data={this.state.data} />
               </td>
             </tr>
             <tr>
@@ -197,9 +153,7 @@ var Courseform = React.createClass({
               </td>
             </tr>
             <tr>
-              <th>
-                Course Faculty
-              </th>
+              <th>Course Faculty</th>
               <td>
                 <SelectList data={this.state.data} />
               </td>
@@ -324,14 +278,28 @@ var TextInput = React.createClass({
   },
 });
 
+var CourseSelectList = React.createClass({
+  render: function () {
+    var optionNodes = this.props.data.map(function (courseID) {
+      return (
+        <option key={courseID.courseid} value={courseID.courseid}>
+          {courseID.courseprefix} {courseID.coursenumber} {courseID.coursesection}
+        </option>
+      );
+    });
+    return (
+      <select name="coursenum" id="coursenum">
+        {optionNodes}
+      </select>
+    );
+  },
+});
+
 var SelectList = React.createClass({
   render: function () {
     var optionNodes = this.props.data.map(function (facID) {
       return (
-        <option
-          key={facID.facultyid}
-          value={facID.facultyid}
-        >
+        <option key={facID.facultyid} value={facID.facultyid}>
           {facID.facultyfirstname} {facID.facultylastname}
         </option>
       );
@@ -341,7 +309,7 @@ var SelectList = React.createClass({
         {optionNodes}
       </select>
     );
-  }
+  },
 });
 
 ReactDOM.render(<CourseBox />, document.getElementById("content"));
