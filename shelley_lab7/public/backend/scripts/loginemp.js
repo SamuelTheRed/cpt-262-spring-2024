@@ -7,7 +7,7 @@ var LoginBox = React.createClass({
     handleLogin: function (logininfo) {
 
         $.ajax({
-            url: '/login/',
+            url: '/loginemp/',
             dataType: 'json',
             type: 'POST',
             data: logininfo,

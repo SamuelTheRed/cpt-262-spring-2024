@@ -7,7 +7,7 @@ var LoginBox = React.createClass({
     handleLogin: function (logininfo) {
 
         $.ajax({
-            url: '/login/',
+            url: '/logincust/',
             dataType: 'json',
             type: 'POST',
             data: logininfo,
@@ -38,8 +38,8 @@ var LoginBox = React.createClass({
 var LoginForm = React.createClass({
     getInitialState: function () {
         return {
-            employeeemail: "",
-            employeepw: "",
+            customeremail: "",
+            customerpw: "",
 
         };
     },
@@ -52,12 +52,12 @@ var LoginForm = React.createClass({
     handleSubmit: function (e) {
         e.preventDefault();
 
-        var employeepw = this.state.employeepw.trim();
-        var employeeemail = this.state.employeeemail.trim();
+        var customerpw = this.state.customerpw.trim();
+        var customeremail = this.state.customeremail.trim();
 
         this.props.onLoginSubmit({
-            employeepw: employeepw,
-            employeeemail: employeeemail
+            customerpw: customerpw,
+            customeremail: customeremail
         });
 
     },
@@ -76,15 +76,15 @@ var LoginForm = React.createClass({
                         <table>
                             <tbody>
                                 <tr>
-                                    <th>Employee Email</th>
+                                    <th>Customer Email</th>
                                     <td>
-                                        <input name="employeeemail" id="employeeemail" value={this.state.employeeemail} onChange={this.handleChange} />
+                                        <input name="customeremail" id="customeremail" value={this.state.customeremail} onChange={this.handleChange} />
                                     </td>
                                 </tr>
                                 <tr>
-                                    <th>Employee Password</th>
+                                    <th>Customer Password</th>
                                     <td>
-                                        <input type="password" name="employeepw" id="employeepw" value={this.state.employeepw} onChange={this.handleChange} />
+                                        <input type="password" name="customerpw" id="customerpw" value={this.state.customerpw} onChange={this.handleChange} />
                                     </td>
                                 </tr>
 
