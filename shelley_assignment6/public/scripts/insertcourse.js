@@ -26,33 +26,11 @@ var CourseBox = React.createClass({
 var Courseform = React.createClass({
   getInitialState: function () {
     return {
-      coursesemester: "",
-      courseyear: "",
-      facultyid: "",
-      data: []
+      courseid: "",
+      courseprefix: "",
+      coursesection: "",
+      coursesection: "",
     };
-  },
-  handleOptionChange: function (e) {
-    this.setState({
-      selectedOption: e.target.value
-    });
-  },
-  loadFac: function () {
-    $.ajax({
-      url: '/getfac',
-      dataType: 'json',
-      cache: false,
-      success: function (data) {
-        this.setState({ data: data });
-      }.bind(this),
-      error: function (xhr, status, err) {
-        console.error(this.props.url, status, err.toString());
-      }.bind(this)
-    });
-  },
-  componentDidMount: function () {
-    this.loadFac();
-
   },
   handleSubmit: function (e) {
     e.preventDefault();
@@ -61,11 +39,8 @@ var Courseform = React.createClass({
     var courseprefix = this.state.courseprefix.trim();
     var coursenumber = this.state.coursenumber.trim();
     var coursesection = this.state.coursesection.trim();
-    var coursesemester = this.state.coursesemester.trim();
-    var courseyear = this.state.courseyear.trim();
-    var facultyid = facnum.value;
 
-    if (!coursesemester || !courseyear) {
+    if (!courseid) {
       console.log("Field Missing");
       return;
     }
@@ -75,9 +50,6 @@ var Courseform = React.createClass({
       courseprefix: courseprefix,
       coursenumber: coursenumber,
       coursesection: coursesection,
-      coursesemester: coursesemester,
-      courseyear: courseyear,
-      facultyid: facultyid
     });
   },
 
@@ -165,46 +137,6 @@ var Courseform = React.createClass({
                   onChange={this.setValue.bind(this, "coursesection")}
                   errorMessage="Course Section is invalid"
                 />
-              </td>
-            </tr>
-            <tr>
-              <th>Course Semester</th>
-              <td>
-                <TextInput
-                  value={this.state.coursesemester}
-                  uniqueName="coursesemester"
-                  textArea={false}
-                  required={true}
-                  minCharacters={3}
-                  validate={this.commonValidate}
-                  onChange={this.setValue.bind(this, "coursesemester")}
-                  errorMessage="Course Section is invalid"
-                  emptyMessage="Course Section is required"
-                />
-              </td>
-            </tr>
-            <tr>
-              <th>Course Year</th>
-              <td>
-                <TextInput
-                  value={this.state.courseyear}
-                  uniqueName="courseyear"
-                  textArea={false}
-                  required={true}
-                  minCharacters={3}
-                  validate={this.commonValidate}
-                  onChange={this.setValue.bind(this, "courseyear")}
-                  errorMessage="Course Year is invalid"
-                  emptyMessage="Course Year is required"
-                />
-              </td>
-            </tr>
-            <tr>
-              <th>
-                Course Faculty
-              </th>
-              <td>
-                <SelectList data={this.state.data} />
               </td>
             </tr>
           </tbody>

@@ -36,7 +36,7 @@ var Courseform = React.createClass({
       selectedOption: e.target.value,
     });
   },
-  loadDara: function () {
+  loadData: function () {
     $.ajax({
       url: "/getcourses",
       dataType: "json",

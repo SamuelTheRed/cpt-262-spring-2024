@@ -101,6 +101,21 @@ app.get("/getfac/", function (req, res) {
   });
 });
 
+app.get("/getdata/", function (req, res) {
+  var sqlsel = "SELECT * FROM epiccourses AS c LEFT JOIN epicschedule AS s ON c.courseid = s.courseID " +
+    " RIGHT JOIN epicfaculty AS f ON s.facultyID = f.facultyid";
+  var sql = mysql.format(sqlsel);
+
+  con.query(sql, function (err, data) {
+    if (err) {
+      console.error(err);
+      process.exit(1);
+    }
+
+    res.send(JSON.stringify(data));
+  });
+});
+
 app.listen(app.get("port"), function () {
   console.log("Server started: http://localhost:" + app.get("port") + "/");
 });
