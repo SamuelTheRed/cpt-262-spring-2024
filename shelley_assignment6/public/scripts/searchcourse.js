@@ -41,6 +41,8 @@ var CourseBox = React.createClass({
               <th>Prefix</th>
               <th>Number</th>
               <th>Section</th>
+              <th>Semester</th>
+              <th>Year</th>
               <th>Faculty</th>
             </tr>
           </thead>
@@ -68,7 +70,7 @@ var Courseform = React.createClass({
   },
   loadCourseTypes: function () {
     $.ajax({
-      url: "/getcoursetypes",
+      url: "/getdata",
       dataType: "json",
       cache: false,
       success: function (data) {
@@ -156,6 +158,20 @@ var Courseform = React.createClass({
               </td>
             </tr>
             <tr>
+              <th>Schedule Semester</th>
+              <td>
+              <td>
+                <SelectSemesterList data={this.state.data} />
+              </td>
+              </td>
+            </tr>
+            <tr>
+              <th>Schedule Year</th>
+              <td>
+                <SelectYearList data={this.state.data} />
+              </td>
+            </tr>
+            <tr>
               <th>Course Faculty</th>
               <td>
                 <SelectList data={this.state.data} />
@@ -176,10 +192,14 @@ var CourseList = React.createClass({
         <Course
           key={course.dbcourseid}
           courseid={course.dbcourseid}
-          courseprefix={course.dbcourseprefix}
-          coursenumber={course.dbcoursenumber}
-          coursesection={course.dbcoursesection}
-          coursefaculty={course.dbcoursefacultyname} // From Faculty DB
+          courseprefix={course.courseprefix}
+          coursenumber={course.coursenumber}
+          coursesection={course.coursesection}
+          schedulesemester={course.schedulesemester}
+          scheduleyear={course.scheduleyear}
+          facultyfirst={course.facultyfirstname} // From Faculty DB
+          facultylast={course.facultylastname}
+
         ></Course>
       );
     });
@@ -197,6 +217,8 @@ var Course = React.createClass({
         <td>{this.props.courseprefix}</td>
         <td>{this.props.coursenumber}</td>
         <td>{this.props.coursesection}</td>
+        <td>{this.props.schedulesemester}</td>
+        <td>{this.props.scheduleyear}</td>
         <td>{this.props.coursefaculty}</td>
       </tr>
     );
@@ -217,6 +239,39 @@ var SelectList = React.createClass({
     });
     return (
       <select name="coursefaculty" id="coursefaculty">
+        <option value="0"></option>
+        {optionNodes}
+      </select>
+    );
+  },
+});
+
+var SelectSemesterList = React.createClass({
+  render: function () {
+    return (
+      <select name="schedulesemester" id="schedulesemester">
+        <option value="fall">Fall</option>
+        <option value="spring">Spring</option>
+        <option value="summer">Summer</option>
+      </select>
+    );
+  },
+});
+
+var SelectYearList = React.createClass({
+  render: function () {
+    var optionNodes = this.props.data.map(function (scheduleYear) {
+      return (
+        <option
+          key={scheduleYear.scheduleyear}
+          value={scheduleYear.scheduleyear}
+        >
+          {scheduleYear.scheduleyear}
+        </option>
+      );
+    });
+    return (
+      <select name="scheduleyear" id="scheduleyear">
         <option value="0"></option>
         {optionNodes}
       </select>

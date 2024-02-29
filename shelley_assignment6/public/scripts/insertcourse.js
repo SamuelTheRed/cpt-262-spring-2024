@@ -26,19 +26,19 @@ var CourseBox = React.createClass({
 var Courseform = React.createClass({
   getInitialState: function () {
     return {
-      courseid: "",
       courseprefix: "",
+      coursenumber: "",
       coursesection: "",
-      coursesection: "",
+      courseassignment: ""
     };
   },
   handleSubmit: function (e) {
     e.preventDefault();
 
-    var courseid = this.state.courseid;
     var courseprefix = this.state.courseprefix.trim();
     var coursenumber = this.state.coursenumber.trim();
     var coursesection = this.state.coursesection.trim();
+    var courseassignment = this.state.courseassignment.trim();
 
     if (!courseid) {
       console.log("Field Missing");
@@ -46,10 +46,10 @@ var Courseform = React.createClass({
     }
 
     this.props.onCourseSubmit({
-      courseid: courseid,
       courseprefix: courseprefix,
       coursenumber: coursenumber,
       coursesection: coursesection,
+      courseassignment: courseassignment
     });
   },
 
@@ -76,22 +76,6 @@ var Courseform = React.createClass({
         <h2>Insert Course</h2>
         <table>
           <tbody>
-            <tr>
-              <th>Course ID</th>
-              <td>
-                <TextInput
-                  value={this.state.courseid}
-                  uniqueName="courseid"
-                  textArea={false}
-                  required={true}
-                  minCharacters={0}
-                  validate={this.commonValidate}
-                  onChange={this.setValue.bind(this, "courseid")}
-                  errorMessage="Course ID is invalid"
-                  emptyMessage="Course ID is required"
-                />
-              </td>
-            </tr>
             <tr>
               <th>Course Prefix</th>
               <td>
@@ -136,6 +120,21 @@ var Courseform = React.createClass({
                   validate={this.commonValidate}
                   onChange={this.setValue.bind(this, "coursesection")}
                   errorMessage="Course Section is invalid"
+                />
+              </td>
+            </tr>
+            <tr>
+              <th>Course Assignment</th>
+              <td>
+                <TextInput
+                  value={this.state.courseassignment}
+                  uniqueName="courseassignment"
+                  textArea={false}
+                  required={false}
+                  minCharacters={3}
+                  validate={this.commonValidate}
+                  onChange={this.setValue.bind(this, "courseassignment")}
+                  errorMessage="Course Assignment is invalid"
                 />
               </td>
             </tr>
@@ -257,26 +256,6 @@ var TextInput = React.createClass({
       );
     }
   },
-});
-
-var SelectList = React.createClass({
-  render: function () {
-    var optionNodes = this.props.data.map(function (facID) {
-      return (
-        <option
-          key={facID.facultyid}
-          value={facID.facultyid}
-        >
-          {facID.facultyfirstname} {facID.facultylastname}
-        </option>
-      );
-    });
-    return (
-      <select name="facnum" id="facnum">
-        {optionNodes}
-      </select>
-    );
-  }
 });
 
 ReactDOM.render(<CourseBox />, document.getElementById("content"));

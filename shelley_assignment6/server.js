@@ -51,39 +51,24 @@ app.post("/faculty/", function (req, res) {
 });
 
 app.post("/course/", function (req, res) {
-  var cid = req.body.courseid;
-  var csemester = req.body.coursesemester;
-  var cyear = req.body.courseyear;
-  var facultyid = req.body.facultyid;
+  var cprefix = req.body.courseprefix;
+  var cnumber = req.body.coursenumber;
+  var csection = req.body.coursesection;
+  var cassignment = req.body.courseassignment
 
-  var checkid = "SELECT * from epiccourses where courseid = " + cid;
+  var sqlins =
+    "INSERT INTO epicschedule (courseprefix, coursenumber, coursenumber, courseassignment) VALUES (?, ?, ?, ?)";
+  var inserts = [cprefix, cnumber, csection, cassignment];
 
-  var sql = mysql.format(checkid);
+  var sql = mysql.format(sqlins, inserts);
 
-  con.query(sql, function (err, data) {
+  console.log(sql);
+
+  con.execute(sql, function (err, result) {
     if (err) throw err;
-
-    if (data.length > 0) {
-      console.log(data[0]["courseid"]);
-
-      var sqlins =
-        "INSERT INTO epicschedule (schedulesemester, scheduleyear, facultyID, " +
-        " courseID) VALUES (?, ?, ?, ?)";
-      var inserts = [csemester, cyear, facultyid, cid];
-
-      var sql = mysql.format(sqlins, inserts);
-
-      console.log(sql);
-
-      con.execute(sql, function (err, result) {
-        if (err) throw err;
-        console.log("1 record inserted");
-        res.redirect("insertcourse.html");
-        res.end();
-      });
-    } else {
-      console.log("Course ID Does Not Exist");
-    }
+    console.log("1 record inserted");
+    res.redirect("insertcourse.html");
+    res.end();
   });
 });
 
