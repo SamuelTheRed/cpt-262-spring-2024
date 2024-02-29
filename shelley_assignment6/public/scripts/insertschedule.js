@@ -26,11 +26,13 @@ var ScheduleBox = React.createClass({
 var Scheduleform = React.createClass({
 	getInitialState: function () {
 		return {
-			courseId: "",
+			courseid: "",
 			schedulesemester: "",
 			scheduleyear: "",
 			facultyid: "",
-			data: []
+			data: [],
+			facdata: [],
+			crsdata: []
 		};
 	},
 	handleOptionChange: function (e) {
@@ -38,13 +40,26 @@ var Scheduleform = React.createClass({
 			selectedOption: e.target.value
 		});
 	},
-	loadData: function () {
+	loadCrsData: function () {
 		$.ajax({
-			url: '/getdata',
+			url: '/getcrsdata',
+			dataType: 'json',
+			cache: false,
+			success: function (crsdata) {
+				this.setState({ crsdata: crsdata });
+			}.bind(this),
+			error: function (xhr, status, err) {
+				console.error(this.props.url, status, err.toString());
+			}.bind(this)
+		});
+	},
+	loadFacData: function () {
+		$.ajax({
+			url: '/getfacdata',
 			dataType: 'json',
 			cache: false,
 			success: function (data) {
-				this.setState({ data: data });
+				this.setState({ facdata: data });
 			}.bind(this),
 			error: function (xhr, status, err) {
 				console.error(this.props.url, status, err.toString());
@@ -52,7 +67,8 @@ var Scheduleform = React.createClass({
 		});
 	},
 	componentDidMount: function () {
-		this.loadData();
+		this.loadCrsData();
+		this.loadFacData();
 
 	},
 	handleSubmit: function (e) {
@@ -69,7 +85,7 @@ var Scheduleform = React.createClass({
 		}
 
 		this.props.onScheduleSubmit({
-			courseId: courseid,
+			courseid: courseid,
 			schedulesemester: schedulesemester,
 			scheduleyear: scheduleyear,
 			facultyid: facultyid
@@ -104,7 +120,7 @@ var Scheduleform = React.createClass({
 								Schedule Course
 							</th>
 							<td>
-								<SelectListCourse data={this.state.data} />
+								<SelectListCourse data={this.state.crsdata} />
 							</td>
 						</tr>
 						<tr>
@@ -144,7 +160,7 @@ var Scheduleform = React.createClass({
 								Schedule Faculty
 							</th>
 							<td>
-								<SelectList data={this.state.data} />
+								<SelectList data={this.state.facdata} />
 							</td>
 						</tr>
 					</tbody>
@@ -295,7 +311,7 @@ var SelectListCourse = React.createClass({
 					key={courseId.courseid}
 					value={courseId.courseid}
 				>
-					{courseId.courseprefix} {courseId.coursenumber} {courseId.coursesection}
+					{courseId.courseprefix} {courseId.coursenumber} {courseId.coursesection} - id_{courseId.courseid}
 				</option>
 			);
 		});

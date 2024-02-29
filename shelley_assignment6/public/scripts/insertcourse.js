@@ -40,7 +40,7 @@ var Courseform = React.createClass({
     var coursesection = this.state.coursesection.trim();
     var courseassignment = this.state.courseassignment.trim();
 
-    if (!courseid) {
+    if (!courseprefix || !coursenumber || !coursesection) {
       console.log("Field Missing");
       return;
     }
@@ -52,7 +52,6 @@ var Courseform = React.createClass({
       courseassignment: courseassignment
     });
   },
-
   validateEmail: function (value) {
     var re =
       /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;

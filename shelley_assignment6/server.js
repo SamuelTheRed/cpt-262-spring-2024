@@ -57,7 +57,7 @@ app.post("/course/", function (req, res) {
   var cassignment = req.body.courseassignment
 
   var sqlins =
-    "INSERT INTO epicschedule (courseprefix, coursenumber, coursenumber, courseassignment) VALUES (?, ?, ?, ?)";
+    "INSERT INTO epiccourses (courseprefix, coursenumber, coursesection, courseassignment) VALUES (?, ?, ?, ?)";
   var inserts = [cprefix, cnumber, csection, cassignment];
 
   var sql = mysql.format(sqlins, inserts);
@@ -72,8 +72,30 @@ app.post("/course/", function (req, res) {
   });
 });
 
-app.get("/getfac/", function (req, res) {
-  var sqlsel = "select * from epicfaculty";
+app.post("/schedule/", function (req, res) {
+  var cid = req.body.courseid;
+  var ssemester = req.body.schedulesemester;
+  var syear = req.body.scheduleyear;
+  var fid = req.body.facultyid;
+
+  var sqlins =
+    "INSERT INTO epicschedule (schedulesemester, scheduleyear, facultyID, courseID) VALUES (?, ?, ?, ?)";
+  var inserts = [ssemester, syear, fid, cid];
+
+  var sql = mysql.format(sqlins, inserts);
+
+  console.log(sql);
+
+  con.execute(sql, function (err, result) {
+    if (err) throw err;
+    console.log("1 record inserted");
+    res.redirect("insertschedule.html");
+    res.end();
+  });
+});
+
+app.get("/getfacdata/", function (req, res) {
+  var sqlsel = "SELECT * FROM epicfaculty ORDER BY facultylastname, facultyfirstname";
   var sql = mysql.format(sqlsel);
 
   con.query(sql, function (err, data) {
@@ -85,10 +107,8 @@ app.get("/getfac/", function (req, res) {
     res.send(JSON.stringify(data));
   });
 });
-
-app.get("/getdata/", function (req, res) {
-  var sqlsel = "SELECT * FROM epiccourses AS c LEFT JOIN epicschedule AS s ON c.courseid = s.courseID " +
-    " RIGHT JOIN epicfaculty AS f ON s.facultyID = f.facultyid";
+app.get("/getcrsdata/", function (req, res) {
+  var sqlsel = "SELECT * FROM epiccourses ORDER BY courseprefix, coursenumber, coursesection";
   var sql = mysql.format(sqlsel);
 
   con.query(sql, function (err, data) {
