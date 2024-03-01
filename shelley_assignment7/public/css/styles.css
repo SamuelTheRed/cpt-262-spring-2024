@@ -67,3 +67,14 @@ div#content {
   border: #004 solid 1px;
   border-radius: 5pt;
 }
+/* 
+tr {
+  margin-top: 15px;
+  border-top: #004 dotted 5px;
+}
+
+td span{
+  display: flex;
+  flex-direction: column;
+} 
+*/

@@ -232,6 +232,58 @@ app.get("/getschedule/", function (req, res) {
   });
 });
 
+app.get("/getresults/", function (req, res) {
+  var rid = req.query.resultid;
+  var cprefix = req.query.courseprefix;
+  var cnumber = req.query.coursenumber;
+  var csection = req.query.coursesection;
+  var ssemester = req.query.schedulesemester;
+  var syear = req.query.scheduleyear;
+  var rslo = req.query.resultslo;
+  var rindicator = req.query.resultindicator;
+  var rthree = req.query.resultthree;
+  var rtwo = req.query.resulttwo;
+  var rone = req.query.resultone;
+
+  var sqlsel =
+    "SELECT epicresults.*, epiccourses.courseprefix, epiccourses.coursenumber, " +
+    "epiccourses.coursesection, epicschedule.schedulesemester, epicschedule.scheduleyear " +
+    "FROM epicresults INNER JOIN epicschedule ON epicresults.scheduleID=epicschedule.scheduleid " +
+    "INNER JOIN epiccourses ON epicschedule.courseID=epiccourses.courseid " +
+    "WHERE resultid LIKE ? AND courseprefix LIKE ? AND coursenumber LIKE ? " +
+    "AND coursesection LIKE ? AND schedulesemester LIKE ? AND scheduleyear LIKE ? " +
+    "AND epicresults.resultslo LIKE ? AND epicresults.resultindicator LIKE ? " +
+    "AND epicresults.resultthree LIKE ? AND epicresults.resulttwo LIKE ? " +
+    "AND epicresults.resultone LIKE ?";
+
+  var inserts = [
+    "%" + rid + "%",
+    "%" + cprefix + "%",
+    "%" + cnumber + "%",
+    "%" + csection + "%",
+    "%" + ssemester + "%",
+    "%" + syear + "%",
+    "%" + rslo + "%",
+    "%" + rindicator + "%",
+    "%" + rthree + "%",
+    "%" + rtwo + "%",
+    "%" + rone + "%",
+  ];
+
+  var sql = mysql.format(sqlsel, inserts);
+
+  console.log(sql);
+
+  con.query(sql, function (err, data) {
+    if (err) {
+      console.error(err);
+      process.exit(1);
+    }
+    res.send(JSON.stringify(data));
+  });
+});
+
+
 app.listen(app.get("port"), function () {
   console.log("Server started: http://localhost:" + app.get("port") + "/");
 });
