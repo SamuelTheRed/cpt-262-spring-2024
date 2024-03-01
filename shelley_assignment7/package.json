@@ -1,0 +1,18 @@
+{
+  "name": "assignment_6",
+  "version": "0.0.0",
+  "description": "assignment_6",
+  "main": "server.js",
+  "author": {
+    "name": "Samuel Shelley"
+  },
+  "dependencies": {
+    "bcrypt": "^4.0.1",
+    "body-parser": "^1.19.1",
+    "express": "^4.17.2",
+    "mysql": "^2.18.1",
+    "mysql2": "^2.1.0",
+    "react": "^16.14.0"
+  }
+}
+ 
