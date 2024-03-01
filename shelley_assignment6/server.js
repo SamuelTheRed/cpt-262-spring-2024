@@ -80,7 +80,7 @@ app.post("/schedule/", function (req, res) {
 
   var sqlins =
     "INSERT INTO epicschedule (schedulesemester, scheduleyear, facultyID, courseID) VALUES (?, ?, ?, ?)";
-  var inserts = [ssemester, syear, fid, cid];
+  var inserts = [ssemester, syear, parseInt(fid), parseInt(cid)];
 
   var sql = mysql.format(sqlins, inserts);
 
@@ -109,6 +109,20 @@ app.get("/getfacdata/", function (req, res) {
 });
 app.get("/getcrsdata/", function (req, res) {
   var sqlsel = "SELECT * FROM epiccourses ORDER BY courseprefix, coursenumber, coursesection";
+  var sql = mysql.format(sqlsel);
+
+  con.query(sql, function (err, data) {
+    if (err) {
+      console.error(err);
+      process.exit(1);
+    }
+
+    res.send(JSON.stringify(data));
+  });
+});
+
+app.post("/getcourses/", function (req, res) {
+  var sqlsel = "SELECT * FROM epiccourses AS c INNER JOIN epicschedule AS s ON c.courseid=s.courseID ORDER BY courseprefix, coursenumber, coursesection";
   var sql = mysql.format(sqlsel);
 
   con.query(sql, function (err, data) {

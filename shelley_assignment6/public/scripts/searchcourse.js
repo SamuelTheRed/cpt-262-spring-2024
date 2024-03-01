@@ -4,14 +4,15 @@ var CourseBox = React.createClass({
   },
   loadCoursesFromServer: function () {
     console.log(courseid.value);
-
     $.ajax({
-      url: "/getcourse",
+      url: "/getcourses",
       data: {
-        courseprefix: courseprefix,
-        coursenumber: coursenumber,
-        coursesection: coursesection,
-        coursefaculty: coursefaculty
+          'courseid': courseid.value,
+          'courseprefix': courseprefix.value,
+          'coursenumber': coursenumber.value,
+          'coursesection': coursesection.value,
+          'schedulesemester': schedulesemester.value,
+          'scheduleyear': scheduleyear,
       },
       dataType: "json",
       cache: false,
@@ -61,6 +62,7 @@ var Courseform = React.createClass({
       coursenumber: "",
       coursesection: "",
       data: [],
+      facdata: [],
     };
   },
   handleOptionChange: function (e) {
@@ -68,13 +70,13 @@ var Courseform = React.createClass({
       selectedOption: e.target.value,
     });
   },
-  loadCourseTypes: function () {
+  loadFacData: function () {
     $.ajax({
-      url: "/getdata",
+      url: "/getfacdata",
       dataType: "json",
       cache: false,
       success: function (data) {
-        this.setState({ data: data });
+        this.setState({ facdata: data });
       }.bind(this),
       error: function (xhr, status, err) {
         console.error(this.props.url, status, err.toString());
@@ -82,7 +84,7 @@ var Courseform = React.createClass({
     });
   },
   componentDidMount: function () {
-    this.loadCourseTypes();
+    this.loadFacData();
   },
   handleSubmit: function (e) {
     e.preventDefault();
@@ -160,21 +162,24 @@ var Courseform = React.createClass({
             <tr>
               <th>Schedule Semester</th>
               <td>
-              <td>
                 <SelectSemesterList data={this.state.data} />
-              </td>
               </td>
             </tr>
             <tr>
               <th>Schedule Year</th>
               <td>
-                <SelectYearList data={this.state.data} />
+                <input
+                  name="scheduleyear"
+                  id="scheduleyear"
+                  value={this.state.scheduleYear}
+                  onChange={this.handleChange}
+                />
               </td>
             </tr>
             <tr>
               <th>Course Faculty</th>
               <td>
-                <SelectList data={this.state.data} />
+                <SelectList data={this.state.facdata} />
               </td>
             </tr>
           </tbody>
@@ -187,7 +192,7 @@ var Courseform = React.createClass({
 var CourseList = React.createClass({
   render: function () {
     var courseNodes = this.props.data.map(function (course) {
-      //map the data to individual 
+      //map the data to individual
       return (
         <Course
           key={course.dbcourseid}
@@ -197,9 +202,7 @@ var CourseList = React.createClass({
           coursesection={course.coursesection}
           schedulesemester={course.schedulesemester}
           scheduleyear={course.scheduleyear}
-          facultyfirst={course.facultyfirstname} // From Faculty DB
-          facultylast={course.facultylastname}
-
+          facultyid={course.facultyid}
         ></Course>
       );
     });
@@ -229,11 +232,8 @@ var SelectList = React.createClass({
   render: function () {
     var optionNodes = this.props.data.map(function (courseFaculty) {
       return (
-        <option
-          key={courseFaculty.dbcoursefacultyid}
-          value={courseFaculty.dbcoursefacultyid}
-        >
-          {courseFaculty.dbcoursefacultyname}
+        <option key={courseFaculty.facultyid} value={courseFaculty.facultyid}>
+          {courseFaculty.facultyfirstname}
         </option>
       );
     });
