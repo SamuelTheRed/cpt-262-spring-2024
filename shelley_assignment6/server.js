@@ -54,7 +54,7 @@ app.post("/course/", function (req, res) {
   var cprefix = req.body.courseprefix;
   var cnumber = req.body.coursenumber;
   var csection = req.body.coursesection;
-  var cassignment = req.body.courseassignment
+  var cassignment = req.body.courseassignment;
 
   var sqlins =
     "INSERT INTO epiccourses (courseprefix, coursenumber, coursesection, courseassignment) VALUES (?, ?, ?, ?)";
@@ -95,7 +95,8 @@ app.post("/schedule/", function (req, res) {
 });
 
 app.get("/getfacdata/", function (req, res) {
-  var sqlsel = "SELECT * FROM epicfaculty ORDER BY facultylastname, facultyfirstname";
+  var sqlsel =
+    "SELECT * FROM epicfaculty ORDER BY facultylastname, facultyfirstname";
   var sql = mysql.format(sqlsel);
 
   con.query(sql, function (err, data) {
@@ -108,7 +109,8 @@ app.get("/getfacdata/", function (req, res) {
   });
 });
 app.get("/getcrsdata/", function (req, res) {
-  var sqlsel = "SELECT * FROM epiccourses ORDER BY courseprefix, coursenumber, coursesection";
+  var sqlsel =
+    "SELECT * FROM epiccourses ORDER BY courseprefix, coursenumber, coursesection";
   var sql = mysql.format(sqlsel);
 
   con.query(sql, function (err, data) {
@@ -121,16 +123,111 @@ app.get("/getcrsdata/", function (req, res) {
   });
 });
 
-app.post("/getcourses/", function (req, res) {
-  var sqlsel = "SELECT * FROM epiccourses AS c INNER JOIN epicschedule AS s ON c.courseid=s.courseID ORDER BY courseprefix, coursenumber, coursesection";
-  var sql = mysql.format(sqlsel);
+app.get("/getfaculty/", function (req, res) {
+  var fid = req.query.facultyid;
+  var ftitle = req.query.facultytitle;
+  var ffirstname = req.query.facultyfirstname;
+  var flastname = req.query.facultylastname;
+  var femail = req.query.facultyemail;
+
+  var sqlsel =
+    "SELECT * " +
+    "FROM epicfaculty " +
+    "WHERE facultyid LIKE ? AND facultytitle LIKE ? AND facultyfirstname LIKE ? " +
+    "AND facultylastname LIKE ? AND facultyemail LIKE ? ";
+
+  var inserts = [
+    "%" + fid + "%",
+    "%" + ftitle + "%",
+    "%" + ffirstname + "%",
+    "%" + flastname + "%",
+    "%" + femail + "%",
+  ];
+
+  var sql = mysql.format(sqlsel, inserts);
+
+  console.log(sql);
 
   con.query(sql, function (err, data) {
     if (err) {
       console.error(err);
       process.exit(1);
     }
+    res.send(JSON.stringify(data));
+  });
+});
 
+app.get("/getcourse/", function (req, res) {
+  var cid = req.query.courseid;
+  var cprefix = req.query.courseprefix;
+  var cnumber = req.query.coursenumber;
+  var csection = req.query.coursesection;
+
+  var sqlsel =
+    "SELECT * " +
+    "FROM epiccourses " +
+    "WHERE courseid LIKE ? AND courseprefix LIKE ? AND coursenumber LIKE ? " +
+    "AND coursesection LIKE ? ";
+
+  var inserts = [
+    "%" + cid + "%",
+    "%" + cprefix + "%",
+    "%" + cnumber + "%",
+    "%" + csection + "%",
+  ];
+
+  var sql = mysql.format(sqlsel, inserts);
+
+  console.log(sql);
+
+  con.query(sql, function (err, data) {
+    if (err) {
+      console.error(err);
+      process.exit(1);
+    }
+    res.send(JSON.stringify(data));
+  });
+});
+
+app.get("/getschedule/", function (req, res) {
+  var sid = req.query.scheduleid;
+  var cprefix = req.query.courseprefix;
+  var cnumber = req.query.coursenumber;
+  var csection = req.query.coursesection;
+  var ssemester = req.query.schedulesemester;
+  var syear = req.query.scheduleyear;
+  var faculty = req.query.coursefaculty;
+
+  console.log("faculty: " + faculty);
+
+  var sqlsel =
+    "SELECT epicschedule.*, epiccourses.courseprefix, epiccourses.coursenumber, " + 
+    "epiccourses.coursesection, epicfaculty.facultyfirstname, epicfaculty.facultylastname " +
+    "FROM epicschedule INNER JOIN epiccourses ON epicschedule.courseID=epiccourses.courseid " +
+    "INNER JOIN epicfaculty ON epicschedule.facultyID=epicfaculty.facultyid " +
+    "WHERE scheduleid LIKE ? AND courseprefix LIKE ? AND coursenumber LIKE ? " +
+    "AND coursesection LIKE ? AND schedulesemester LIKE ? AND scheduleyear LIKE ? " +
+    "AND epicschedule.facultyID LIKE ? ";
+
+  var inserts = [
+    "%" + sid + "%",
+    "%" + cprefix + "%",
+    "%" + cnumber + "%",
+    "%" + csection + "%",
+    "%" + ssemester + "%",
+    "%" + syear + "%",
+    "%" + faculty + "%"
+  ];
+
+  var sql = mysql.format(sqlsel, inserts);
+
+  console.log(sql);
+
+  con.query(sql, function (err, data) {
+    if (err) {
+      console.error(err);
+      process.exit(1);
+    }
     res.send(JSON.stringify(data));
   });
 });

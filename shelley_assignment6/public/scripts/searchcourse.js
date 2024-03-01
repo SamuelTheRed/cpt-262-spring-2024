@@ -5,14 +5,12 @@ var CourseBox = React.createClass({
   loadCoursesFromServer: function () {
     console.log(courseid.value);
     $.ajax({
-      url: "/getcourses",
+      url: "/getcourse",
       data: {
           'courseid': courseid.value,
           'courseprefix': courseprefix.value,
           'coursenumber': coursenumber.value,
           'coursesection': coursesection.value,
-          'schedulesemester': schedulesemester.value,
-          'scheduleyear': scheduleyear,
       },
       dataType: "json",
       cache: false,
@@ -26,7 +24,6 @@ var CourseBox = React.createClass({
   },
   componentDidMount: function () {
     this.loadCoursesFromServer();
-    // setInterval(this.loadCoursesFromServer, this.props.pollInterval);
   },
 
   render: function () {
@@ -42,9 +39,7 @@ var CourseBox = React.createClass({
               <th>Prefix</th>
               <th>Number</th>
               <th>Section</th>
-              <th>Semester</th>
-              <th>Year</th>
-              <th>Faculty</th>
+              <th>Assignment</th>
             </tr>
           </thead>
           <CourseList data={this.state.data} />
@@ -61,30 +56,7 @@ var Courseform = React.createClass({
       courseprefix: "",
       coursenumber: "",
       coursesection: "",
-      data: [],
-      facdata: [],
     };
-  },
-  handleOptionChange: function (e) {
-    this.setState({
-      selectedOption: e.target.value,
-    });
-  },
-  loadFacData: function () {
-    $.ajax({
-      url: "/getfacdata",
-      dataType: "json",
-      cache: false,
-      success: function (data) {
-        this.setState({ facdata: data });
-      }.bind(this),
-      error: function (xhr, status, err) {
-        console.error(this.props.url, status, err.toString());
-      }.bind(this),
-    });
-  },
-  componentDidMount: function () {
-    this.loadFacData();
   },
   handleSubmit: function (e) {
     e.preventDefault();
@@ -93,14 +65,12 @@ var Courseform = React.createClass({
     var courseprefix = this.state.courseprefix.trim();
     var coursenumber = this.state.coursenumber.trim();
     var coursesection = this.state.coursesection.trim();
-    var coursefaculty = coursefaculty.value;
 
     this.props.onCourseSubmit({
       courseid: courseid,
       courseprefix: courseprefix,
       coursenumber: coursenumber,
       coursesection: coursesection,
-      coursefaculty: coursefaculty,
     });
   },
   handleChange: function (event) {
@@ -111,7 +81,7 @@ var Courseform = React.createClass({
   render: function () {
     return (
       <form onSubmit={this.handleSubmit}>
-        <h2>Search Courses</h2>
+        <h2>Search Through Courses</h2>
         <table>
           <tbody>
             <tr>
@@ -159,29 +129,6 @@ var Courseform = React.createClass({
                 />
               </td>
             </tr>
-            <tr>
-              <th>Schedule Semester</th>
-              <td>
-                <SelectSemesterList data={this.state.data} />
-              </td>
-            </tr>
-            <tr>
-              <th>Schedule Year</th>
-              <td>
-                <input
-                  name="scheduleyear"
-                  id="scheduleyear"
-                  value={this.state.scheduleYear}
-                  onChange={this.handleChange}
-                />
-              </td>
-            </tr>
-            <tr>
-              <th>Course Faculty</th>
-              <td>
-                <SelectList data={this.state.facdata} />
-              </td>
-            </tr>
           </tbody>
         </table>
         <input type="submit" value="Search Course" />
@@ -195,14 +142,12 @@ var CourseList = React.createClass({
       //map the data to individual
       return (
         <Course
-          key={course.dbcourseid}
-          courseid={course.dbcourseid}
-          courseprefix={course.courseprefix}
-          coursenumber={course.coursenumber}
-          coursesection={course.coursesection}
-          schedulesemester={course.schedulesemester}
-          scheduleyear={course.scheduleyear}
-          facultyid={course.facultyid}
+          key={course.courseid}
+          crsid={course.courseid}
+          crsprefix={course.courseprefix}
+          crsnumber={course.coursenumber}
+          crssection={course.coursesection}
+          crsassignment={course.courseassignment}
         ></Course>
       );
     });
@@ -216,65 +161,12 @@ var Course = React.createClass({
   render: function () {
     return (
       <tr>
-        <td>{this.props.courseid}</td>
-        <td>{this.props.courseprefix}</td>
-        <td>{this.props.coursenumber}</td>
-        <td>{this.props.coursesection}</td>
-        <td>{this.props.schedulesemester}</td>
-        <td>{this.props.scheduleyear}</td>
-        <td>{this.props.coursefaculty}</td>
+        <td>{this.props.crsid}</td>
+        <td>{this.props.crsprefix}</td>
+        <td>{this.props.crsnumber}</td>
+        <td>{this.props.crssection}</td>
+        <td>{this.props.crsassignment}</td>
       </tr>
-    );
-  },
-});
-
-var SelectList = React.createClass({
-  render: function () {
-    var optionNodes = this.props.data.map(function (courseFaculty) {
-      return (
-        <option key={courseFaculty.facultyid} value={courseFaculty.facultyid}>
-          {courseFaculty.facultyfirstname}
-        </option>
-      );
-    });
-    return (
-      <select name="coursefaculty" id="coursefaculty">
-        <option value="0"></option>
-        {optionNodes}
-      </select>
-    );
-  },
-});
-
-var SelectSemesterList = React.createClass({
-  render: function () {
-    return (
-      <select name="schedulesemester" id="schedulesemester">
-        <option value="fall">Fall</option>
-        <option value="spring">Spring</option>
-        <option value="summer">Summer</option>
-      </select>
-    );
-  },
-});
-
-var SelectYearList = React.createClass({
-  render: function () {
-    var optionNodes = this.props.data.map(function (scheduleYear) {
-      return (
-        <option
-          key={scheduleYear.scheduleyear}
-          value={scheduleYear.scheduleyear}
-        >
-          {scheduleYear.scheduleyear}
-        </option>
-      );
-    });
-    return (
-      <select name="scheduleyear" id="scheduleyear">
-        <option value="0"></option>
-        {optionNodes}
-      </select>
     );
   },
 });
