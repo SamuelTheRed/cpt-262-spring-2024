@@ -94,6 +94,30 @@ app.post("/schedule/", function (req, res) {
   });
 });
 
+app.post("/results/", function (req, res) {
+  var schid = req.body.scheduleid;
+  var resslo = req.body.resultslo;
+  var resind = req.body.resultindicator;
+  var resthr = req.body.resultthree;
+  var restwo = req.body.resulttwo;
+  var resone = req.body.resone;
+
+  var sqlins =
+    "INSERT INTO epicresults (schedulesemester, scheduleyear, facultyID, courseID) VALUES (?, ?, ?, ?)";
+  var inserts = [ssemester, syear, parseInt(fid), parseInt(cid)];
+
+  var sql = mysql.format(sqlins, inserts);
+
+  console.log(sql);
+
+  con.execute(sql, function (err, result) {
+    if (err) throw err;
+    console.log("1 record inserted");
+    res.redirect("insertresults.html");
+    res.end();
+  });
+});
+
 app.get("/getfacdata/", function (req, res) {
   var sqlsel =
     "SELECT * FROM epicfaculty ORDER BY facultylastname, facultyfirstname";
@@ -111,6 +135,22 @@ app.get("/getfacdata/", function (req, res) {
 app.get("/getcrsdata/", function (req, res) {
   var sqlsel =
     "SELECT * FROM epiccourses ORDER BY courseprefix, coursenumber, coursesection";
+  var sql = mysql.format(sqlsel);
+
+  con.query(sql, function (err, data) {
+    if (err) {
+      console.error(err);
+      process.exit(1);
+    }
+
+    res.send(JSON.stringify(data));
+  });
+});
+app.get("/getschdata/", function (req, res) {
+  var sqlsel =
+    "SELECT * FROM epicschedule INNER JOIN epiccourses ON epicschedule.courseID=epiccourses.courseid " +
+    "INNER JOIN epicfaculty ON epicschedule.facultyID=epicfaculty.facultyid ORDER BY courseprefix, " +
+    "coursenumber, coursesection, scheduleyear, schedulesemester, facultylastname";
   var sql = mysql.format(sqlsel);
 
   con.query(sql, function (err, data) {

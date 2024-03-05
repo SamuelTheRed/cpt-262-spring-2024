@@ -1,10 +1,10 @@
-var ScheduleBox = React.createClass({
-  handleScheduleSubmit: function (schedule) {
+var ResultsBox = React.createClass({
+  handleResultsSubmit: function (results) {
     $.ajax({
-      url: "/schedule",
+      url: "/results",
       dataType: "json",
       type: "POST",
-      data: schedule,
+      data: results,
       success: function (data) {
         this.setState({ data: data });
       }.bind(this),
@@ -15,21 +15,18 @@ var ScheduleBox = React.createClass({
   },
   render: function () {
     return (
-      <div className="ScheduleBox">
-        <h1>Schedules</h1>
-        <Scheduleform onScheduleSubmit={this.handleScheduleSubmit} />
+      <div className="ResultsBox">
+        <h1>Results</h1>
+        <Resultsform onResultsSubmit={this.handleResultsSubmit} />
       </div>
     );
   },
 });
 
-var Scheduleform = React.createClass({
+var Resultsform = React.createClass({
   getInitialState: function () {
     return {
-      scheduleyear: "",
-      data: [],
-      facdata: [],
-      crsdata: [],
+      schdata: [],
     };
   },
   handleOptionChange: function (e) {
@@ -37,26 +34,13 @@ var Scheduleform = React.createClass({
       selectedOption: e.target.value,
     });
   },
-  loadCrsData: function () {
+  loadSchData: function () {
     $.ajax({
-      url: "/getcrsdata",
+      url: "/getschdata",
       dataType: "json",
       cache: false,
-      success: function (crsdata) {
-        this.setState({ crsdata: crsdata });
-      }.bind(this),
-      error: function (xhr, status, err) {
-        console.error(this.props.url, status, err.toString());
-      }.bind(this),
-    });
-  },
-  loadFacData: function () {
-    $.ajax({
-      url: "/getfacdata",
-      dataType: "json",
-      cache: false,
-      success: function (data) {
-        this.setState({ facdata: data });
+      success: function (schdata) {
+        this.setState({ schdata: schdata });
       }.bind(this),
       error: function (xhr, status, err) {
         console.error(this.props.url, status, err.toString());
@@ -64,27 +48,30 @@ var Scheduleform = React.createClass({
     });
   },
   componentDidMount: function () {
-    this.loadCrsData();
-    this.loadFacData();
+    this.loadSchData();
   },
   handleSubmit: function (e) {
     e.preventDefault();
 
-    var courseid = coursenum.value;
-    var schedulesemester = semesternum.value;
-    var scheduleyear = this.state.scheduleyear.trim();
-    var facultyid = facnum.value;
+    var resultslo = this.state.resultslo.trim();
+    var resultindicator = this.resultindicator.trim();
+    var resultthree = this.resultthree.trim();
+    var resulttwo = this.resulttwo.trim();
+    var resultone = this.resultone.trim();
+    var scheduleid = schnum.value;
 
-    if (!schedulesemester || !scheduleyear) {
+    if (!resultslo || !resultindicator) {
       console.log("Field Missing");
       return;
     }
 
-    this.props.onScheduleSubmit({
-      courseid: courseid,
-      schedulesemester: schedulesemester,
-      scheduleyear: scheduleyear,
-      facultyid: facultyid,
+    this.props.onResultsSubmit({
+      resultslo: resultslo,
+      resultindicator: resultindicator,
+      resultthree: resultthree,
+      resulttwo: resulttwo,
+      resultone: resultone,
+      scheduleid: scheduleid
     });
   },
 
@@ -107,47 +94,99 @@ var Scheduleform = React.createClass({
   },
   render: function () {
     return (
-      <form className="ScheduleForm" onSubmit={this.handleSubmit}>
-        <h2>Insert Schedule</h2>
+      <form className="ResultsForm" onSubmit={this.handleSubmit}>
+        <h2>Insert Results</h2>
         <table>
           <tbody>
             <tr>
-              <th>Schedule Course</th>
+              <th>Schedule</th>
               <td>
-                <SelectListCourse data={this.state.crsdata} />
+                <SelectList data={this.state.schdata} />
               </td>
             </tr>
             <tr>
-              <th>Schedule Semester</th>
-              <td>
-                <SelectSemesterList />
-              </td>
-            </tr>
-            <tr>
-              <th>Schedule Year</th>
+              <th>Result SLO</th>
               <td>
                 <TextInput
-                  value={this.state.scheduleyear}
-                  uniqueName="scheduleyear"
+                  value={this.state.resultslo}
+                  uniqueName="resultslo"
                   textArea={false}
                   required={true}
-                  minCharacters={3}
+                  minCharacters={0}
                   validate={this.commonValidate}
-                  onChange={this.setValue.bind(this, "scheduleyear")}
-                  errorMessage="Schedule Year is invalid"
-                  emptyMessage="Schedule Year is required"
+                  onChange={this.setValue.bind(this, "resultslo")}
+                  errorMessage="Result SLO is invalid"
+                  emptyMessage="Result SLO is required"
                 />
               </td>
             </tr>
             <tr>
-              <th>Schedule Faculty</th>
+              <th>Result Indicator</th>
               <td>
-                <SelectList data={this.state.facdata} />
+                <TextInput
+                  value={this.state.resultindicator}
+                  uniqueName="resultindicator"
+                  textArea={false}
+                  required={true}
+                  minCharacters={0}
+                  validate={this.commonValidate}
+                  onChange={this.setValue.bind(this, "resultindicator")}
+                  errorMessage="Result Indicator is invalid"
+                  emptyMessage="Result Indicator is required"
+                />
+              </td>
+            </tr>
+            <tr>
+              <th>Result One</th>
+              <td>
+                <TextInput
+                  value={this.state.resultone}
+                  uniqueName="resultone"
+                  textArea={false}
+                  required={false}
+                  minCharacters={0}
+                  validate={this.commonValidate}
+                  onChange={this.setValue.bind(this, "resultone")}
+                  errorMessage="Result One is invalid"
+                  emptyMessage="Result One is required"
+                />
+              </td>
+            </tr>
+            <tr>
+              <th>Result Two</th>
+              <td>
+                <TextInput
+                  value={this.state.resulttwo}
+                  uniqueName="resulttwo"
+                  textArea={false}
+                  required={false}
+                  minCharacters={0}
+                  validate={this.commonValidate}
+                  onChange={this.setValue.bind(this, "resulttwo")}
+                  errorMessage="Result Two is invalid"
+                  emptyMessage="Result Two is required"
+                />
+              </td>
+            </tr>
+            <tr>
+              <th>Result Three</th>
+              <td>
+                <TextInput
+                  value={this.state.resultthree}
+                  uniqueName="resultthree"
+                  textArea={false}
+                  required={true}
+                  minCharacters={0}
+                  validate={this.commonValidate}
+                  onChange={this.setValue.bind(this, "resultthree")}
+                  errorMessage="Result Three is invalid"
+                  emptyMessage="Result Three is required"
+                />
               </td>
             </tr>
           </tbody>
         </table>
-        <input type="submit" value="Insert Schedule" />
+        <input type="submit" value="Insert Results" />
       </form>
     );
   },
@@ -267,48 +306,19 @@ var TextInput = React.createClass({
 
 var SelectList = React.createClass({
   render: function () {
-    var optionNodes = this.props.data.map(function (facID) {
+    var optionNodes = this.props.data.map(function (schID) {
       return (
-        <option key={facID.facultyid} value={facID.facultyid}>
-          {facID.facultyfirstname} {facID.facultylastname}
+        <option key={schID.scheduleid} value={schID.scheduleid}>
+          {schID.courseprefix}{schID.coursenumber}{schID.coursesection} - {schID.scheduleyear} {schID.schedulesemester} - {schID.facultyfirstname} {schID.facultylastname}
         </option>
       );
     });
     return (
-      <select name="facnum" id="facnum">
+      <select name="schnum" id="schnum">
         {optionNodes}
       </select>
     );
   },
 });
 
-var SelectSemesterList = React.createClass({
-  render: function () {
-    return (
-      <select name="semesternum" id="semesternum">
-        <option key="Fall" value="Fall">Fall</option>
-        <option key="Spring" value="Spring">Spring</option>
-        <option key="Summer" value="Summer">Summer</option>
-      </select>
-    );
-  },
-});
-
-var SelectListCourse = React.createClass({
-  render: function () {
-    var optionNodes = this.props.data.map(function (courseId) {
-      return (
-        <option key={courseId.courseid} value={courseId.courseid}>
-          {courseId.courseprefix} {courseId.coursenumber}{" "}
-          {courseId.coursesection} - id_{courseId.courseid}
-        </option>
-      );
-    });
-    return (
-      <select name="coursenum" id="coursenum">
-        {optionNodes}
-      </select>
-    );
-  },
-});
-ReactDOM.render(<ScheduleBox />, document.getElementById("content"));
+ReactDOM.render(<ResultsBox />, document.getElementById("content"));
