@@ -4,6 +4,7 @@ var path = require("path");
 var express = require("express");
 var bodyParser = require("body-parser");
 var app = express();
+var bcrypt = require("bcrypt");
 
 const mysql = require("mysql2");
 
@@ -100,11 +101,11 @@ app.post("/results/", function (req, res) {
   var resind = req.body.resultindicator;
   var resthr = req.body.resultthree;
   var restwo = req.body.resulttwo;
-  var resone = req.body.resone;
+  var resone = req.body.resultone;
 
   var sqlins =
-    "INSERT INTO epicresults (schedulesemester, scheduleyear, facultyID, courseID) VALUES (?, ?, ?, ?)";
-  var inserts = [ssemester, syear, parseInt(fid), parseInt(cid)];
+    "INSERT INTO epicresults (scheduleID, resultslo, resultindicator, resultthree, resulttwo, resultone) VALUES (?, ?, ?, ?, ?, ?)";
+  var inserts = [parseInt(schid), resslo, resind, parseInt(resthr), parseInt(restwo), parseInt(resone)];
 
   var sql = mysql.format(sqlins, inserts);
 
@@ -247,7 +248,7 @@ app.get("/getschedule/", function (req, res) {
     "INNER JOIN epicfaculty ON epicschedule.facultyID=epicfaculty.facultyid " +
     "WHERE scheduleid LIKE ? AND courseprefix LIKE ? AND coursenumber LIKE ? " +
     "AND coursesection LIKE ? AND schedulesemester LIKE ? AND scheduleyear LIKE ? " +
-    "AND epicschedule.facultyID LIKE ? ";
+    "AND epicfaculty.facultylastname LIKE ? ";
 
   var inserts = [
     "%" + sid + "%",
@@ -323,6 +324,38 @@ app.get("/getresults/", function (req, res) {
   });
 });
 
+app.post("/login/", function (req, res) {
+  var uemail = req.body.useremail;
+  var upw = req.body.userpw;
+  console.log(upw);
+
+  var sqlsel = "select * from epicusers where useremail = ?";
+
+  var inserts = [uemail];
+
+  var sql = mysql.format(sqlsel, inserts);
+  console.log("SQL: " + sql);
+  con.query(sql, function (err, data) {
+      if (data.length > 0) {
+          bcrypt.compare(
+              upw,
+              data[0].userpassword,
+              function (err, passwordCorrect) {
+                  if (err) {
+                      throw err;
+                  } else if (!passwordCorrect) {
+                      console.log("Password incorrect");
+                  } else {
+                      console.log("Password correct");
+                      res.send({ redirect: "insertfaculty.html" });
+                  }
+              }
+          );
+      } else {
+          console.log("Incorrect user name or password");
+      }
+  });
+});
 
 app.listen(app.get("port"), function () {
   console.log("Server started: http://localhost:" + app.get("port") + "/");
