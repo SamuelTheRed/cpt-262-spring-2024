@@ -324,6 +324,38 @@ app.get("/getresults/", function (req, res) {
   });
 });
 
+app.post("/login/", function (req, res) {
+  var uemail = req.body.useremail;
+  var upw = req.body.userpw;
+  console.log(upw);
+
+  var sqlsel = "select * from epicusers where useremail = ?";
+
+  var inserts = [uemail];
+
+  var sql = mysql.format(sqlsel, inserts);
+  console.log("SQL: " + sql);
+  con.query(sql, function (err, data) {
+      if (data.length > 0) {
+          bcrypt.compare(
+              upw,
+              data[0].userpassword,
+              function (err, passwordCorrect) {
+                  if (err) {
+                      throw err;
+                  } else if (!passwordCorrect) {
+                      console.log("Password incorrect");
+                  } else {
+                      console.log("Password correct");
+                      res.send({ redirect: "insertfaculty.html" });
+                  }
+              }
+          );
+      } else {
+          console.log("Incorrect user name or password");
+      }
+  });
+});
 
 app.listen(app.get("port"), function () {
   console.log("Server started: http://localhost:" + app.get("port") + "/");
