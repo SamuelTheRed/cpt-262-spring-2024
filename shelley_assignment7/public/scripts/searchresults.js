@@ -1,8 +1,8 @@
-var ScheduleBox = React.createClass({
+var ResultsBox = React.createClass({
   getInitialState: function () {
     return { data: [] };
   },
-  loadSchedulesFromServer: function () {
+  loadResultsFromServer: function () {
     console.log(resultid.value);
     $.ajax({
       url: "/getresults",
@@ -30,15 +30,15 @@ var ScheduleBox = React.createClass({
     });
   },
   componentDidMount: function () {
-    this.loadSchedulesFromServer();
+    this.loadResultsFromServer();
     // setInterval(this.loadCoursesFromServer, this.props.pollInterval);
   },
 
   render: function () {
     return (
       <div>
-        <h1>Schedule</h1>
-        <Scheduleform onCourseSubmit={this.loadSchedulesFromServer} />
+        <h1>Results</h1>
+        <Resultsform onCourseSubmit={this.loadResultsFromServer} />
         <br />
         <table>
           <thead>
@@ -56,14 +56,14 @@ var ScheduleBox = React.createClass({
               <th>3</th>
             </tr>
           </thead>
-          <ScheduleList data={this.state.data} />
+          <ResultsList data={this.state.data} />
         </table>
       </div>
     );
   },
 });
 
-var Scheduleform = React.createClass({
+var Resultsform = React.createClass({
   getInitialState: function () {
     return {
       resultid: "",
@@ -115,7 +115,7 @@ var Scheduleform = React.createClass({
   render: function () {
     return (
       <form onSubmit={this.handleSubmit}>
-        <h2>Search Through Schedule</h2>
+        <h2>Search Through Results</h2>
         <table>
           <tbody>
             <tr>
@@ -237,17 +237,17 @@ var Scheduleform = React.createClass({
             </tr>
           </tbody>
         </table>
-        <input type="submit" value="Search Schedule" />
+        <input type="submit" value="Search Results" />
       </form>
     );
   },
 });
-var ScheduleList = React.createClass({
+var ResultsList = React.createClass({
   render: function () {
     var scheduleNodes = this.props.data.map(function (course) {
       //map the data to individual
       return (
-        <Schedule
+        <Results
           key={course.resultid}
           resid={course.resultid}
           crsprefix={course.courseprefix}
@@ -260,7 +260,7 @@ var ScheduleList = React.createClass({
           resthree={course.resultthree}
           restwo={course.resulttwo}
           resone={course.resultone}
-        ></Schedule>
+        ></Results>
       );
     });
 
@@ -269,7 +269,7 @@ var ScheduleList = React.createClass({
   },
 });
 
-var Schedule = React.createClass({
+var Results = React.createClass({
   render: function () {
     return (
       <tr>
@@ -302,4 +302,4 @@ var SelectSemesterList = React.createClass({
   },
 });
 
-ReactDOM.render(<ScheduleBox />, document.getElementById("content"));
+ReactDOM.render(<ResultsBox />, document.getElementById("content"));

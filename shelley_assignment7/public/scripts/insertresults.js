@@ -27,6 +27,11 @@ var Resultsform = React.createClass({
   getInitialState: function () {
     return {
       schdata: [],
+      resultslo: "",
+      resultindicator: "",
+      resultthree: "",
+      resulttwo: "",
+      resultone: "",
     };
   },
   handleOptionChange: function (e) {
@@ -54,10 +59,10 @@ var Resultsform = React.createClass({
     e.preventDefault();
 
     var resultslo = this.state.resultslo.trim();
-    var resultindicator = this.resultindicator.trim();
-    var resultthree = this.resultthree.trim();
-    var resulttwo = this.resulttwo.trim();
-    var resultone = this.resultone.trim();
+    var resultindicator = this.state.resultindicator.trim();
+    var resultthree = this.state.resultthree.trim();
+    var resulttwo = this.state.resulttwo.trim();
+    var resultone = this.state.resultone.trim();
     var scheduleid = schnum.value;
 
     if (!resultslo || !resultindicator) {
@@ -86,6 +91,10 @@ var Resultsform = React.createClass({
   },
   commonValidate: function () {
     return true;
+  },
+  numberValidate: function (value) {
+    var reg = /^\d*$/;
+    return reg.test(value);
   },
   setValue: function (field, event) {
     var object = {};
@@ -143,11 +152,11 @@ var Resultsform = React.createClass({
                   value={this.state.resultone}
                   uniqueName="resultone"
                   textArea={false}
-                  required={false}
+                  required={true}
                   minCharacters={0}
-                  validate={this.commonValidate}
+                  validate={this.numberValidate}
                   onChange={this.setValue.bind(this, "resultone")}
-                  errorMessage="Result One is invalid"
+                  errorMessage="Result One must be a number"
                   emptyMessage="Result One is required"
                 />
               </td>
@@ -159,11 +168,11 @@ var Resultsform = React.createClass({
                   value={this.state.resulttwo}
                   uniqueName="resulttwo"
                   textArea={false}
-                  required={false}
+                  required={true}
                   minCharacters={0}
-                  validate={this.commonValidate}
+                  validate={this.numberValidate}
                   onChange={this.setValue.bind(this, "resulttwo")}
-                  errorMessage="Result Two is invalid"
+                  errorMessage="Result Two must be a number"
                   emptyMessage="Result Two is required"
                 />
               </td>
@@ -177,9 +186,9 @@ var Resultsform = React.createClass({
                   textArea={false}
                   required={true}
                   minCharacters={0}
-                  validate={this.commonValidate}
+                  validate={this.numberValidate}
                   onChange={this.setValue.bind(this, "resultthree")}
-                  errorMessage="Result Three is invalid"
+                  errorMessage="Result Three must be a number"
                   emptyMessage="Result Three is required"
                 />
               </td>

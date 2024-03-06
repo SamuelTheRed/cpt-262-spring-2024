@@ -4,6 +4,7 @@ var path = require("path");
 var express = require("express");
 var bodyParser = require("body-parser");
 var app = express();
+var bcrypt = require("bcrypt");
 
 const mysql = require("mysql2");
 
@@ -100,11 +101,11 @@ app.post("/results/", function (req, res) {
   var resind = req.body.resultindicator;
   var resthr = req.body.resultthree;
   var restwo = req.body.resulttwo;
-  var resone = req.body.resone;
+  var resone = req.body.resultone;
 
   var sqlins =
-    "INSERT INTO epicresults (schedulesemester, scheduleyear, facultyID, courseID) VALUES (?, ?, ?, ?)";
-  var inserts = [ssemester, syear, parseInt(fid), parseInt(cid)];
+    "INSERT INTO epicresults (scheduleID, resultslo, resultindicator, resultthree, resulttwo, resultone) VALUES (?, ?, ?, ?, ?, ?)";
+  var inserts = [parseInt(schid), resslo, resind, parseInt(resthr), parseInt(restwo), parseInt(resone)];
 
   var sql = mysql.format(sqlins, inserts);
 
@@ -247,7 +248,7 @@ app.get("/getschedule/", function (req, res) {
     "INNER JOIN epicfaculty ON epicschedule.facultyID=epicfaculty.facultyid " +
     "WHERE scheduleid LIKE ? AND courseprefix LIKE ? AND coursenumber LIKE ? " +
     "AND coursesection LIKE ? AND schedulesemester LIKE ? AND scheduleyear LIKE ? " +
-    "AND epicschedule.facultyID LIKE ? ";
+    "AND epicfaculty.facultylastname LIKE ? ";
 
   var inserts = [
     "%" + sid + "%",

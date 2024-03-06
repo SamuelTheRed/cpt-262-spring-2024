@@ -243,7 +243,7 @@ var SelectList = React.createClass({
   render: function () {
     var optionNodes = this.props.data.map(function (courseFaculty) {
       return (
-        <option key={courseFaculty.facultyid} value={courseFaculty.facultyid}>
+        <option key={courseFaculty.facultyid} value={courseFaculty.facultylastname}>
           {courseFaculty.facultyfirstname} {" "} {courseFaculty.facultylastname}
         </option>
       );
