@@ -308,31 +308,31 @@ var EmployeeUpdateform = React.createClass({
     <tr>
         <th>Employee ID</th>
         <td>
-<input type="text" name="upempid" id="upempid" value={this.state.upempid} onChange={this.handleUpChange} />
+<input type="text" name="upempid" id="upempid" value={this.state.upempid} onChange={this.state.handleUpChange} />
         </td>
     </tr>
     <tr>
         <th>Employee Name</th>
         <td>
-<input name="upempname" id="upempname" value={this.state.upempname} onChange={this.handleUpChange} />
+<input name="upempname" id="upempname" value={this.state.upempname} onChange={this.state.handleUpChange} />
         </td>
     </tr>
     <tr>
         <th>Employee Email</th>
         <td>
-<input name="upempemail" id="upempemail" value={this.state.upempemail} onChange={this.handleUpChange} />
+<input name="upempemail" id="upempemail" value={this.state.upempemail} onChange={this.state.handleUpChange} />
         </td>
     </tr>
     <tr>
         <th>Employee Phone</th>
         <td>
-<input name="upempphone" id="upempphone" value={this.state.upempphone} onChange={this.handleUpChange} />
+<input name="upempphone" id="upempphone" value={this.state.upempphone} onChange={this.state.handleUpChange} />
         </td>
     </tr>
     <tr>
         <th>Employee Salary</th>
         <td>
-<input name="upempsalary" id="upempsalary" value={this.state.upempsalary} onChange={this.handleUpChange} />
+<input name="upempsalary" id="upempsalary" value={this.state.upempsalary} onChange={this.state.handleUpChange} />
         </td>
     </tr>
     <tr>
