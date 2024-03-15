@@ -29,12 +29,15 @@ var ProductBox = React.createClass({
   render: function () {
     return (
       <div>
-        <h1>Products</h1>
+        <div className="page_title">
+          <h1>Products</h1>
+        </div>
         <Productform onProductSubmit={this.loadProductsFromServer} />
         <br />
+        <div className="result_table">
         <table>
           <thead>
-            <tr>
+            <tr className="result_headers">
               <th>ID</th>
               <th>Name</th>
               <th>Price</th>
@@ -44,6 +47,7 @@ var ProductBox = React.createClass({
           </thead>
           <ProductList data={this.state.data} />
         </table>
+        </div>
       </div>
     );
   },
@@ -80,58 +84,63 @@ var Productform = React.createClass({
   },
   render: function () {
     return (
-      <form onSubmit={this.handleSubmit}>
+      <form className="form_area" onSubmit={this.handleSubmit}>
         <h2>Search Through Products</h2>
-        <table>
-          <tbody>
-            <tr>
-              <th>Product ID</th>
-              <td>
-                <input
-                  type="text"
-                  name="productid"
-                  id="productid"
-                  value={this.state.productid}
-                  onChange={this.handleChange}
-                />
-              </td>
-            </tr>
-            <tr>
-              <th>Product Name</th>
-              <td>
-                <input
-                  name="productname"
-                  id="productname"
-                  value={this.state.productname}
-                  onChange={this.handleChange}
-                />
-              </td>
-            </tr>
-            <tr>
-              <th>Product Price</th>
-              <td>
-                <input
-                  name="productprice"
-                  id="productprice"
-                  value={this.state.productprice}
-                  onChange={this.handleChange}
-                />
-              </td>
-            </tr>
-            <tr>
-              <th>Product Quantity</th>
-              <td>
-                <input
-                  name="productquantity"
-                  id="productquantity"
-                  value={this.state.productquantity}
-                  onChange={this.handleChange}
-                />
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <input type="submit" value="Search Product" />
+        <div className="table_area">
+          <table className="form_table">
+            <tbody>
+              <tr>
+                <th>Product ID</th>
+                <td>
+                  <input
+                    type="text"
+                    name="productid"
+                    id="productid"
+                    value={this.state.productid}
+                    onChange={this.handleChange}
+                  />
+                </td>
+              </tr>
+              <tr>
+                <th>Product Name</th>
+                <td>
+                  <input
+                    type="text"
+                    name="productname"
+                    id="productname"
+                    value={this.state.productname}
+                    onChange={this.handleChange}
+                  />
+                </td>
+              </tr>
+              <tr>
+                <th>Product Price</th>
+                <td>
+                  <input
+                    type="text"
+                    name="productprice"
+                    id="productprice"
+                    value={this.state.productprice}
+                    onChange={this.handleChange}
+                  />
+                </td>
+              </tr>
+              <tr>
+                <th>Product Quantity</th>
+                <td>
+                  <input
+                    type="text"
+                    name="productquantity"
+                    id="productquantity"
+                    value={this.state.productquantity}
+                    onChange={this.handleChange}
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <input type="submit" className="form_submit" value="Search Product" />
+        </div>
       </form>
     );
   },

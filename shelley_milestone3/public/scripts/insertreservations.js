@@ -16,7 +16,7 @@ var ReservationBox = React.createClass({
     render: function () {
       return (
         <div className="ReservationBox">
-          <h1>Reservations</h1>
+          <div className="page_title"><h1>Reservations</h1></div>
           <Reservationform onReservationSubmit={this.handleReservationSubmit} />
         </div>
       );
