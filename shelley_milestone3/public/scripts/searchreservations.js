@@ -141,11 +141,11 @@ var ReservationBox = React.createClass({
         //map the data to individual
         return (
           <Reservation
-            key={reservation.reservationid}
-            resid={reservation.reservationid}
-            resdatetime={reservation.reservationdatetime}
-            resplayer={reservation.reservationplayer}
-            resuser={reservation.reservationuser}
+            key={reservation.dbreservation_id}
+            resid={reservation.dbreservation_id}
+            resdatetime={reservation.dbreservation_datetime}
+            resplayer={reservation.dbplayer_email}
+            resuser={reservation.dbuser_firstname}
           ></Reservation>
         );
       });

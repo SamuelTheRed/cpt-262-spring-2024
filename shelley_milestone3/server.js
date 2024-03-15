@@ -62,6 +62,39 @@ app.get("/getproduct/", function (req, res) {
   });
 });
 
+app.get("/getreservation/", function (req, res) {
+  var rid = req.query.reservationid;
+  var rdatetime = req.query.reservationdatetime;
+  var rplayer = req.query.reservationplayer;
+  var ruser = req.query.reservationuser;
+
+  var sqlsel =
+    "SELECT `dbreservation_id`, `dbreservation_datetime`, `dbplayer_email`, " +
+    "`dbuser_firstname` FROM `Reservations` AS r INNER JOIN `Players` AS p ON " +
+    "r.dbplayer_id=p.dbplayer_id LEFT JOIN `Users` AS u ON r.dbuser_id=u.dbuser_id " +
+    "WHERE dbreservation_id LIKE ? AND dbreservation_datetime LIKE ? AND dbplayer_email LIKE ? " +
+    "AND dbuser_firstname LIKE ? ";
+
+  var inserts = [
+    "%" + rid + "%",
+    "%" + rdatetime + "%",
+    "%" + rplayer + "%",
+    "%" + ruser + "%",
+  ];
+
+  var sql = mysql.format(sqlsel, inserts);
+
+  console.log(sql);
+
+  con.query(sql, function (err, data) {
+    if (err) {
+      console.error(err);
+      process.exit(1);
+    }
+    res.send(JSON.stringify(data));
+  });
+});
+
 app.listen(app.get("port"), function () {
   console.log("Server started: http://localhost:" + app.get("port") + "/");
 });
