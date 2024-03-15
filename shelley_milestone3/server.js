@@ -20,16 +20,16 @@ const mysql = require('mysql2');
 //     console.log("Connected!!");
 // });
 
-app.set('port', (process.env.PORT || 3000));
+app.set("port", process.env.PORT || 3000);
 
-app.use('/', express.static(path.join(__dirname, 'public')));
+app.use("/", express.static(path.join(__dirname, "public")));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.get('/', function (req, res) {
-    res.sendFile(path.join(__dirname + "/public/backend/index.html"));
+app.get("/", function (req, res) {
+  res.sendFile(path.join(__dirname + "/public/index.html"));
 });
 
-app.listen(app.get('port'), function () {
-    console.log('Server started: http://localhost:' + app.get('port') + '/backend/insertorder.html');
-});
+app.listen(app.get("port"), function () {
+    console.log("Server started: http://localhost:" + app.get("port") + "/");
+  });
