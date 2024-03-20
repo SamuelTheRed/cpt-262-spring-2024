@@ -86,14 +86,14 @@ div#content {
   height: 40px;
   width: 60%;
   min-width: fit-content;
-  border-radius: 5px;
+  border-radius: 10px;
   z-index: 100;
   position: absolute;
   background-color: #1f261f;
 }
 #title {
   font-size: xx-large;
-  color: #28683e;
+  color: #3b935a;
 }
 main img {
   max-width: 600px;
@@ -140,7 +140,7 @@ main div.img_back {
   z-index: 99;
   position: absolute;
   overflow: hidden;
-  justify-content: space-evenly;
+  justify-content: center;
 }
 main div.img_front {
   width: 100%;
@@ -155,6 +155,7 @@ main div.img_front {
 .img_back img {
   height: 200px;
   max-width: 50%;
+  margin: 0px 30px;
 }
 .img_front img {
   height: 200px;
@@ -208,6 +209,7 @@ div#content {
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  margin-bottom: 150px;
 }
 #content div.table_area {
   display: flex;
