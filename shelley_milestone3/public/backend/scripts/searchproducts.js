@@ -1,11 +1,14 @@
+// Create Product Box
 var ProductBox = React.createClass({
   getInitialState: function () {
     return { data: [] };
   },
+// Load all product items from the database
   loadProductsFromServer: function () {
     console.log(productid.value);
     $.ajax({
       url: "/getproduct",
+      // Stores the data
       data: {
         productid: productid.value,
         productname: productname.value,
@@ -22,19 +25,26 @@ var ProductBox = React.createClass({
       }.bind(this),
     });
   },
+  // When site is loaded, load products
   componentDidMount: function () {
     this.loadProductsFromServer();
   },
-
+  // Render Product Box
   render: function () {
     return (
       <div>
-        <h1>Products</h1>
+        {/* Page Title */}
+        <div className="page_title">
+          <h1>Products</h1>
+        </div>
+        {/* Product Form */}
         <Productform onProductSubmit={this.loadProductsFromServer} />
         <br />
+        <div className="result_table">
+          {/* Result Table */}
         <table>
           <thead>
-            <tr>
+            <tr className="result_headers">
               <th>ID</th>
               <th>Name</th>
               <th>Price</th>
@@ -44,11 +54,13 @@ var ProductBox = React.createClass({
           </thead>
           <ProductList data={this.state.data} />
         </table>
+        </div>
       </div>
     );
   },
 });
 
+// Add Product Form to Page
 var Productform = React.createClass({
   getInitialState: function () {
     return {
@@ -58,6 +70,7 @@ var Productform = React.createClass({
       productquantity: "",
     };
   },
+  // Handle Search Submit Button
   handleSubmit: function (e) {
     e.preventDefault();
 
@@ -73,69 +86,79 @@ var Productform = React.createClass({
       productquantity: productquantity,
     });
   },
+  // Handle change in focus
   handleChange: function (event) {
     this.setState({
       [event.target.id]: event.target.value,
     });
   },
+  // Render Product Search Form
   render: function () {
     return (
-      <form onSubmit={this.handleSubmit}>
+      <form className="form_area" onSubmit={this.handleSubmit}>
         <h2>Search Through Products</h2>
-        <table>
-          <tbody>
-            <tr>
-              <th>Product ID</th>
-              <td>
-                <input
-                  type="text"
-                  name="productid"
-                  id="productid"
-                  value={this.state.productid}
-                  onChange={this.handleChange}
-                />
-              </td>
-            </tr>
-            <tr>
-              <th>Product Name</th>
-              <td>
-                <input
-                  name="productname"
-                  id="productname"
-                  value={this.state.productname}
-                  onChange={this.handleChange}
-                />
-              </td>
-            </tr>
-            <tr>
-              <th>Product Price</th>
-              <td>
-                <input
-                  name="productprice"
-                  id="productprice"
-                  value={this.state.productprice}
-                  onChange={this.handleChange}
-                />
-              </td>
-            </tr>
-            <tr>
-              <th>Product Quantity</th>
-              <td>
-                <input
-                  name="productquantity"
-                  id="productquantity"
-                  value={this.state.productquantity}
-                  onChange={this.handleChange}
-                />
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <input type="submit" value="Search Product" />
+        <div className="table_area">
+          <table className="form_table">
+            <tbody>
+              <tr>
+                <th>Product ID</th>
+                <td>
+                  <input
+                    type="text"
+                    name="productid"
+                    id="productid"
+                    value={this.state.productid}
+                    onChange={this.handleChange}
+                  />
+                </td>
+              </tr>
+              <tr>
+                <th>Product Name</th>
+                <td>
+                  <input
+                    type="text"
+                    name="productname"
+                    id="productname"
+                    value={this.state.productname}
+                    onChange={this.handleChange}
+                  />
+                </td>
+              </tr>
+              <tr>
+                <th>Product Price</th>
+                <td>
+                  <input
+                    type="text"
+                    name="productprice"
+                    id="productprice"
+                    value={this.state.productprice}
+                    onChange={this.handleChange}
+                  />
+                </td>
+              </tr>
+              <tr>
+                <th>Product Quantity</th>
+                <td>
+                  <input
+                    type="text"
+                    name="productquantity"
+                    id="productquantity"
+                    value={this.state.productquantity}
+                    onChange={this.handleChange}
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          {/* Submit Search Button */}
+          <input type="submit" className="form_submit" value="Search Product" />
+        </div>
       </form>
     );
   },
 });
+
+// Product List of Products
 var ProductList = React.createClass({
   render: function () {
     var productNodes = this.props.data.map(function (product) {
@@ -157,6 +180,7 @@ var ProductList = React.createClass({
   },
 });
 
+// Product Entity to Fill Product List
 var Product = React.createClass({
   render: function () {
     return (

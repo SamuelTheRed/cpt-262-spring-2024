@@ -19,7 +19,9 @@ var ReservationBox = React.createClass({
   render: function () {
     return (
       <div className="ReservationBox">
+        <div className="page_title">
           <h1>Reservations</h1>
+        </div>
         <Reservationform onReservationSubmit={this.handleReservationSubmit} />
       </div>
     );
@@ -123,9 +125,10 @@ var Reservationform = React.createClass({
   // Display Form
   render: function () {
     return (
-      <form className="ReservationForm" onSubmit={this.handleSubmit}>
+      <form className="form_area" onSubmit={this.handleSubmit}>
         <h2>Insert Reservation</h2>
-          <table>
+        <div className="table_area">
+          <table className="form_table">
             <tbody>
               <tr>
                 {/* Display the Reservation Date so the player can input a date */}
@@ -178,7 +181,12 @@ var Reservationform = React.createClass({
             </tbody>
           </table>
           {/* Show Submit Button and allow player to interact with it to submit information */}
-          <input type="submit" value="Insert Reservation"/>
+          <input
+            type="submit"
+            className="form_submit"
+            value="Insert Reservation"
+          />
+        </div>
       </form>
     );
   },

@@ -7,10 +7,10 @@ var ReservationBox = React.createClass({
     $.ajax({
       url: "/getreservation",
       data: {
-          'reservationid': reservationid.value,
-          'reservationdatetime': reservationdatetime.value,
-          'reservationplayer': reservationplayer.value,
-          'reservationuser': reservationuser.value,
+        reservationid: reservationid.value,
+        reservationdatetime: reservationdatetime.value,
+        reservationplayer: reservationplayer.value,
+        reservationuser: reservationuser.value,
       },
       dataType: "json",
       cache: false,
@@ -29,12 +29,17 @@ var ReservationBox = React.createClass({
   render: function () {
     return (
       <div>
-        <h1>Reservations</h1>
-        <Reservationform onReservationSubmit={this.loadReservationsFromServer} />
+        <div className="page_title">
+          <h1>Reservations</h1>
+        </div>
+        <Reservationform
+          onReservationSubmit={this.loadReservationsFromServer}
+        />
         <br />
+        <div className="result_table">
         <table>
           <thead>
-            <tr>
+            <tr className="result_headers">
               <th>ID</th>
               <th>Date Time</th>
               <th>Player</th>
@@ -43,6 +48,7 @@ var ReservationBox = React.createClass({
           </thead>
           <ReservationList data={this.state.data} />
         </table>
+        </div>
       </div>
     );
   },
@@ -79,58 +85,67 @@ var Reservationform = React.createClass({
   },
   render: function () {
     return (
-      <form onSubmit={this.handleSubmit}>
+      <form className="form_area" onSubmit={this.handleSubmit}>
         <h2>Search Through Reservations</h2>
-        <table>
-          <tbody>
-            <tr>
-              <th>Reservation ID</th>
-              <td>
-                <input
-                  type="text"
-                  name="reservationid"
-                  id="reservationid"
-                  value={this.state.reservationid}
-                  onChange={this.handleChange}
-                />
-              </td>
-            </tr>
-            <tr>
-              <th>Reservation Date Time</th>
-              <td>
-                <input
-                  name="reservationdatetime"
-                  id="reservationdatetime"
-                  value={this.state.reservationdatetime}
-                  onChange={this.handleChange}
-                />
-              </td>
-            </tr>
-            <tr>
-              <th>Reservation Player</th>
-              <td>
-                <input
-                  name="reservationplayer"
-                  id="reservationplayer"
-                  value={this.state.reservationplayer}
-                  onChange={this.handleChange}
-                />
-              </td>
-            </tr>
-            <tr>
-              <th>Reservation User</th>
-              <td>
-                <input
-                  name="reservationuser"
-                  id="reservationuser"
-                  value={this.state.reservationuser}
-                  onChange={this.handleChange}
-                />
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <input type="submit" value="Search Reservation" />
+        <div className="table_area">
+          <table className="form_table">
+            <tbody>
+              <tr>
+                <th>Reservation ID</th>
+                <td>
+                  <input
+                    type="text"
+                    name="reservationid"
+                    id="reservationid"
+                    value={this.state.reservationid}
+                    onChange={this.handleChange}
+                  />
+                </td>
+              </tr>
+              <tr>
+                <th>Reservation Date Time</th>
+                <td>
+                  <input
+                    type="text"
+                    name="reservationdatetime"
+                    id="reservationdatetime"
+                    value={this.state.reservationdatetime}
+                    onChange={this.handleChange}
+                  />
+                </td>
+              </tr>
+              <tr>
+                <th>Reservation Player</th>
+                <td>
+                  <input
+                    type="text"
+                    name="reservationplayer"
+                    id="reservationplayer"
+                    value={this.state.reservationplayer}
+                    onChange={this.handleChange}
+                  />
+                </td>
+              </tr>
+              <tr>
+                <th>Reservation User</th>
+                <td>
+                  <input
+                    type="text"
+                    name="reservationuser"
+                    id="reservationuser"
+                    value={this.state.reservationuser}
+                    onChange={this.handleChange}
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <input
+            type="submit"
+            className="form_submit"
+            value="Search Reservation"
+          />
+        </div>
       </form>
     );
   },
