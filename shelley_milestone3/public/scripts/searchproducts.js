@@ -1,11 +1,14 @@
+// Create Product Box
 var ProductBox = React.createClass({
   getInitialState: function () {
     return { data: [] };
   },
+// Load all product items from the database
   loadProductsFromServer: function () {
     console.log(productid.value);
     $.ajax({
       url: "/getproduct",
+      // Stores the data
       data: {
         productid: productid.value,
         productname: productname.value,
@@ -22,19 +25,23 @@ var ProductBox = React.createClass({
       }.bind(this),
     });
   },
+  // When site is loaded, load products
   componentDidMount: function () {
     this.loadProductsFromServer();
   },
-
+  // Render Product Box
   render: function () {
     return (
       <div>
+        {/* Page Title */}
         <div className="page_title">
           <h1>Products</h1>
         </div>
+        {/* Product Form */}
         <Productform onProductSubmit={this.loadProductsFromServer} />
         <br />
         <div className="result_table">
+          {/* Result Table */}
         <table>
           <thead>
             <tr className="result_headers">
@@ -53,6 +60,7 @@ var ProductBox = React.createClass({
   },
 });
 
+// Add Product Form to Page
 var Productform = React.createClass({
   getInitialState: function () {
     return {
@@ -62,6 +70,7 @@ var Productform = React.createClass({
       productquantity: "",
     };
   },
+  // Handle Search Submit Button
   handleSubmit: function (e) {
     e.preventDefault();
 
@@ -77,11 +86,13 @@ var Productform = React.createClass({
       productquantity: productquantity,
     });
   },
+  // Handle change in focus
   handleChange: function (event) {
     this.setState({
       [event.target.id]: event.target.value,
     });
   },
+  // Render Product Search Form
   render: function () {
     return (
       <form className="form_area" onSubmit={this.handleSubmit}>
@@ -139,12 +150,15 @@ var Productform = React.createClass({
               </tr>
             </tbody>
           </table>
+          {/* Submit Search Button */}
           <input type="submit" className="form_submit" value="Search Product" />
         </div>
       </form>
     );
   },
 });
+
+// Product List of Products
 var ProductList = React.createClass({
   render: function () {
     var productNodes = this.props.data.map(function (product) {
@@ -166,6 +180,7 @@ var ProductList = React.createClass({
   },
 });
 
+// Product Entity to Fill Product List
 var Product = React.createClass({
   render: function () {
     return (

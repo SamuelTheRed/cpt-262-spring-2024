@@ -10,7 +10,7 @@ var PlayerBox = React.createClass({
       }.bind(this),
       error: function (xhr, status, err) {
         console.error(this.props.url, status, err.toString());
-      }.bind(this)
+      }.bind(this),
     });
   },
   render: function () {
@@ -29,7 +29,7 @@ var Playerform = React.createClass({
       playerfirstnameSS: "",
       playerlastnameSS: "",
       playeremailSS: "",
-      playerphoneSS: ""
+      playerphoneSS: "",
     };
   },
   handleSubmit: function (e) {
@@ -49,7 +49,7 @@ var Playerform = React.createClass({
       playerfirstnameSS: playerfirstnameSS,
       playerlastnameSS: playerlastnameSS,
       playeremailSS: playeremailSS,
-      playerphoneSS: playerphoneSS
+      playerphoneSS: playerphoneSS,
     });
   },
   validateEmail: function (value) {
@@ -139,7 +139,7 @@ var Playerform = React.createClass({
             </tr>
           </tbody>
         </table>
-        <input type="submit" value="Insert Player"/>
+        <input type="submit" value="Insert Player" />
       </form>
     );
   },
