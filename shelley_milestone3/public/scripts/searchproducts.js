@@ -60,7 +60,7 @@ var ProductBox = React.createClass({
   },
 });
 
-// Add Product Form to Page
+// Search Product Form to Page
 var Productform = React.createClass({
   getInitialState: function () {
     return {

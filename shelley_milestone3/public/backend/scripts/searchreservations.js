@@ -1,11 +1,14 @@
+// Create Reservation Box
 var ReservationBox = React.createClass({
   getInitialState: function () {
     return { data: [] };
   },
+  // Load all reservation items from the database
   loadReservationsFromServer: function () {
     console.log(reservationid.value);
     $.ajax({
       url: "/getreservation",
+      // Stores the data
       data: {
         reservationid: reservationid.value,
         reservationdatetime: reservationdatetime.value,
@@ -22,21 +25,25 @@ var ReservationBox = React.createClass({
       }.bind(this),
     });
   },
+  // When site is loaded, load reservations
   componentDidMount: function () {
     this.loadReservationsFromServer();
   },
-
+  // Render Product Box
   render: function () {
     return (
       <div>
+      {/* Page Title */}
         <div className="page_title">
           <h1>Reservations</h1>
         </div>
+        {/* Reservation Form */}
         <Reservationform
           onReservationSubmit={this.loadReservationsFromServer}
         />
         <br />
         <div className="result_table">
+          {/* Result Table */}
         <table>
           <thead>
             <tr className="result_headers">
@@ -54,6 +61,7 @@ var ReservationBox = React.createClass({
   },
 });
 
+// Search Reservation Form to Page
 var Reservationform = React.createClass({
   getInitialState: function () {
     return {
@@ -63,6 +71,7 @@ var Reservationform = React.createClass({
       reservationuser: "",
     };
   },
+  // Handle Search Submit Button
   handleSubmit: function (e) {
     e.preventDefault();
 
@@ -78,11 +87,13 @@ var Reservationform = React.createClass({
       reservationuser: reservationuser,
     });
   },
+  // Handle change in focus
   handleChange: function (event) {
     this.setState({
       [event.target.id]: event.target.value,
     });
   },
+  // Render Product Search Form
   render: function () {
     return (
       <form className="form_area" onSubmit={this.handleSubmit}>
@@ -150,6 +161,8 @@ var Reservationform = React.createClass({
     );
   },
 });
+
+// Product List of Products
 var ReservationList = React.createClass({
   render: function () {
     var reservationNodes = this.props.data.map(function (reservation) {
@@ -170,6 +183,7 @@ var ReservationList = React.createClass({
   },
 });
 
+// Reservation Entity to Fill Reservation List
 var Reservation = React.createClass({
   render: function () {
     return (
