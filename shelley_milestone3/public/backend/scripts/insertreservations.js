@@ -33,10 +33,10 @@ var Reservationform = React.createClass({
   // Create Variables
   getInitialState: function () {
     return {
-      reservationdate: "",
-      reservationtime: "",
-      plrdata: [],
-      usrdata: [],
+      reservationdateSS: "",
+      reservationtimeSS: "",
+      plrdataSS: [],
+      usrdataSS: [],
     };
   },
   // Handle the change when user interact with radio button
@@ -52,7 +52,7 @@ var Reservationform = React.createClass({
       dataType: "json",
       cache: false,
       success: function (plrdata) {
-        this.setState({ plrdata: plrdata });
+        this.setState({ plrdataSS: plrdata });
       }.bind(this),
       error: function (xhr, status, err) {
         console.error(this.props.url, status, err.toString());
@@ -66,7 +66,7 @@ var Reservationform = React.createClass({
       dataType: "json",
       cache: false,
       success: function (usrdata) {
-        this.setState({ usrdata: usrdata });
+        this.setState({ usrdataSS: usrdata });
       }.bind(this),
       error: function (xhr, status, err) {
         console.error(this.props.url, status, err.toString());
@@ -82,23 +82,23 @@ var Reservationform = React.createClass({
     e.preventDefault();
 
     // Assign the values from the text inputs to variables
-    var reservationdate = this.state.reservationdate.trim();
-    var reservationtime = this.state.reservationtime.trim();
-    var playerid = plrnum.value;
-    var userid = usrnum.value;
+    var reservationdateSS = this.state.reservationdateSS.trim();
+    var reservationtimeSS = this.state.reservationtimeSS.trim();
+    var playeridSS = plrnumSS.value;
+    var useridSS = usrnumSS.value;
 
     // Check to see if inputs are missing
-    if (!reservationdate || !reservationtime || !playerid) {
+    if (!reservationdateSS || !reservationtimeSS || !playeridSS) {
       console.log("Field Missing");
       return;
     }
 
     // Use the information form inputs and submit them to database
     this.props.onReservationSubmit({
-      reservationdate: reservationdate,
-      reservationtime: reservationtime,
-      playerid: playerid,
-      userid: userid,
+      reservationdateSS: reservationdateSS,
+      reservationtimeSS: reservationtimeSS,
+      playeridSS: playeridSS,
+      useridSS: useridSS,
     });
   },
   // Set validation for inputs with emails
@@ -135,13 +135,13 @@ var Reservationform = React.createClass({
                 <th>Reservation Date</th>
                 <td>
                   <DateInput
-                    value={this.state.reservationdate}
+                    value={this.state.reservationdateSS}
                     uniqueName="reservationdate"
                     textArea={false}
                     required={true}
                     minCharacters={3}
                     validate={this.commonValidate}
-                    onChange={this.setValue.bind(this, "reservationdate")}
+                    onChange={this.setValue.bind(this, "reservationdateSS")}
                     errorMessage="Reservation Date is invalid"
                     emptyMessage="Reservation Date is Required"
                   />
@@ -152,13 +152,13 @@ var Reservationform = React.createClass({
                 <th>Reservation Time</th>
                 <td>
                   <TimeInput
-                    value={this.state.reservationtime}
+                    value={this.state.reservationtimeSS}
                     uniqueName="reservationtime"
                     textArea={false}
                     required={true}
                     minCharacters={3}
                     validate={this.commonValidate}
-                    onChange={this.setValue.bind(this, "reservationtime")}
+                    onChange={this.setValue.bind(this, "reservationtimeSS")}
                     errorMessage="Reservation Time is invalid"
                     emptyMessage="Reservation Time is Required"
                   />
@@ -168,14 +168,14 @@ var Reservationform = React.createClass({
               <tr>
                 <th>Reservation Player</th>
                 <td>
-                  <PlayerList data={this.state.plrdata} />
+                  <PlayerList data={this.state.plrdataSS} />
                 </td>
               </tr>
               {/* Display UserList to show the Users at TCTG so player can select a  user */}
               <tr>
                 <th>Reservation User</th>
                 <td>
-                  <UserList data={this.state.usrdata} />
+                  <UserList data={this.state.usrdataSS} />
                 </td>
               </tr>
             </tbody>
@@ -363,8 +363,8 @@ var TimeInput = React.createClass({
           onBlur={this.handleBlur}
           value={this.props.value}
           step="480"
-          min="10:00"
-          max="18:00"
+          min="08:00"
+          max="16:00"
         />
 
         <InputError
@@ -387,7 +387,7 @@ var PlayerList = React.createClass({
       );
     });
     return (
-      <select name="plrnum" id="plrnum">
+      <select name="plrnumSS" id="plrnumSS">
         {optionNodes}
       </select>
     );
@@ -405,7 +405,7 @@ var UserList = React.createClass({
       );
     });
     return (
-      <select name="usrnum" id="usrnum">
+      <select name="usrnumSS" id="usrnumSS">
         {optionNodes}
       </select>
     );

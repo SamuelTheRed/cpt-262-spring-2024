@@ -1,3 +1,4 @@
+// Create User Box
 var UserBox = React.createClass({
   handleUserSubmit: function (user) {
     $.ajax({
@@ -10,7 +11,7 @@ var UserBox = React.createClass({
       }.bind(this),
       error: function (xhr, status, err) {
         console.error(this.props.url, status, err.toString());
-      }.bind(this)
+      }.bind(this),
     });
   },
   render: function () {
@@ -26,30 +27,47 @@ var UserBox = React.createClass({
 var Userform = React.createClass({
   getInitialState: function () {
     return {
-      userfirstname: "",
-      userlastname: "",
-      useremail: "",
-      userphone: ""
+      userlastnameSS: "",
+      userfirstnameSS: "",
+      useremailSS: "",
+      userphoneSS: "",
+      userpasswordSS: "",
+      userroleSS: "",
+      userpwSS: "",
+      userpw2SS: "",
     };
   },
   handleSubmit: function (e) {
     e.preventDefault();
 
-    var userfirstname = this.state.userfirstname.trim();
-    var userlastname = this.state.userlastname.trim();
-    var useremail = this.state.useremail.trim();
-    var userphone = this.state.userphone.trim();
+    var userlastnameSS = this.state.userlastnameSS.trim();
+    var userfirstnameSS = this.state.userfirstnameSS.trim();
+    var useremailSS = this.state.useremailSS.trim();
+    var userphoneSS = this.state.userphoneSS.trim();
+    var userpwSS = this.state.userpwSS.trim();
+    var userpw2SS = this.state.userpw2SS.trim();
+    var userroleSS = rolenum.value;
 
-    if (!userfirstname || !userlastname || !useremail) {
+    if (!this.validateEmail(useremailSS)) {
+      console.log("Bad Email " + this.validateEmail(useremailSS));
+      return;
+    }
+    if (!userfirstnameSS || !userlastnameSS || !useremailSS) {
       console.log("Field Missing");
+      return;
+    }
+    if (userpwSS != userpw2SS) {
+      alert("Passwords do not match!!!");
       return;
     }
 
     this.props.onUserSubmit({
-      userfirstname: userfirstname,
-      userlastname: userlastname,
-      useremail: useremail,
-      userphone: userphone
+      userfirstnameSS: userfirstnameSS,
+      userlastnameSS: userlastnameSS,
+      useremailSS: useremailSS,
+      userphoneSS: userphoneSS,
+      userroleSS: userroleSS,
+      userpwSS: userpwSS,
     });
   },
   validateEmail: function (value) {
@@ -79,13 +97,13 @@ var Userform = React.createClass({
               <th>User First Name</th>
               <td>
                 <TextInput
-                  value={this.state.userfirstname}
+                  value={this.state.userfirstnameSS}
                   uniqueName="userfirstname"
                   textArea={false}
                   required={true}
                   minCharacters={3}
                   validate={this.commonValidate}
-                  onChange={this.setValue.bind(this, "userfirstname")}
+                  onChange={this.setValue.bind(this, "userfirstnameSS")}
                   errorMessage="User Name is invalid"
                   emptyMessage="User Name is Required"
                 />
@@ -95,13 +113,13 @@ var Userform = React.createClass({
               <th>User Last Name</th>
               <td>
                 <TextInput
-                  value={this.state.userlastname}
+                  value={this.state.userlastnameSS}
                   uniqueName="userlastname"
                   textArea={false}
                   required={true}
                   minCharacters={2}
                   validate={this.commonValidate}
-                  onChange={this.setValue.bind(this, "userlastname")}
+                  onChange={this.setValue.bind(this, "userlastnameSS")}
                   errorMessage="Invalid User Last Name"
                   emptyMessage="User Last Name is Required"
                 />
@@ -111,13 +129,13 @@ var Userform = React.createClass({
               <th>User Email</th>
               <td>
                 <TextInput
-                  value={this.state.useremail}
+                  value={this.state.useremailSS}
                   uniqueName="useremail"
                   textArea={false}
                   required={false}
                   minCharacters={3}
                   validate={this.commonValidate}
-                  onChange={this.setValue.bind(this, "useremail")}
+                  onChange={this.setValue.bind(this, "useremailSS")}
                   errorMessage="User Email is invalid"
                 />
               </td>
@@ -126,14 +144,54 @@ var Userform = React.createClass({
               <th>User Phone</th>
               <td>
                 <TextInput
-                  value={this.state.userphone}
+                  value={this.state.userphoneSS}
                   uniqueName="userphone"
                   textArea={false}
                   required={false}
                   minCharacters={3}
                   validate={this.commonValidate}
-                  onChange={this.setValue.bind(this, "userphone")}
+                  onChange={this.setValue.bind(this, "userphoneSS")}
                   errorMessage="User Phone is invalid"
+                />
+              </td>
+            </tr>
+            <tr>
+              <th>User Roles Tier</th>
+              <td>
+                <RolesList data={this.state.data} />
+              </td>
+            </tr>
+            <tr>
+              <th>User Password</th>
+              <td>
+                <TextInput
+                  inputType="password"
+                  value={this.state.userpwSS}
+                  uniqueName="userpw"
+                  textArea={false}
+                  required={false}
+                  minCharacters={6}
+                  validate={this.commonValidate}
+                  onChange={this.setValue.bind(this, "userpwSS")}
+                  errorMessage="Password is incorrect"
+                  emptyMessage="Password is required"
+                />
+              </td>
+            </tr>
+            <tr>
+              <th>User Password Confirm</th>
+              <td>
+                <TextInput
+                  inputType="password"
+                  value={this.state.userpw2SS}
+                  uniqueName="userpw2"
+                  textArea={false}
+                  required={false}
+                  minCharacters={6}
+                  validate={this.commonValidate}
+                  onChange={this.setValue.bind(this, "userpw2SS")}
+                  errorMessage="Password is incorrect"
+                  emptyMessage="Password is required"
                 />
               </td>
             </tr>
@@ -238,6 +296,7 @@ var TextInput = React.createClass({
       return (
         <div className={this.props.uniqueName}>
           <input
+            type={this.props.inputType}
             name={this.props.uniqueName}
             id={this.props.uniqueName}
             placeholder={this.props.text}
@@ -254,6 +313,24 @@ var TextInput = React.createClass({
         </div>
       );
     }
+  },
+});
+
+var RolesList = React.createClass({
+  render: function () {
+    return (
+      <select name="rolenum" id="rolenum">
+        <option key="1" value="Admin">
+          Admin
+        </option>
+        <option key="2" value="Privileged">
+          Privileged
+        </option>
+        <option key="3" value="Player">
+          Player
+        </option>
+      </select>
+    );
   },
 });
 

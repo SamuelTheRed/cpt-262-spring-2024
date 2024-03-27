@@ -30,6 +30,9 @@ var Playerform = React.createClass({
       playerlastnameSS: "",
       playeremailSS: "",
       playerphoneSS: "",
+      playerrewardsSS: "",
+      playerpwSS: "",
+      playerpw2SS: "",
     };
   },
   handleSubmit: function (e) {
@@ -39,9 +42,20 @@ var Playerform = React.createClass({
     var playerlastnameSS = this.state.playerlastnameSS.trim();
     var playeremailSS = this.state.playeremailSS.trim();
     var playerphoneSS = this.state.playerphoneSS.trim();
+    var playerrewardsSS = rewardnum.value;
+    var playerpwSS = this.state.playerpwSS.trim();
+    var playerpw2SS = this.state.playerpw2SS.trim();
 
+    if (!this.validateEmail(playeremailSS)) {
+      console.log("Bad Email " + this.validateEmail(playeremailSS));
+      return;
+    }
     if (!playerfirstnameSS || !playerlastnameSS || !playeremailSS) {
       console.log("Field Missing");
+      return;
+    }
+    if (playerpwSS != playerpw2SS) {
+      alert("Passwords do not match!!!");
       return;
     }
 
@@ -50,6 +64,8 @@ var Playerform = React.createClass({
       playerlastnameSS: playerlastnameSS,
       playeremailSS: playeremailSS,
       playerphoneSS: playerphoneSS,
+      playerrewardsSS: playerrewardsSS,
+      playerpwSS: playerpwSS,
     });
   },
   validateEmail: function (value) {
@@ -85,7 +101,7 @@ var Playerform = React.createClass({
                   required={true}
                   minCharacters={3}
                   validate={this.commonValidate}
-                  onChange={this.setValue.bind(this, "playerfirstname")}
+                  onChange={this.setValue.bind(this, "playerfirstnameSS")}
                   errorMessage="Player Name is invalid"
                   emptyMessage="Player Name is Required"
                 />
@@ -101,7 +117,7 @@ var Playerform = React.createClass({
                   required={true}
                   minCharacters={2}
                   validate={this.commonValidate}
-                  onChange={this.setValue.bind(this, "playerlastname")}
+                  onChange={this.setValue.bind(this, "playerlastnameSS")}
                   errorMessage="Invalid Player Last Name"
                   emptyMessage="Player Last Name is Required"
                 />
@@ -117,7 +133,7 @@ var Playerform = React.createClass({
                   required={false}
                   minCharacters={3}
                   validate={this.commonValidate}
-                  onChange={this.setValue.bind(this, "playeremail")}
+                  onChange={this.setValue.bind(this, "playeremailSS")}
                   errorMessage="Player Email is invalid"
                 />
               </td>
@@ -132,8 +148,48 @@ var Playerform = React.createClass({
                   required={false}
                   minCharacters={3}
                   validate={this.commonValidate}
-                  onChange={this.setValue.bind(this, "playerphone")}
+                  onChange={this.setValue.bind(this, "playerphoneSS")}
                   errorMessage="Player Phone is invalid"
+                />
+              </td>
+            </tr>
+            <tr>
+              <th>Player Rewards Tier</th>
+              <td>
+                <RewardsList data={this.state.data} />
+              </td>
+            </tr>
+            <tr>
+              <th>Player Password</th>
+              <td>
+                <TextInput
+                  inputType="password"
+                  value={this.state.playerpwSS}
+                  uniqueName="playerpw"
+                  textArea={false}
+                  required={false}
+                  minCharacters={6}
+                  validate={this.commonValidate}
+                  onChange={this.setValue.bind(this, "playerpwSS")}
+                  errorMessage="Password is incorrect"
+                  emptyMessage="Password is required"
+                />
+              </td>
+            </tr>
+            <tr>
+              <th>Player Password Confirm</th>
+              <td>
+                <TextInput
+                  inputType="password"
+                  value={this.state.playerpw2SS}
+                  uniqueName="playerpw2"
+                  textArea={false}
+                  required={false}
+                  minCharacters={6}
+                  validate={this.commonValidate}
+                  onChange={this.setValue.bind(this, "playerpw2SS")}
+                  errorMessage="Password is incorrect"
+                  emptyMessage="Password is required"
                 />
               </td>
             </tr>
@@ -238,6 +294,7 @@ var TextInput = React.createClass({
       return (
         <div className={this.props.uniqueName}>
           <input
+            type={this.props.inputType}
             name={this.props.uniqueName}
             id={this.props.uniqueName}
             placeholder={this.props.text}
@@ -254,6 +311,24 @@ var TextInput = React.createClass({
         </div>
       );
     }
+  },
+});
+
+var RewardsList = React.createClass({
+  render: function () {
+    return (
+      <select name="rewardnum" id="rewardnum">
+        <option key="1" value="Standard">
+          Standard
+        </option>
+        <option key="2" value="Plus">
+          Plus
+        </option>
+        <option key="3" value="Premium">
+          Premium
+        </option>
+      </select>
+    );
   },
 });
 

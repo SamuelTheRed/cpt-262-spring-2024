@@ -9,7 +9,7 @@ var LoginBox = React.createClass({
   // Handles User Login
   handleLogin: function (logininfo) {
     $.ajax({
-      url: "/loginemp/",
+      url: "/loginusr/",
       dataType: "json",
       type: "POST",
       data: logininfo,
@@ -40,21 +40,21 @@ var LoginForm = React.createClass({
   // Sets Initial State of email and password
   getInitialState: function () {
     return {
-      useremail: "",
-      userpw: "",
+      useremailSS: "",
+      userpwSS: "",
     };
   },
   // Handles Login Form Submit
   handleSubmit: function (e) {
     e.preventDefault();
 
-    var userpw = this.state.userpw.trim();
-    var useremail = this.state.useremail.trim();
+    var userpwSS = this.state.userpwSS.trim();
+    var useremailSS = this.state.useremailSS.trim();
 
     // Sets variable to submitted information
     this.props.onLoginSubmit({
-      userpw: userpw,
-      useremail: useremail,
+      userpwSS: userpwSS,
+      useremailSS: useremailSS,
     });
   },
   // Handles when change occurs in any field
@@ -76,9 +76,9 @@ var LoginForm = React.createClass({
                   <th>User Email</th>
                   <td>
                     <input
-                      name="useremail"
-                      id="useremail"
-                      value={this.state.useremail}
+                      name="useremailSS"
+                      id="useremailSS"
+                      value={this.state.useremailSS}
                       onChange={this.handleChange}
                     />
                   </td>
@@ -89,9 +89,9 @@ var LoginForm = React.createClass({
                   <td>
                     <input
                       type="password"
-                      name="userpw"
-                      id="userpw"
-                      value={this.state.userpw}
+                      name="userpwSS"
+                      id="userpwSS"
+                      value={this.state.userpwSS}
                       onChange={this.handleChange}
                     />
                   </td>

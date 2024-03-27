@@ -26,30 +26,30 @@ var ProductBox = React.createClass({
 var Productform = React.createClass({
   getInitialState: function () {
     return {
-      productname: "",
-      productdescription: "",
-      productprice: "",
-      productquantity: ""
+      productnameSS: "",
+      productdescriptionSS: "",
+      productpriceSS: "",
+      productquantitySS: ""
     };
   },
   handleSubmit: function (e) {
     e.preventDefault();
 
-    var productname = this.state.productname.trim();
-    var productdescription = this.state.productdescription.trim();
-    var productprice = this.state.productprice.trim();
-    var productquantity = this.state.productquantity.trim();
+    var productnameSS = this.state.productnameSS.trim();
+    var productdescriptionSS = this.state.productdescriptionSS.trim();
+    var productpriceSS = this.state.productpriceSS.trim();
+    var productquantitySS = this.state.productquantitySS.trim();
 
-    if (!productname || !productdescription || !productprice) {
+    if (!productnameSS || !productdescriptionSS || !productpriceSS) {
       console.log("Field Missing");
       return;
     }
 
     this.props.onProductSubmit({
-      productname: productname,
-      productdescription: productdescription,
-      productprice: productprice,
-      productquantity: productquantity
+      productnameSS: productnameSS,
+      productdescriptionSS: productdescriptionSS,
+      productpriceSS: productpriceSS,
+      productquantitySS: productquantitySS
     });
   },
   validateEmail: function (value) {
@@ -79,13 +79,13 @@ var Productform = React.createClass({
               <th>Product Name</th>
               <td>
                 <TextInput
-                  value={this.state.productname}
+                  value={this.state.productnameSS}
                   uniqueName="productname"
                   textArea={false}
                   required={true}
                   minCharacters={3}
                   validate={this.commonValidate}
-                  onChange={this.setValue.bind(this, "productname")}
+                  onChange={this.setValue.bind(this, "productnameSS")}
                   errorMessage="Product Name is invalid"
                   emptyMessage="Product Name is Required"
                 />
@@ -95,13 +95,13 @@ var Productform = React.createClass({
               <th>Product Description</th>
               <td>
                 <TextInput
-                  value={this.state.productdescription}
+                  value={this.state.productdescriptionSS}
                   uniqueName="productdescription"
                   textArea={false}
                   required={true}
                   minCharacters={2}
                   validate={this.commonValidate}
-                  onChange={this.setValue.bind(this, "productdescription")}
+                  onChange={this.setValue.bind(this, "productdescriptionSS")}
                   errorMessage="Invalid Product Description"
                   emptyMessage="Product Description is Required"
                 />
@@ -111,13 +111,13 @@ var Productform = React.createClass({
               <th>Product Price</th>
               <td>
                 <TextInput
-                  value={this.state.productprice}
+                  value={this.state.productpriceSS}
                   uniqueName="productprice"
                   textArea={false}
                   required={false}
-                  minCharacters={3}
+                  minCharacters={1}
                   validate={this.commonValidate}
-                  onChange={this.setValue.bind(this, "productprice")}
+                  onChange={this.setValue.bind(this, "productpriceSS")}
                   errorMessage="Product Price is invalid"
                 />
               </td>
@@ -126,13 +126,13 @@ var Productform = React.createClass({
               <th>Product Quantity</th>
               <td>
                 <TextInput
-                  value={this.state.productquantity}
+                  value={this.state.productquantitySS}
                   uniqueName="productquantity"
                   textArea={false}
                   required={false}
-                  minCharacters={3}
+                  minCharacters={1}
                   validate={this.commonValidate}
-                  onChange={this.setValue.bind(this, "productquantity")}
+                  onChange={this.setValue.bind(this, "productquantitySS")}
                   errorMessage="Product Quantity is invalid"
                 />
               </td>

@@ -5,15 +5,15 @@ var ProductBox = React.createClass({
   },
 // Load all product items from the database
   loadProductsFromServer: function () {
-    console.log(productid.value);
+    console.log(productidSS.value);
     $.ajax({
       url: "/getproduct",
       // Stores the data
       data: {
-        productid: productid.value,
-        productname: productname.value,
-        productprice: productprice.value,
-        productquantity: productquantity.value,
+        productidSS: productidSS.value,
+        productnameSS: productnameSS.value,
+        productpriceSS: productpriceSS.value,
+        productquantitySS: productquantitySS.value,
       },
       dataType: "json",
       cache: false,
@@ -64,26 +64,26 @@ var ProductBox = React.createClass({
 var Productform = React.createClass({
   getInitialState: function () {
     return {
-      productid: "",
-      productname: "",
-      productprice: "",
-      productquantity: "",
+      productidSS: "",
+      productnameSS: "",
+      productpriceSS: "",
+      productquantitySS: "",
     };
   },
   // Handle Search Submit Button
   handleSubmit: function (e) {
     e.preventDefault();
 
-    var productid = this.state.productid.trim();
-    var productname = this.state.productname.trim();
-    var productprice = this.state.productprice.trim();
-    var productquantity = this.state.productquantity.trim();
+    var productidSS = this.state.productidSS.trim();
+    var productnameSS = this.state.productnameSS.trim();
+    var productpriceSS = this.state.productpriceSS.trim();
+    var productquantitySS = this.state.productquantitySS.trim();
 
     this.props.onProductSubmit({
-      productid: productid,
-      productname: productname,
-      productprice: productprice,
-      productquantity: productquantity,
+      productidSS: productidSS,
+      productnameSS: productnameSS,
+      productpriceSS: productpriceSS,
+      productquantitySS: productquantitySS,
     });
   },
   // Handle change in focus
@@ -105,9 +105,9 @@ var Productform = React.createClass({
                 <td>
                   <input
                     type="text"
-                    name="productid"
-                    id="productid"
-                    value={this.state.productid}
+                    name="productidSS"
+                    id="productidSS"
+                    value={this.state.productidSS}
                     onChange={this.handleChange}
                   />
                 </td>
@@ -117,9 +117,9 @@ var Productform = React.createClass({
                 <td>
                   <input
                     type="text"
-                    name="productname"
-                    id="productname"
-                    value={this.state.productname}
+                    name="productnameSS"
+                    id="productnameSS"
+                    value={this.state.productnameSS}
                     onChange={this.handleChange}
                   />
                 </td>
@@ -129,9 +129,9 @@ var Productform = React.createClass({
                 <td>
                   <input
                     type="text"
-                    name="productprice"
-                    id="productprice"
-                    value={this.state.productprice}
+                    name="productpriceSS"
+                    id="productpriceSS"
+                    value={this.state.productpriceSS}
                     onChange={this.handleChange}
                   />
                 </td>
@@ -141,9 +141,9 @@ var Productform = React.createClass({
                 <td>
                   <input
                     type="text"
-                    name="productquantity"
-                    id="productquantity"
-                    value={this.state.productquantity}
+                    name="productquantitySS"
+                    id="productquantitySS"
+                    value={this.state.productquantitySS}
                     onChange={this.handleChange}
                   />
                 </td>

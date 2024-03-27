@@ -93,7 +93,7 @@ var Reservationform = React.createClass({
       [event.target.id]: event.target.value,
     });
   },
-  // Render Product Search Form
+  // Render Reservations Search Form
   render: function () {
     return (
       <form className="form_area" onSubmit={this.handleSubmit}>
@@ -162,7 +162,7 @@ var Reservationform = React.createClass({
   },
 });
 
-// Product List of Products
+// Reservsation List of Reservations
 var ReservationList = React.createClass({
   render: function () {
     var reservationNodes = this.props.data.map(function (reservation) {
