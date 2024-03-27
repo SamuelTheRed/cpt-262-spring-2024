@@ -1,0 +1,97 @@
+package.json
+    "cookie-parser": "^1.4.4",
+    "jsonwebtoken": "^8.5.1",
+
+server.js
+const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
+
+const jwtKey = 'my_secret_key'
+const jwtExpirySeconds = 3000
+
+
+server.js /login/
+                    const token = jwt.sign({ empkey }, jwtKey, {
+                        algorithm: 'HS256',
+                        expiresIn: jwtExpirySeconds
+                      });
+                    
+                    res.cookie('token', token, { maxAge: jwtExpirySeconds * 1000 })
+                    res.send({ redirect: '/backend/searchemployee.html'});
+
+specific page
+    loadAllowLogin: function () {
+        $.ajax({
+            url: '/getloggedin',
+            dataType: 'json',
+            cache: false,
+            success: function (datalog) {
+                this.setState({ data: datalog });
+                this.setState({ viewthepage: this.state.data[0].dbemployeetype });
+                console.log("Logged in:" + this.state.viewthepage);
+            }.bind(this),
+            error: function (xhr, status, err) {
+                console.error(this.props.url, status, err.toString());
+            }.bind(this)
+        });
+    },
+
+server.js /getloggedout
+app.get('/getloggedout/', function (req, res) {
+    res.cookie('token', 2, { maxAge: 0 })
+    res.send({ redirect: '/backend/index.html'});
+});
+
+server.js /getloggedin
+app.get('/getloggedin/', function (req, res) {
+
+    var viewpage = 0;
+    var datahold = [];
+    const validtoken = req.cookies.token
+    console.log('token new:', validtoken);
+    var payload;
+    
+    if(!validtoken) {
+        viewpage = 0;
+        console.log("NVT");
+    } else {
+        try {
+            payload = jwt.verify(validtoken, jwtKey);
+            console.log('payload new:', payload.empkey);
+            viewpage = payload.empkey;
+
+            var sqlsel = 'select * from employeetable where dbemployeekey = ?';
+            var inserts = [viewpage];
+
+            var sql = mysql.format(sqlsel, inserts);
+
+            con.query(sql, function (err, data) {
+                if (err) {
+                    console.error(err);
+                    process.exit(1);
+                }
+                console.log("Show 1" + data);
+                
+                datahold = data;
+
+                res.send(JSON.stringify(data));
+            });
+
+          } catch (e) {
+            if (e instanceof jwt.JsonWebTokenError) {
+                viewpage = 0;
+                console.log("NVT2");
+            }
+            viewpage = 0;
+            console.log("NVT3");
+          }
+    }
+    
+});
+
+specific page
+        if (this.state.viewthepage == 0 || this.state.viewthepage != 1) {
+            return (
+                <div>NOOOOOOO!</div>
+            );
+        } else {
