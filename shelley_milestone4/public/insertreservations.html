@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>TCTG Golf Academy - Book a Reservation</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.0/react.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.0/react-dom.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.6.15/browser.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/classnames/2.1.5/index.min.js"></script>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <!-- Configure Body -->
+  <body>
+    <!-- Display Logo for TCTG Golf Academy -->
+    <div class="logo" onclick="window.location.href='../index.html'">
+      <img src="images/logo.png" alt="logo" />
+    </div>
+    <!-- Show Links between Pages to allow user to go to a new page -->
+    <nav>
+      <a href="./index.html">Home</a>
+      <a href="./searchproducts.html">Product List</a>
+      <a href="./insertreservations.html">Schedule a Reservation</a>
+      <a href="./searchreservations.html">View Reservation Vacancies</a>
+    </nav>
+    <!-- Show Reservation items from the JS file and place them into Content -->
+    <div id="content"></div>
+    <!-- Display the cover image -->
+    <div class="cover_image">
+      <!-- Display Logo for TCTG Golf Academy -->
+      <div class="image_tint">
+        <img src="./images/logo.png" alt="logo" />
+      </div>
+    </div>
+    <!-- Configure Footer -->
+    <footer>
+      <!-- Show Links between Pages to allow user to go to a new page -->
+      <nav class="footer">
+        <!-- Display Logo for TCTG Golf Academy -->
+        <div>
+          <img src="images/logo.png" alt="logo" />
+        </div>
+        <div>
+          <a href="./index.html">Home</a>
+          <a href="./searchproducts.html">Product List</a>
+          <a href="./insertreservations.html">Schedule a Reservation</a>
+          <a href="./searchreservations.html">View Reservation Vacancies</a>
+          <a href="./backend/index.html">Employee Portal</a>
+        </div>
+        <!-- TCTG Golf Academy information -->
+        <div>
+          <!-- Display address of TCTG Golf Academy-->
+          <span class="caption">ADDRESS</span>
+          <span>
+            2050 Highway 501 East<br />
+            Conway, South Carolina 29526
+          </span>
+          <!-- Display phone number of TCTG Golf Academy -->
+          <span class="caption">PHONE NUMBER</span>
+          <span>(843) 347-3186</span>
+        </div>
+        <!-- Display any Social Media Links that TCTG Golf Academy may have -->
+        <div>
+          <a href="https://www.facebook.com/gohgtc" class="icon">
+            <img src="./images/icons8-fb-250.png" />
+          </a>
+          <a href="facebook.com" class="icon">
+            <img src="./images/icons8-gmail-256.png" />
+          </a>
+          <a href="https://www.youtube.com/" class="icon">
+            <img src="./images/icons8-youtube-512.png" />
+          </a>
+        </div>
+        <div></div>
+      </nav>
+    </footer>
+    <!-- Bring the Insert Reservations JS File to HTML -->
+    <script type="text/babel" src="scripts/insertreservations.js"></script>
+  </body>
+</html>
