@@ -101,6 +101,169 @@ app.get("/getreservation/", function (req, res) {
     res.send(JSON.stringify(data));
   });
 });
+// Search Purchases
+app.get("/getpurchase/", function (req, res) {
+  var pid = req.query.purchaseidSS;
+  var pstatus = req.query.purchaseinformationSS;
+  var pdatetime = req.query.purchasedatetimeSS;
+
+  var sqlsel =
+    "SELECT * FROM `Purchases` " +
+    "WHERE dborder_id LIKE ? AND dbpurchase_status LIKE ? AND dbpurchase_datetimefulfilled LIKE ?";
+
+  var inserts = [
+    "%" + pid + "%",
+    "%" + pstatus + "%",
+    "%" + pdatetime + "%",
+  ];
+
+  var sql = mysql.format(sqlsel, inserts);
+
+  console.log(sql);
+
+  con.query(sql, function (err, data) {
+    if (err) {
+      console.error(err);
+      process.exit(1);
+    }
+    res.send(JSON.stringify(data));
+  });
+});
+// Search  Players
+app.get("/getplayer/", function (req, res) {
+  var pid = req.query.playeridSS;
+  var pfirstname = req.query.playerfirstnameSS;
+  var plastname = req.query.playerlastnameSS;
+  var pemail = req.query.playeremailSS;
+  var pphone = req.query.playerphoneSS;
+  var prewards = req.query.playerrewardsSS;
+
+  var sqlsel =
+    "SELECT * FROM `Players` " +
+    "WHERE dbplayer_id LIKE ? AND dbplayer_firstname LIKE ? AND dbplayer_lastname LIKE ? " +
+    "AND dbplayer_email LIKE ? AND dbplayer_phone LIKE ? AND dbplayer_rewardstier LIKE ? ";
+
+  var inserts = [
+    "%" + pid + "%",
+    "%" + pfirstname + "%",
+    "%" + plastname + "%",
+    "%" + pemail + "%",
+    "%" + pphone + "%",
+    "%" + prewards + "%",
+  ];
+
+  var sql = mysql.format(sqlsel, inserts);
+
+  console.log(sql);
+
+  con.query(sql, function (err, data) {
+    if (err) {
+      console.error(err);
+      process.exit(1);
+    }
+    res.send(JSON.stringify(data));
+  });
+});
+// Search  Users
+app.get("/getuser/", function (req, res) {
+  var uid = req.query.useridSS;
+  var ufirstname = req.query.userfirstnameSS;
+  var ulastname = req.query.userlastnameSS;
+  var uemail = req.query.useremailSS;
+  var uphone = req.query.userphoneSS;
+  var urole = req.query.userroleSS;
+
+  var sqlsel =
+    "SELECT * FROM `Users` " +
+    "WHERE dbuser_id LIKE ? AND dbuser_firstname LIKE ? AND dbuser_lastname LIKE ? " +
+    "AND dbuser_email LIKE ? AND dbuser_phone LIKE ? AND dbuser_role LIKE ? ";
+
+  var inserts = [
+    "%" + uid + "%",
+    "%" + ufirstname + "%",
+    "%" + ulastname + "%",
+    "%" + uemail + "%",
+    "%" + uphone + "%",
+    "%" + urole + "%",
+  ];
+
+  var sql = mysql.format(sqlsel, inserts);
+
+  console.log(sql);
+
+  con.query(sql, function (err, data) {
+    if (err) {
+      console.error(err);
+      process.exit(1);
+    }
+    res.send(JSON.stringify(data));
+  });
+});
+// Search Order
+app.get("/getorder/", function (req, res) {
+  var oid = req.query.orderidSS;
+  var odatetime = req.query.orderdatetimeSS;
+  var oplayer = req.query.orderplayerSS;
+  var ouser = req.query.orderuserSS;
+
+  var sqlsel =
+    "SELECT `dborder_id`, `dborder_datetime`, `dbplayer_lastname`, " +
+    "`dbuser_firstname` FROM `Orders` AS o INNER JOIN `Players` AS p ON " +
+    "o.dbplayer_id=p.dbplayer_id LEFT JOIN `Users` AS u ON o.dbuser_id=u.dbuser_id " +
+    "WHERE dborder_id LIKE ? AND dborder_datetime LIKE ? AND dbplayer_lastname LIKE ? " +
+    "AND dbuser_firstname LIKE ? ";
+
+  var inserts = [
+    "%" + oid + "%",
+    "%" + odatetime + "%",
+    "%" + oplayer + "%",
+    "%" + ouser + "%",
+  ];
+
+  var sql = mysql.format(sqlsel, inserts);
+
+  console.log(sql);
+
+  con.query(sql, function (err, data) {
+    if (err) {
+      console.error(err);
+      process.exit(1);
+    }
+    res.send(JSON.stringify(data));
+  });
+});
+// Search Order Item
+app.get("/getorderitem/", function (req, res) {
+  var oiid = req.query.orderitemidSS;
+  var oiproduct = req.query.orderitemproductSS;
+  var oiorder = req.query.orderitemorderSS;
+  var oiquantity = req.query.orderitemquantitySS;
+
+  var sqlsel =
+    "SELECT * FROM `OrderItems` AS i INNER JOIN `Products` AS p ON " +
+    "i.dbproduct_id=p.dbproduct_id LEFT JOIN `Orders` AS o ON i.dborder_id=o.dborder_id " +
+    "WHERE dborderitem_id LIKE ? AND dbproduct_name LIKE ? AND o.dborder_id LIKE ? " +
+    "AND dborderitem_id LIKE ? ";
+
+  var inserts = [
+    "%" + oiid + "%",
+    "%" + oiproduct + "%",
+    "%" + oiorder + "%",
+    "%" + oiquantity + "%",
+  ];
+
+  var sql = mysql.format(sqlsel, inserts);
+
+  console.log(sql);
+
+  con.query(sql, function (err, data) {
+    if (err) {
+      console.error(err);
+      process.exit(1);
+    }
+    res.send(JSON.stringify(data));
+  });
+});
 
 /* 
 
@@ -275,10 +438,10 @@ app.post("/player", function (req, res) {
     console.log(sql);
 
     con.execute(sql, function (err, result) {
-        if (err) throw err;
-        console.log("1 record inserted");
-        res.redirect("insertplayers.html");
-        res.end();
+      if (err) throw err;
+      console.log("1 record inserted");
+      res.redirect("insertplayers.html");
+      res.end();
     });
   });
 });
@@ -352,24 +515,17 @@ app.post("/user", function (req, res) {
     var sqlins =
       "INSERT INTO Users (dbuser_lastname, dbuser_firstname, dbuser_email, " +
       " dbuser_phone, dbuser_role, dbuser_password) VALUES (?, ?, ?, ?, ?, ?)";
-    var inserts = [
-      ulastname,
-      ufirstname,
-      uemail,
-      uphone,
-      urole,
-      theHashedPW,
-    ];
+    var inserts = [ulastname, ufirstname, uemail, uphone, urole, theHashedPW];
 
     var sql = mysql.format(sqlins, inserts);
 
     console.log(sql);
 
     con.execute(sql, function (err, result) {
-        if (err) throw err;
-        console.log("1 record inserted");
-        res.redirect("insertusers.html");
-        res.end();
+      if (err) throw err;
+      console.log("1 record inserted");
+      res.redirect("insertusers.html");
+      res.end();
     });
   });
 });
@@ -393,24 +549,24 @@ app.post("/loginusr/", function (req, res) {
   var sql = mysql.format(sqlsel, inserts);
   console.log("SQL: " + sql);
   con.query(sql, function (err, data) {
-      if (data.length > 0) {
-          bcrypt.compare(
-              upw,
-              data[0].dbuser_password,
-              function (err, passwordCorrect) {
-                  if (err) {
-                      throw err;
-                  } else if (!passwordCorrect) {
-                      console.log("Password incorrect");
-                  } else {
-                      console.log("Password correct");
-                      res.send({ redirect: "insertorder.html" });
-                  }
-              }
-          );
-      } else {
-          console.log("Incorrect user name or password");
-      }
+    if (data.length > 0) {
+      bcrypt.compare(
+        upw,
+        data[0].dbuser_password,
+        function (err, passwordCorrect) {
+          if (err) {
+            throw err;
+          } else if (!passwordCorrect) {
+            console.log("Password incorrect");
+          } else {
+            console.log("Password correct");
+            res.send({ redirect: "insertorder.html" });
+          }
+        }
+      );
+    } else {
+      console.log("Incorrect user name or password");
+    }
   });
 });
 

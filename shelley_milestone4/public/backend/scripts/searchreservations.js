@@ -5,15 +5,15 @@ var ReservationBox = React.createClass({
   },
   // Load all reservation items from the database
   loadReservationsFromServer: function () {
-    console.log(reservationid.value);
+    console.log(reservationidSS.value);
     $.ajax({
       url: "/getreservation",
       // Stores the data
       data: {
-        reservationid: reservationid.value,
-        reservationdatetime: reservationdatetime.value,
-        reservationplayer: reservationplayer.value,
-        reservationuser: reservationuser.value,
+        reservationidSS: reservationidSS.value,
+        reservationdatetimeSS: reservationdatetimeSS.value,
+        reservationplayerSS: reservationplayerSS.value,
+        reservationuserSS: reservationuserSS.value,
       },
       dataType: "json",
       cache: false,
@@ -29,11 +29,11 @@ var ReservationBox = React.createClass({
   componentDidMount: function () {
     this.loadReservationsFromServer();
   },
-  // Render Product Box
+  // Render Reservation Box
   render: function () {
     return (
       <div>
-      {/* Page Title */}
+        {/* Page Title */}
         <div className="page_title">
           <h1>Reservations</h1>
         </div>
@@ -44,17 +44,17 @@ var ReservationBox = React.createClass({
         <br />
         <div className="result_table">
           {/* Result Table */}
-        <table>
-          <thead>
-            <tr className="result_headers">
-              <th>ID</th>
-              <th>Date Time</th>
-              <th>Player</th>
-              <th>User</th>
-            </tr>
-          </thead>
-          <ReservationList data={this.state.data} />
-        </table>
+          <table>
+            <thead>
+              <tr className="result_headers">
+                <th>ID</th>
+                <th>Date Time</th>
+                <th>Player</th>
+                <th>User</th>
+              </tr>
+            </thead>
+            <ReservationList data={this.state.data} />
+          </table>
         </div>
       </div>
     );
@@ -65,26 +65,26 @@ var ReservationBox = React.createClass({
 var Reservationform = React.createClass({
   getInitialState: function () {
     return {
-      reservationid: "",
-      reservationdatetime: "",
-      reservationplayer: "",
-      reservationuser: "",
+      reservationidSS: "",
+      reservationdatetimeSS: "",
+      reservationplayerSS: "",
+      reservationuserSS: "",
     };
   },
   // Handle Search Submit Button
   handleSubmit: function (e) {
     e.preventDefault();
 
-    var reservationid = this.state.reservationid.trim();
-    var reservationdatetime = this.state.reservationdatetime.trim();
-    var reservationplayer = this.state.reservationplayer.trim();
-    var reservationuser = this.state.reservationuser.trim();
+    var reservationidSS = this.state.reservationidSS.trim();
+    var reservationdatetimeSS = this.state.reservationdatetimeSS.trim();
+    var reservationplayerSS = this.state.reservationplayerSS.trim();
+    var reservationuserSS = this.state.reservationuserSS.trim();
 
     this.props.onReservationSubmit({
-      reservationid: reservationid,
-      reservationdatetime: reservationdatetime,
-      reservationplayer: reservationplayer,
-      reservationuser: reservationuser,
+      reservationidSS: reservationidSS,
+      reservationdatetimeSS: reservationdatetimeSS,
+      reservationplayerSS: reservationplayerSS,
+      reservationuserSS: reservationuserSS,
     });
   },
   // Handle change in focus
@@ -93,7 +93,7 @@ var Reservationform = React.createClass({
       [event.target.id]: event.target.value,
     });
   },
-  // Render Reservations Search Form
+  // Render Product Search Form
   render: function () {
     return (
       <form className="form_area" onSubmit={this.handleSubmit}>
@@ -106,9 +106,9 @@ var Reservationform = React.createClass({
                 <td>
                   <input
                     type="text"
-                    name="reservationid"
-                    id="reservationid"
-                    value={this.state.reservationid}
+                    name="reservationidSS"
+                    id="reservationidSS"
+                    value={this.state.reservationidSS}
                     onChange={this.handleChange}
                   />
                 </td>
@@ -118,9 +118,9 @@ var Reservationform = React.createClass({
                 <td>
                   <input
                     type="text"
-                    name="reservationdatetime"
-                    id="reservationdatetime"
-                    value={this.state.reservationdatetime}
+                    name="reservationdatetimeSS"
+                    id="reservationdatetimeSS"
+                    value={this.state.reservationdatetimeSS}
                     onChange={this.handleChange}
                   />
                 </td>
@@ -130,9 +130,9 @@ var Reservationform = React.createClass({
                 <td>
                   <input
                     type="text"
-                    name="reservationplayer"
-                    id="reservationplayer"
-                    value={this.state.reservationplayer}
+                    name="reservationplayerSS"
+                    id="reservationplayerSS"
+                    value={this.state.reservationplayerSS}
                     onChange={this.handleChange}
                   />
                 </td>
@@ -142,9 +142,9 @@ var Reservationform = React.createClass({
                 <td>
                   <input
                     type="text"
-                    name="reservationuser"
-                    id="reservationuser"
-                    value={this.state.reservationuser}
+                    name="reservationuserSS"
+                    id="reservationuserSS"
+                    value={this.state.reservationuserSS}
                     onChange={this.handleChange}
                   />
                 </td>
@@ -162,7 +162,7 @@ var Reservationform = React.createClass({
   },
 });
 
-// Reservsation List of Reservations
+// Product List of Products
 var ReservationList = React.createClass({
   render: function () {
     var reservationNodes = this.props.data.map(function (reservation) {

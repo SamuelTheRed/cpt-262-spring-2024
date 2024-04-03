@@ -1,172 +1,177 @@
 var PurchaseBox = React.createClass({
-    getInitialState: function () {
-      return { data: [] };
-    },
-    loadPurchasesFromServer: function () {
-      console.log(purchaseid.value);
-      $.ajax({
-        url: "/getpurchase",
-        data: {
-            'purchaseid': purchaseid.value,
-            'purchaseinformation': purchaseinformation.value,
-            'purchasedatetime': purchasedatetime.value,
-            'purchaseorder': purchaseorder.value,
-        },
-        dataType: "json",
-        cache: false,
-        success: function (data) {
-          this.setState({ data: data });
-        }.bind(this),
-        error: function (xhr, status, err) {
-          console.error(this.props.url, status, err.toString());
-        }.bind(this),
-      });
-    },
-    componentDidMount: function () {
-      this.loadPurchasesFromServer();
-    },
-  
-    render: function () {
-      return (
-        <div>
+  getInitialState: function () {
+    return { data: [] };
+  },
+  // Load all purchases items from the database
+  loadPurchasesFromServer: function () {
+    console.log(purchaseidSS.value);
+    $.ajax({
+      url: "/getpurchase",
+      // Stores the data
+      data: {
+        purchaseidSS: purchaseidSS.value,
+        purchaseinformationSS: statusnum.value,
+        purchasedatetimeSS: purchasedatetimeSS.value,
+      },
+      dataType: "json",
+      cache: false,
+      success: function (data) {
+        this.setState({ data: data });
+      }.bind(this),
+      error: function (xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this),
+    });
+  },
+  // When site is loaded, load purchases
+  componentDidMount: function () {
+    this.loadPurchasesFromServer();
+  },
+
+  render: function () {
+    return (
+      <div>
+        {/* Page Title */}
+        <div className="page_title">
           <h1>Purchases</h1>
-          <Purchaseform onPurchaseSubmit={this.loadPurchasesFromServer} />
-          <br />
+        </div>
+        {/* Purchase Form */}
+        <Purchaseform onPurchaseSubmit={this.loadPurchasesFromServer} />
+        <br />
+        <div className="result_table">
+          {/* Result Table */}
           <table>
             <thead>
-              <tr>
+              <tr className="result_headers">
                 <th>ID</th>
                 <th>Information</th>
                 <th>Datetime</th>
-                <th>Order</th>
               </tr>
             </thead>
             <PurchaseList data={this.state.data} />
           </table>
         </div>
-      );
-    },
-  });
-  
-  var Purchaseform = React.createClass({
-    getInitialState: function () {
-      return {
-        purchaseid: "",
-        purchaseinformation: "",
-        purchasedatetime: "",
-        purchaseorder: "",
-      };
-    },
-    handleSubmit: function (e) {
-      e.preventDefault();
-  
-      var purchaseid = this.state.purchaseid.trim();
-      var purchaseinformation = this.state.purchaseinformation.trim();
-      var purchasedatetime = this.state.purchasedatetime.trim();
-      var purchaseorder = this.state.purchaseorder.trim();
-  
-      this.props.onPurchaseSubmit({
-        purchaseid: purchaseid,
-        purchaseinformation: purchaseinformation,
-        purchasedatetime: purchasedatetime,
-        purchaseorder: purchaseorder,
-      });
-    },
-    handleChange: function (event) {
-      this.setState({
-        [event.target.id]: event.target.value,
-      });
-    },
-    render: function () {
+      </div>
+    );
+  },
+});
+
+var Purchaseform = React.createClass({
+  getInitialState: function () {
+    return {
+      purchaseidSS: "",
+      purchaseinformationSS: "",
+      purchasedatetimeSS: "",
+    };
+  },
+  handleSubmit: function (e) {
+    e.preventDefault();
+
+    var purchaseidSS = this.state.purchaseidSS.trim();
+    var purchaseinformationSS = this.state.purchaseinformationSS.trim();
+    var purchasedatetimeSS = this.state.purchasedatetimeSS.trim();
+
+    this.props.onPurchaseSubmit({
+      purchaseidSS: purchaseidSS,
+      purchaseinformationSS: purchaseinformationSS,
+      purchasedatetimeSS: purchasedatetimeSS,
+    });
+  },
+  handleChange: function (event) {
+    this.setState({
+      [event.target.id]: event.target.value,
+    });
+  },
+  render: function () {
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <h2>Search Through Purchases</h2>
+        <table>
+          <tbody>
+            <tr>
+              <th>Purchase ID</th>
+              <td>
+                <input
+                  type="text"
+                  name="purchaseidSS"
+                  id="purchaseidSS"
+                  value={this.state.purchaseidSS}
+                  onChange={this.handleChange}
+                />
+              </td>
+            </tr>
+            <tr>
+              <th>Purchase Information</th>
+              <td>
+                <StatusList data={this.state.data}></StatusList>
+              </td>
+            </tr>
+            <tr>
+              <th>Purchase Datetime</th>
+              <td>
+                <input
+                  name="purchasedatetimeSS"
+                  id="purchasedatetimeSS"
+                  value={this.state.purchasedatetimeSS}
+                  onChange={this.handleChange}
+                />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <input type="submit" value="Search Purchase" />
+      </form>
+    );
+  },
+});
+var PurchaseList = React.createClass({
+  render: function () {
+    var purchaseNodes = this.props.data.map(function (purchase) {
+      //map the data to individual
       return (
-        <form onSubmit={this.handleSubmit}>
-          <h2>Search Through Purchases</h2>
-          <table>
-            <tbody>
-              <tr>
-                <th>Purchase ID</th>
-                <td>
-                  <input
-                    type="text"
-                    name="purchaseid"
-                    id="purchaseid"
-                    value={this.state.purchaseid}
-                    onChange={this.handleChange}
-                  />
-                </td>
-              </tr>
-              <tr>
-                <th>Purchase Information</th>
-                <td>
-                  <input
-                    name="purchaseinformation"
-                    id="purchaseinformation"
-                    value={this.state.purchaseinformation}
-                    onChange={this.handleChange}
-                  />
-                </td>
-              </tr>
-              <tr>
-                <th>Purchase Datetime</th>
-                <td>
-                  <input
-                    name="purchasedatetime"
-                    id="purchasedatetime"
-                    value={this.state.purchasedatetime}
-                    onChange={this.handleChange}
-                  />
-                </td>
-              </tr>
-              <tr>
-                <th>Purchase Order</th>
-                <td>
-                  <input
-                    name="purchaseorder"
-                    id="purchaseorder"
-                    value={this.state.purchaseorder}
-                    onChange={this.handleChange}
-                  />
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <input type="submit" value="Search Purchase" />
-        </form>
+        <Purchase
+          key={purchase.dborder_id}
+          purid={purchase.dborder_id}
+          purinformation={purchase.dbpurchase_status}
+          purdatetime={purchase.dbpurchase_datetimefulfilled}
+        ></Purchase>
       );
-    },
-  });
-  var PurchaseList = React.createClass({
-    render: function () {
-      var purchaseNodes = this.props.data.map(function (purchase) {
-        //map the data to individual
-        return (
-          <Purchase
-            key={purchase.purchaseid}
-            purid={purchase.purchaseid}
-            purinformation={purchase.purchaseinformation}
-            purdatetime={purchase.purchasedatetime}
-            purorder={purchase.purchaseorder}
-          ></Purchase>
-        );
-      });
-  
-      //print all the nodes in the list
-      return <tbody>{purchaseNodes}</tbody>;
-    },
-  });
-  
-  var Purchase = React.createClass({
-    render: function () {
-      return (
-        <tr>
-          <td>{this.props.purid}</td>
-          <td>{this.props.purinformation}</td>
-          <td>{this.props.purdatetime}</td>
-          <td>{this.props.purorder}</td>
-        </tr>
-      );
-    },
-  });
-  
-  ReactDOM.render(<PurchaseBox />, document.getElementById("content"));
-  
+    });
+
+    //print all the nodes in the list
+    return <tbody>{purchaseNodes}</tbody>;
+  },
+});
+
+var Purchase = React.createClass({
+  render: function () {
+    return (
+      <tr>
+        <td>{this.props.purid}</td>
+        <td>{this.props.purinformation}</td>
+        <td>{this.props.purdatetime}</td>
+      </tr>
+    );
+  },
+});
+var StatusList = React.createClass({
+  render: function () {
+    return (
+      <select name="statusnum" id="statusnum">
+        <option key="0" value="">
+          --
+        </option>
+        <option key="1" value="Pending">
+          Pending
+        </option>
+        <option key="2" value="Fulfilled">
+          Fulfilled
+        </option>
+        <option key="3" value="Cancelled">
+          Cancelled
+        </option>
+      </select>
+    );
+  },
+});
+ReactDOM.render(<PurchaseBox />, document.getElementById("content"));
