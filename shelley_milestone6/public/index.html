@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>TCTG Golf Academy - Home</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.0/react.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.0/react-dom.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.6.15/browser.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/classnames/2.1.5/index.min.js"></script>
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
+  </head>
+  <!-- Configure Body -->
+  <body>
+    <!-- Display Logo for TCTG Golf Academy -->
+    <div class="logo" onclick="window.location.href='../index.html'">
+      <img src="./images/logo.png" alt="logo" />
+    </div>
+    <div>
+      <!-- Show Links between Pages to allow user to go to a new page -->
+      <nav>
+        <a href="./index.html">Home</a>
+        <a href="./searchproducts.html">Product List</a>
+        <a href="./insertreservations.html">Schedule a Reservation</a>
+        <a href="./searchreservations.html">View Reservation Vacancies</a>
+      </nav>
+    </div>
+    <!-- Display the cover image -->
+    <div class="cover_image">
+      <!-- Display Logo for TCTG Golf Academy -->
+      <div class="image_tint">
+        <img
+          src="./images/logo-small.png"
+          height="200px"
+          width="200px"
+          alt="logo"
+        />
+      </div>
+    </div>
+    <!-- Configure Main -->
+    <main>
+      <!-- Hold information about TCTG Golf Academy -->
+      <div>
+        <!-- Display a About US Banner -->
+        <div class="banner_container"><span class="banner">About Us</span></div>
+        <!-- Display TCTG Golf Academy as a Title for About Us -->
+        <div id="title_container">
+          <div id="title_streak"></div>
+          <div id="title_blob">
+            <img src="./images/logo.png" alt="logo" />
+          </div>
+        </div>
+        <!-- Display Information about TCTG Golf Academy -->
+        <p>
+          PineHills was originally built in 1966 and was formally named The
+          Pines. The course was reopned in 1993 with a different feel and twist.
+          Architect Arthur Hills, designed the award winning course and is his
+          only one along the Grand Strand. PineHills at Myrtlewood Golf Club
+          been singled out by Golf Digest as one of the “Top Ten Courses” in
+          Myrtle Beach, it also bears the distinction of being the first and
+          only Grand Strand golf course designed by award-winning architect
+          Arthur Hills.
+        </p>
+        <p>
+          PineHills is one of Myrtle Beach&#8217;s most player-friendly designs,
+          combining the creativity of Arthur Hills&#8217; architectural work
+          with premium conditions to deliver an experience that brings players
+          back every year. The course&#8217;s character-filled greens complexes,
+          which reward precision on the approach and quality recovery shots, are
+          among the highlights of a round at PineHills.
+        </p>
+        <!-- Divide the Text by a black bar to show a couple of images -->
+        <div class="divider" id="top_divider"></div>
+        <!-- Display Images -->
+        <div id="image_container">
+          <div class="img_back">
+            <img src="./images/f7.png" alt="golf ball and club" />
+            <img src="./images/PineHills-17.png" alt="feild" />
+          </div>
+          <div class="img_front">
+            <img
+              src="./images/Myrtlewood_Entrance.png"
+              alt="Myrtlewood Entrance"
+            />
+          </div>
+        </div>
+        <!-- Close the Divider -->
+        <div class="divider" id="bottom_divider"></div>
+      </div>
+    </main>
+    <!-- Configure Footer -->
+    <footer>
+      <!-- Show Links between Pages to allow user to go to a new page -->
+      <nav class="footer">
+        <!-- Display Logo for TCTG Golf Academy -->
+        <div>
+          <img
+            src="images/logo-small.png"
+            height="100px"
+            width="100px"
+            alt="logo"
+          />
+        </div>
+        <div>
+          <a href="./index.html">Home</a>
+          <a href="./searchproducts.html">Product List</a>
+          <a href="./insertreservations.html">Schedule a Reservation</a>
+          <a href="./searchreservations.html">View Reservation Vacancies</a>
+          <a href="./backend/index.html">Employee Portal</a>
+        </div>
+        <!-- TCTG Golf Academy information -->
+        <div>
+          <!-- Display address of TCTG Golf Academy-->
+          <span class="caption">ADDRESS</span>
+          <span>
+            2050 Highway 501 East<br />
+            Conway, South Carolina 29526
+          </span>
+          <!-- Display phone number of TCTG Golf Academy -->
+          <span class="caption">PHONE NUMBER</span>
+          <span>(843) 347-3186</span>
+        </div>
+        <!-- Display any Social Media Links that TCTG Golf Academy may have -->
+        <div>
+          <a href="https://www.facebook.com/gohgtc" class="icon">
+            <img src="./images/icons8-fb-250.png" />
+          </a>
+          <a href="facebook.com" class="icon">
+            <img src="./images/icons8-gmail-256.png" />
+          </a>
+          <a href="https://www.youtube.com/" class="icon">
+            <img src="./images/icons8-youtube-512.png" />
+          </a>
+        </div>
+        <div>
+          <img
+            src="./images/KytesLogo.png"
+            height="100px"
+            width="100px"
+            alt="logo"
+          />
+        </div>
+      </nav>
+    </footer>
+  </body>
+</html>
