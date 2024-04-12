@@ -209,7 +209,7 @@ var UserUpdateform = React.createClass({
       upuseremailSS: "",
       upuserphoneSS: "",
       upuserroleSS: "",
-      updata: []
+      updata: [],
     };
   },
   handleUpOptionChange: function (e) {
@@ -233,7 +233,7 @@ var UserUpdateform = React.createClass({
       upuserlastnameSS: upuserlastnameSS,
       upuseremailSS: upuseremailSS,
       upuserphoneSS: upuserphoneSS,
-      upuserroleSS: upuserroleSS
+      upuserroleSS: upuserroleSS,
     });
   },
   handleUpChange: function (event) {
@@ -398,14 +398,14 @@ var RolesList = React.createClass({
         <option key="0" value="">
           --
         </option>
-        <option key="1" value="Admin">
-          Admin
+        <option key="1" value="Manager">
+          Manager
         </option>
-        <option key="2" value="Privileged">
-          Privileged
+        <option key="2" value="Front-Desk">
+          Front-Desk
         </option>
-        <option key="3" value="Player">
-          Player
+        <option key="3" value="Assistant">
+          Assistant
         </option>
       </select>
     );
@@ -418,14 +418,14 @@ var UpRolesList = React.createClass({
         <option key="0" value="">
           --
         </option>
-        <option key="1" value="Admin">
-          Admin
+        <option key="1" value="Manager">
+          Manager
         </option>
-        <option key="2" value="Privileged">
-          Privileged
+        <option key="2" value="Front-Desk">
+          Front-Desk
         </option>
-        <option key="3" value="Player">
-          Player
+        <option key="3" value="Assistant">
+          Assistant
         </option>
       </select>
     );

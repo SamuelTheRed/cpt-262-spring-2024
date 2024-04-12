@@ -1,5 +1,23 @@
 // Create Order Box
 var OrderBox = React.createClass({
+  getInitialState: function () {
+    return { data: [], viewthepage: "" };
+  },
+  loadAllowLogin: function () {
+    $.ajax({
+      url: "/getloggedin",
+      dataType: "json",
+      cache: false,
+      success: function (datalog) {
+        this.setState({ data: datalog });
+        this.setState({ viewthepage: this.state.data[0].dbuser_role });
+        console.log("Logged in:" + this.state.viewthepage);
+      }.bind(this),
+      error: function (xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this),
+    });
+  },
   // Submit information to database
   handleOrderSubmit: function (order) {
     $.ajax({
@@ -31,13 +49,17 @@ var OrderBox = React.createClass({
     });
   },
   render: function () {
-    return (
-      <div className="OrderBox">
-        <h1>Orders</h1>
-        <Orderform onOrderSubmit={this.handleOrderSubmit} />
-        <OrderItemform onOrderItemSubmit={this.handleOrderItemSubmit} />
-      </div>
-    );
+    if (this.state.viewthepage != "Manager") {
+      return <div>You do not have access to this page</div>;
+    } else {
+      return (
+        <div className="OrderBox">
+          <h1>Orders</h1>
+          <Orderform onOrderSubmit={this.handleOrderSubmit} />
+          <OrderItemform onOrderItemSubmit={this.handleOrderItemSubmit} />
+        </div>
+      );
+    }
   },
 });
 

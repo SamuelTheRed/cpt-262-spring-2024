@@ -5,6 +5,11 @@ var express = require("express");
 var bodyParser = require("body-parser");
 var app = express();
 var bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const cookieParser = require("cookie-parser");
+
+const jwtKey = "key_b9uu2_pW38x";
+const jwtExpirySeconds = 3000;
 
 const mysql = require("mysql2");
 
@@ -24,6 +29,7 @@ app.set("port", process.env.PORT || 3000);
 
 app.use("/", express.static(path.join(__dirname, "public")));
 app.use(bodyParser.json());
+app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get("/", function (req, res) {
@@ -111,11 +117,7 @@ app.get("/getpurchase/", function (req, res) {
     "SELECT * FROM `Purchases` " +
     "WHERE dborder_id LIKE ? AND dbpurchase_status LIKE ? AND dbpurchase_datetimefulfilled LIKE ?";
 
-  var inserts = [
-    "%" + pid + "%",
-    "%" + pstatus + "%",
-    "%" + pdatetime + "%",
-  ];
+  var inserts = ["%" + pid + "%", "%" + pstatus + "%", "%" + pdatetime + "%"];
 
   var sql = mysql.format(sqlsel, inserts);
 
@@ -242,12 +244,12 @@ app.get("/getsingleord/", function (req, res) {
   var sql = mysql.format(sqlsel, inserts);
 
   con.query(sql, function (err, data) {
-      if (err) {
-          console.error(err);
-          process.exit(1);
-      }
+    if (err) {
+      console.error(err);
+      process.exit(1);
+    }
 
-      res.send(JSON.stringify(data));
+    res.send(JSON.stringify(data));
   });
 });
 // Search Order Item
@@ -305,7 +307,8 @@ app.get("/getplrdata/", function (req, res) {
 });
 // Insert Reservations, Insert Orders - User Data
 app.get("/getusrdata/", function (req, res) {
-  var sqlsel = "SELECT * FROM Users WHERE dbuser_id > 0 ORDER BY dbuser_lastname, dbuser_firstname"; // Update to not include self reservation
+  var sqlsel =
+    "SELECT * FROM Users WHERE dbuser_id > 0 ORDER BY dbuser_lastname, dbuser_firstname"; // Update to not include self reservation
   var sql = mysql.format(sqlsel);
 
   con.query(sql, function (err, data) {
@@ -588,12 +591,12 @@ app.get("/getsingleplr/", function (req, res) {
   var sql = mysql.format(sqlsel, inserts);
 
   con.query(sql, function (err, data) {
-      if (err) {
-          console.error(err);
-          process.exit(1);
-      }
+    if (err) {
+      console.error(err);
+      process.exit(1);
+    }
 
-      res.send(JSON.stringify(data));
+    res.send(JSON.stringify(data));
   });
 });
 // Get Single Product
@@ -606,12 +609,12 @@ app.get("/getsinglepdc/", function (req, res) {
   var sql = mysql.format(sqlsel, inserts);
 
   con.query(sql, function (err, data) {
-      if (err) {
-          console.error(err);
-          process.exit(1);
-      }
+    if (err) {
+      console.error(err);
+      process.exit(1);
+    }
 
-      res.send(JSON.stringify(data));
+    res.send(JSON.stringify(data));
   });
 });
 // Get Single User
@@ -624,12 +627,12 @@ app.get("/getsingleusr/", function (req, res) {
   var sql = mysql.format(sqlsel, inserts);
 
   con.query(sql, function (err, data) {
-      if (err) {
-          console.error(err);
-          process.exit(1);
-      }
+    if (err) {
+      console.error(err);
+      process.exit(1);
+    }
 
-      res.send(JSON.stringify(data));
+    res.send(JSON.stringify(data));
   });
 });
 
@@ -649,18 +652,18 @@ app.post("/updatesingleplr", function (req, res) {
   var prewards = req.body.upplayerrewardsSS;
 
   var sqlins =
-      "UPDATE Players SET dbplayer_id = ?, dbplayer_firstname = ?, dbplayer_lastname = ?, dbplayer_email = ?, " +
-      " dbplayer_phone = ?, dbplayer_rewardstier = ? " +
-      " WHERE dbplayer_id = ? ";
+    "UPDATE Players SET dbplayer_id = ?, dbplayer_firstname = ?, dbplayer_lastname = ?, dbplayer_email = ?, " +
+    " dbplayer_phone = ?, dbplayer_rewardstier = ? " +
+    " WHERE dbplayer_id = ? ";
   var inserts = [pid, pfirstname, plastname, pemail, pphone, prewards, pid];
 
   var sql = mysql.format(sqlins, inserts);
   console.log(sql);
   con.execute(sql, function (err, result) {
-      if (err) throw err;
-      console.log("1 record updated");
+    if (err) throw err;
+    console.log("1 record updated");
 
-      res.end();
+    res.end();
   });
 });
 // Update Single Product
@@ -672,18 +675,18 @@ app.post("/updatesinglepdc", function (req, res) {
   var pquantity = req.body.upproductquantitySS;
 
   var sqlins =
-      "UPDATE Products SET dbproduct_id = ?, dbproduct_name = ?, dbproduct_description = ?, " +
-      " dbproduct_price = ?, dbproduct_quantity = ? " +
-      " WHERE dbproduct_id = ? ";
+    "UPDATE Products SET dbproduct_id = ?, dbproduct_name = ?, dbproduct_description = ?, " +
+    " dbproduct_price = ?, dbproduct_quantity = ? " +
+    " WHERE dbproduct_id = ? ";
   var inserts = [pid, pname, pdescription, pprice, pquantity, pid];
 
   var sql = mysql.format(sqlins, inserts);
   console.log(sql);
   con.execute(sql, function (err, result) {
-      if (err) throw err;
-      console.log("1 record updated");
+    if (err) throw err;
+    console.log("1 record updated");
 
-      res.end();
+    res.end();
   });
 });
 // Update Single User
@@ -696,19 +699,74 @@ app.post("/updatesingleusr", function (req, res) {
   var urole = req.body.upuserroleSS;
 
   var sqlins =
-      "UPDATE Users SET dbuser_id = ?, dbuser_firstname = ?, dbuser_lastname = ?, dbuser_email = ?, " +
-      " dbuser_phone = ?, dbuser_role = ? " +
-      " WHERE dbuser_id = ? ";
+    "UPDATE Users SET dbuser_id = ?, dbuser_firstname = ?, dbuser_lastname = ?, dbuser_email = ?, " +
+    " dbuser_phone = ?, dbuser_role = ? " +
+    " WHERE dbuser_id = ? ";
   var inserts = [uid, ufirstname, ulastname, uemail, uphone, urole, uid];
 
   var sql = mysql.format(sqlins, inserts);
   console.log(sql);
   con.execute(sql, function (err, result) {
-      if (err) throw err;
-      console.log("1 record updated");
+    if (err) throw err;
+    console.log("1 record updated");
 
-      res.end();
+    res.end();
   });
+});
+
+/* 
+
+  Miscellaneous GET API calls
+
+*/
+
+// Get if Logged Out
+app.get("/getloggedout/", function (req, res) {
+  res.cookie("token", 2, { maxAge: 0 });
+  res.send({ redirect: "/backend/index.html" });
+});
+// Get if Logged In
+app.get("/getloggedin/", function (req, res) {
+  var viewpage = "";
+  var datahold = [];
+  const validtoken = req.cookies.token;
+  console.log("token new:", validtoken);
+  var payload;
+
+  if (!validtoken) {
+    viewpage = "";
+    console.log("NVT");
+  } else {
+    try {
+      payload = jwt.verify(validtoken, jwtKey);
+      console.log("payload new:", payload.empkey);
+      viewpage = payload.empkey;
+
+      var sqlsel = "select * from Users where dbuser_role = ?";
+      var inserts = [viewpage];
+
+      var sql = mysql.format(sqlsel, inserts);
+
+      con.query(sql, function (err, data) {
+        if (err) {
+          console.error(err);
+          process.exit(1);
+        }
+        console.log("Show 1" + data);
+
+        datahold = data;
+
+        res.send(JSON.stringify(data));
+      });
+    } catch (e) {
+      if (e instanceof jwt.JsonWebTokenError) {
+        viewpage = 0;
+        console.log("NVT2");
+      }
+      viewpage = 0;
+      console.log("NVT3");
+    }
+  }
 });
 
 /* 
@@ -721,16 +779,16 @@ app.post("/updatesingleusr", function (req, res) {
 app.post("/loginusr/", function (req, res) {
   var uemail = req.body.useremailSS;
   var upw = req.body.userpwSS;
-  console.log(upw);
 
   var sqlsel = "select * from Users where dbuser_email = ?";
-
   var inserts = [uemail];
 
   var sql = mysql.format(sqlsel, inserts);
   console.log("SQL: " + sql);
   con.query(sql, function (err, data) {
     if (data.length > 0) {
+      var usrkey = data[0].dbuser_id;
+
       bcrypt.compare(
         upw,
         data[0].dbuser_password,
@@ -741,6 +799,13 @@ app.post("/loginusr/", function (req, res) {
             console.log("Password incorrect");
           } else {
             console.log("Password correct");
+            // Create token specific to user
+            const token = jwt.sign({ usrkey }, jwtKey, {
+              algorithm: "HS256",
+              expiresIn: jwtExpirySeconds,
+            });
+            // Add cookie to user for page viewing validation
+            res.cookie("token", token, { maxAge: jwtExpirySeconds * 1000 });
             res.send({ redirect: "insertorder.html" });
           }
         }
