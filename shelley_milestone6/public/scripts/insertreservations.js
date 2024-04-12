@@ -35,32 +35,15 @@ var Reservationform = React.createClass({
     return {
       reservationdateSS: "",
       reservationtimeSS: "",
-      plrdataSS: [],
+      playeremailSS: "",
+      playerpwSS: "",
     };
   },
-  // Handle the change when user interact with radio button
+  // Handle the change when player interact with radio button
   handleOptionChange: function (e) {
     this.setState({
       selectedOption: e.target.value,
     });
-  },
-  // Load Player Data
-  loadPlrData: function () {
-    $.ajax({
-      url: "/getplrdata",
-      dataType: "json",
-      cache: false,
-      success: function (plrdata) {
-        this.setState({ plrdataSS: plrdata });
-      }.bind(this),
-      error: function (xhr, status, err) {
-        console.error(this.props.url, status, err.toString());
-      }.bind(this),
-    });
-  },
-  // Check to see if items from database are mounted 
-  componentDidMount: function () {
-    this.loadPlrData();
   },
   handleSubmit: function (e) {
     e.preventDefault();
@@ -68,11 +51,12 @@ var Reservationform = React.createClass({
     // Assign the values from the text inputs to variables
     var reservationdateSS = this.state.reservationdateSS.trim();
     var reservationtimeSS = this.state.reservationtimeSS.trim();
-    var playeridSS = plrnumSS.value;
+    var playerpwSS = this.state.playerpwSS.trim();
+    var playeremailSS = this.state.playeremailSS.trim();
 
     // Check to see if inputs are missing
-    if (!reservationdateSS || !reservationtimeSS || !playeridSS) {
-      console.log("Field Missing");
+    if (!reservationdateSS || !reservationtimeSS || playeremailSS || playerpwSS) {
+      alert("Field Missing");
       return;
     }
 
@@ -80,7 +64,8 @@ var Reservationform = React.createClass({
     this.props.onReservationSubmit({
       reservationdateSS: reservationdateSS,
       reservationtimeSS: reservationtimeSS,
-      playeridSS: playeridSS,
+      playerpwSS: playerpwSS,
+      playeremailSS: playeremailSS,
     });
   },
   // Set validation for inputs with emails
@@ -118,7 +103,7 @@ var Reservationform = React.createClass({
                 <td>
                   <DateInput
                     value={this.state.reservationdateSS}
-                    uniqueName="reservationdate"
+                    uniqueName="reservationdateSS"
                     textArea={false}
                     required={true}
                     minCharacters={3}
@@ -135,7 +120,7 @@ var Reservationform = React.createClass({
                 <td>
                   <TimeInput
                     value={this.state.reservationtimeSS}
-                    uniqueName="reservationtime"
+                    uniqueName="reservationtimeSS"
                     textArea={false}
                     required={true}
                     minCharacters={3}
@@ -146,11 +131,39 @@ var Reservationform = React.createClass({
                   />
                 </td>
               </tr>
-              {/* Display PlayerList to show the Players at TCTG so player can select a player*/}
               <tr>
-                <th>Reservation Player</th>
+                {/* Email Input */}
+                <th>Player Email</th>
                 <td>
-                  <PlayerList data={this.state.plrdataSS} />
+                  <TextInput
+                    value={this.state.playeremailSS}
+                    uniqueName="playeremailSS"
+                    textArea={false}
+                    required={true}
+                    minCharacters={3}
+                    validate={this.validateEmail}
+                    onChange={this.setValue.bind(this, "playeremailSS")}
+                    errorMessage="Player Email is invalid"
+                    emptyMessage="Player Email is Required"
+                  />
+                </td>
+              </tr>
+              <tr>
+                {/* Password Input */}
+                <th>Player Password</th>
+                <td>
+                  <TextInput
+                    value={this.state.playerpwSS}
+                    uniqueName="playerpwSS"
+                    inputType="password"
+                    textArea={false}
+                    required={true}
+                    minCharacters={3}
+                    validate={this.commonValidate}
+                    onChange={this.setValue.bind(this, "playerpwSS")}
+                    errorMessage="Player Password is invalid"
+                    emptyMessage="Player Password is Required"
+                  />
                 </td>
               </tr>
             </tbody>
@@ -164,6 +177,102 @@ var Reservationform = React.createClass({
         </div>
       </form>
     );
+  },
+});
+// Text Input
+var TextInput = React.createClass({
+  getInitialState: function () {
+    return {
+      isEmpty: true,
+      value: null,
+      valid: false,
+      errorMessage: "",
+      errorVisible: false,
+    };
+  },
+
+  handleChange: function (event) {
+    this.validation(event.target.value);
+
+    if (this.props.onChange) {
+      this.props.onChange(event);
+    }
+  },
+
+  validation: function (value, valid) {
+    if (typeof valid === "undefined") {
+      valid = true;
+    }
+
+    var message = "";
+    var errorVisible = false;
+
+    if (!valid) {
+      message = this.props.errorMessage;
+      valid = false;
+      errorVisible = true;
+    } else if (this.props.required && jQuery.isEmptyObject(value)) {
+      message = this.props.emptyMessage;
+      valid = false;
+      errorVisible = true;
+    } else if (value.length < this.props.minCharacters) {
+      message = this.props.errorMessage;
+      valid = false;
+      errorVisible = true;
+    }
+
+    this.setState({
+      value: value,
+      isEmpty: jQuery.isEmptyObject(value),
+      valid: valid,
+      errorMessage: message,
+      errorVisible: errorVisible,
+    });
+  },
+
+  handleBlur: function (event) {
+    var valid = this.props.validate(event.target.value);
+    this.validation(event.target.value, valid);
+  },
+  render: function () {
+    if (this.props.textArea) {
+      return (
+        <div className={this.props.uniqueName}>
+          <textarea
+            placeholder={this.props.text}
+            className={"input input-" + this.props.uniqueName}
+            onChange={this.handleChange}
+            onBlur={this.handleBlur}
+            value={this.props.value}
+          />
+
+          <InputError
+            visible={this.state.errorVisible}
+            errorMessage={this.state.errorMessage}
+          />
+        </div>
+      );
+    } else {
+      return (
+        <div className={this.props.uniqueName}>
+          <input
+            type={this.props.inputType}
+            name={this.props.uniqueName}
+            id={this.props.uniqueName}
+            placeholder={this.props.text}
+            className={"input input-" + this.props.uniqueName}
+            onChange={this.handleChange}
+            onBlur={this.handleBlur}
+            value={this.props.value}
+          />
+
+          <InputError
+            visible={this.state.errorVisible}
+            errorMessage={this.state.errorMessage}
+          />
+        </div>
+      );
+    }
   },
 });
 
@@ -187,8 +296,8 @@ var InputError = React.createClass({
   },
 });
 
-// Create a new class for DateInput component 
-// to allow the user/player to enter in a Date   
+// Create a new class for DateInput component
+// to allow the user/player to enter in a Date
 var DateInput = React.createClass({
   getInitialState: function () {
     return {
@@ -233,7 +342,7 @@ var DateInput = React.createClass({
       errorVisible = true;
     }
 
-    // Set the value 
+    // Set the value
     this.setState({
       value: value,
       isEmpty: jQuery.isEmptyObject(value),
@@ -351,23 +460,5 @@ var TimeInput = React.createClass({
   },
 });
 
-// A list to select a Player from database
-var PlayerList = React.createClass({
-  render: function () {
-    var optionNodes = this.props.data.map(function (plrID) {
-      return (
-        <option key={plrID.dbplayer_id} value={plrID.dbplayer_id}>
-          {plrID.dbplayer_firstname} {plrID.dbplayer_lastname}
-        </option>
-      );
-    });
-    return (
-      <select name="plrnumSS" id="plrnumSS">
-        {optionNodes}
-      </select>
-    );
-  },
-});
-
-// Place Entire file into content to display on HTML page 
+// Place Entire file into content to display on HTML page
 ReactDOM.render(<ReservationBox />, document.getElementById("content"));
