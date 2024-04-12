@@ -149,7 +149,7 @@ var Purchase = React.createClass({
       <tr>
         <td>{this.props.purid}</td>
         <td>{this.props.purinformation}</td>
-        <td>{this.props.purdatetime}</td>
+        <td>{this.props.purdatetime.slice(0,16)}</td>
       </tr>
     );
   },

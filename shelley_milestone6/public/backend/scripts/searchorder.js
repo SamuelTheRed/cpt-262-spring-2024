@@ -198,7 +198,7 @@ var Order = React.createClass({
     return (
       <tr>
         <td>{this.props.ordid}</td>
-        <td>{this.props.orddatetime}</td>
+        <td>{this.props.orddatetime.slice(0,16)}</td>
         <td>{this.props.ordplayer}</td>
         <td>{this.props.orduser}</td>
       </tr>

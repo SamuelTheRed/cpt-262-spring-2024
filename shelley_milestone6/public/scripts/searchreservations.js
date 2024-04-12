@@ -189,7 +189,7 @@ var Reservation = React.createClass({
     return (
       <tr>
         <td>{this.props.resid}</td>
-        <td>{this.props.resdatetime}</td>
+        <td>{this.props.resdatetime.slice(0,16)}</td>
         <td>{this.props.resplayer}</td>
         <td>{this.props.resuser}</td>
       </tr>
