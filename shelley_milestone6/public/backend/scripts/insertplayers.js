@@ -10,8 +10,10 @@ var PlayerBox = React.createClass({
       }.bind(this),
       error: function (xhr, status, err) {
         console.error(this.props.url, status, err.toString());
+        alert(err.toString());
       }.bind(this),
     });
+    window.location.reload(true);
   },
   render: function () {
     return (
@@ -48,10 +50,17 @@ var Playerform = React.createClass({
 
     if (!this.validateEmail(playeremailSS)) {
       console.log("Bad Email " + this.validateEmail(playeremailSS));
+      alert("Bad Email");
       return;
     }
-    if (!playerfirstnameSS || !playerlastnameSS || !playeremailSS) {
+    if (!this.validatePhone(playerphoneSS)) {
+      console.log("Bad Phone Number " + this.validatePhone(playerphoneSS));
+      alert("Bad Phone Number");
+      return;
+    }
+    if (!playerfirstnameSS || !playerlastnameSS || !playeremailSS || !playerphoneSS || playerpwSS.length < 6) {
       console.log("Field Missing");
+      alert("Field Missing");
       return;
     }
     if (playerpwSS != playerpw2SS) {
@@ -75,6 +84,10 @@ var Playerform = React.createClass({
   },
   validateDollars: function (value) {
     var regex = /^\$?[0-9]+(\.[0-9][0-9])?$/;
+    return regex.test(value);
+  },
+  validatePhone: function (value) {
+    var regex = /\(?([0-9]{10})$/;
     return regex.test(value);
   },
   commonValidate: function () {
@@ -130,7 +143,7 @@ var Playerform = React.createClass({
                   value={this.state.playeremailSS}
                   uniqueName="playeremail"
                   textArea={false}
-                  required={false}
+                  required={true}
                   minCharacters={3}
                   validate={this.commonValidate}
                   onChange={this.setValue.bind(this, "playeremailSS")}
@@ -145,7 +158,7 @@ var Playerform = React.createClass({
                   value={this.state.playerphoneSS}
                   uniqueName="playerphone"
                   textArea={false}
-                  required={false}
+                  required={true}
                   minCharacters={3}
                   validate={this.commonValidate}
                   onChange={this.setValue.bind(this, "playerphoneSS")}
@@ -167,7 +180,7 @@ var Playerform = React.createClass({
                   value={this.state.playerpwSS}
                   uniqueName="playerpw"
                   textArea={false}
-                  required={false}
+                  required={true}
                   minCharacters={6}
                   validate={this.commonValidate}
                   onChange={this.setValue.bind(this, "playerpwSS")}
@@ -184,7 +197,7 @@ var Playerform = React.createClass({
                   value={this.state.playerpw2SS}
                   uniqueName="playerpw2"
                   textArea={false}
-                  required={false}
+                  required={true}
                   minCharacters={6}
                   validate={this.commonValidate}
                   onChange={this.setValue.bind(this, "playerpw2SS")}

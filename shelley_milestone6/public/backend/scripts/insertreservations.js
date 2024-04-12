@@ -14,6 +14,7 @@ var ReservationBox = React.createClass({
         console.error(this.props.url, status, err.toString());
       }.bind(this),
     });
+    window.location.reload(true);
   },
   // Render the Box onto HTML Page
   render: function () {

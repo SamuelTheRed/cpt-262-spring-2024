@@ -30,8 +30,10 @@ var OrderBox = React.createClass({
       }.bind(this),
       error: function (xhr, status, err) {
         console.error(this.props.url, status, err.toString());
+        alert(err.toString());
       }.bind(this),
     });
+    window.location.reload(true);
   },
   // Submit information to database
   handleOrderItemSubmit: function (orderItem) {
@@ -45,11 +47,14 @@ var OrderBox = React.createClass({
       }.bind(this),
       error: function (xhr, status, err) {
         console.error(this.props.url, status, err.toString());
+        alert(err.toString());
       }.bind(this),
     });
+    window.location.reload(true);
   },
   render: function () {
     if (this.state.viewthepage != "Manager") {
+      console.log(this.state.viewthepage);
       return <div>You do not have access to this page</div>;
     } else {
       return (
@@ -89,6 +94,7 @@ var Orderform = React.createClass({
       }.bind(this),
       error: function (xhr, status, err) {
         console.error(this.props.url, status, err.toString());
+        alert(err.toString());
       }.bind(this),
     });
   },
@@ -103,6 +109,7 @@ var Orderform = React.createClass({
       }.bind(this),
       error: function (xhr, status, err) {
         console.error(this.props.url, status, err.toString());
+        alert(err.toString());
       }.bind(this),
     });
   },
@@ -123,6 +130,7 @@ var Orderform = React.createClass({
     // Check to see if inputs are missing
     if (!orderdateSS || !ordertimeSS || !playeridSS) {
       console.log("Field Missing");
+      alert("Field Missing");
       return;
     }
 
@@ -239,6 +247,7 @@ var OrderItemform = React.createClass({
       }.bind(this),
       error: function (xhr, status, err) {
         console.error(this.props.url, status, err.toString());
+        alert(err.toString());
       }.bind(this),
     });
   },
@@ -253,6 +262,7 @@ var OrderItemform = React.createClass({
       }.bind(this),
       error: function (xhr, status, err) {
         console.error(this.props.url, status, err.toString());
+        alert(err.toString());
       }.bind(this),
     });
   },
@@ -272,6 +282,7 @@ var OrderItemform = React.createClass({
     // Check to see if inputs are missing
     if (!itemquantitySS || !orderidSS || !productidSS) {
       console.log("Field Missing");
+      alert("Field Missing");
       return;
     }
 

@@ -18,6 +18,7 @@ const con = mysql.createConnection({
   user: "sshell18_cpt262remote",
   password: "f3b6b5eb-7238-4f07-aaa6-d49848d2ec7c",
   database: "sshell18_cpt262_fall2024_final",
+  dateStrings: true,
 });
 
 con.connect(function (err) {
@@ -86,7 +87,7 @@ app.get("/getreservation/", function (req, res) {
     "`dbuser_firstname` FROM `Reservations` AS r INNER JOIN `Players` AS p ON " +
     "r.dbplayer_id=p.dbplayer_id LEFT JOIN `Users` AS u ON r.dbuser_id=u.dbuser_id " +
     "WHERE dbreservation_id LIKE ? AND dbreservation_datetime LIKE ? AND dbplayer_email LIKE ? " +
-    "AND dbuser_firstname LIKE ? ";
+    "AND dbuser_firstname LIKE ? ORDER BY dbreservation_datetime DESC ";
 
   var inserts = [
     "%" + rid + "%",
@@ -380,23 +381,59 @@ app.post("/reservation/", function (req, res) {
 app.post("/reservation-frontend/", function (req, res) {
   var rdate = req.body.reservationdateSS;
   var rtime = req.body.reservationtimeSS;
-  var pid = req.body.playeridSS;
+  var pemail = req.body.playeremailSS;
+  var ppw = req.body.playerpwSS;
   var uid = 0;
 
-  var sqlins =
-    "INSERT INTO Reservations (dbreservation_datetime, dbplayer_id, dbuser_id) VALUES (?, ?, ?)";
-  var rdatetime = rdate + " " + rtime;
-  var inserts = [rdatetime, parseInt(pid), parseInt(uid)];
 
-  var sql = mysql.format(sqlins, inserts);
+  var sqlsel = "select * from Players where dbplayer_email = ?";
+  var inserts = [pemail];
 
-  console.log(sql);
+  var sql = mysql.format(sqlsel, inserts);
+  console.log("SQL: " + sql);
+  con.query(sql, function (err, data) {
+    if (data.length > 0) {
+      var plrkey = data[0].dbplayer_id;
 
-  con.execute(sql, function (err, result) {
-    if (err) throw err;
-    console.log("1 record inserted");
-    res.redirect("insertreservations.html");
-    res.end();
+      bcrypt.compare(
+        ppw,
+        data[0].dbplayer_password,
+        function (err, passwordCorrect) {
+          if (err) {
+            throw err;
+          } else if (!passwordCorrect) {
+            console.log("Password incorrect");
+          } else {
+            console.log("Password correct");
+            // Create token specific to player
+            const token = jwt.sign({ plrkey }, jwtKey, {
+              algorithm: "HS256",
+              expiresIn: jwtExpirySeconds,
+            });
+            // Add cookie to user for page viewing validation
+            res.cookie("token", token, { maxAge: jwtExpirySeconds * 1000 });
+
+            var sqlins =
+              "INSERT INTO Reservations (dbreservation_datetime, dbplayer_id, dbuser_id) VALUES (?, ?, ?)";
+            var rdatetime = rdate + " " + rtime;
+            var inserts = [rdatetime, plrkey, parseInt(uid)];
+
+            var sql = mysql.format(sqlins, inserts);
+
+            console.log(sql);
+
+            con.execute(sql, function (err, result) {
+              if (err) throw err;
+              console.log("1 record inserted");
+              res.redirect("insertreservations.html");
+              res.end();
+            });
+          }
+        }
+      );
+    } else {
+      console.log("Incorrect user name or password");
+    }
   });
 });
 // Insert Orders
@@ -458,7 +495,7 @@ app.post("/player", function (req, res) {
   var theHashedPW = "";
   bcrypt.hash(ppw, saltRounds, function (err, hashedPassword) {
     if (err) {
-      console.log("Bad");
+      console.log("Invalid Password Process");
       return;
     } else {
       theHashedPW = hashedPassword;
@@ -485,7 +522,6 @@ app.post("/player", function (req, res) {
       if (err) throw err;
       console.log("1 record inserted");
       res.redirect("insertplayers.html");
-      alert("Record Inserted");
       res.end();
     });
   });
@@ -543,8 +579,6 @@ app.post("/user", function (req, res) {
   var uphone = req.body.userphoneSS;
   var urole = req.body.userroleSS;
   var upw = req.body.userpwSS;
-
-  console.log("pw" + upw);
 
   var saltRounds = 10;
   var theHashedPW = "";
@@ -787,7 +821,7 @@ app.post("/loginusr/", function (req, res) {
   console.log("SQL: " + sql);
   con.query(sql, function (err, data) {
     if (data.length > 0) {
-      var usrkey = data[0].dbuser_id;
+      var usrkey = data[0].dbuser_role;
 
       bcrypt.compare(
         upw,

@@ -13,6 +13,7 @@ var UserBox = React.createClass({
         console.error(this.props.url, status, err.toString());
       }.bind(this),
     });
+    window.location.reload(true);
   },
   render: function () {
     return (
@@ -52,7 +53,12 @@ var Userform = React.createClass({
       console.log("Bad Email " + this.validateEmail(useremailSS));
       return;
     }
-    if (!userfirstnameSS || !userlastnameSS || !useremailSS) {
+    if (!this.validatePhone(userphoneSS)) {
+      console.log("Bad Phone Number " + this.validatePhone(userphoneSS));
+      alert("Bad Phone Number");
+      return;
+    }
+    if (!userfirstnameSS || !userlastnameSS || !useremailSS || !userphoneSS || userpwSS.length < 6) {
       console.log("Field Missing");
       return;
     }
@@ -74,6 +80,10 @@ var Userform = React.createClass({
     var re =
       /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(value);
+  },
+  validatePhone: function (value) {
+    var regex = /\(?([0-9]{10})$/;
+    return regex.test(value);
   },
   validateDollars: function (value) {
     var regex = /^\$?[0-9]+(\.[0-9][0-9])?$/;

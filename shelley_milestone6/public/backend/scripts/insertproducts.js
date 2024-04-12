@@ -12,6 +12,7 @@ var ProductBox = React.createClass({
         console.error(this.props.url, status, err.toString());
       }.bind(this)
     });
+    window.location.reload(true);
   },
   render: function () {
     return (
