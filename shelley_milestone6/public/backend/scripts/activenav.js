@@ -55,6 +55,14 @@ var ShowNav = React.createClass({
             <a href="updateusers.html">Update User</a>
           </div>
         </div>
+
+        <div className="itemdropdown">
+          <button className="itembtn">My Account</button>
+          <div className="item-actions">
+            <a href="index.html">Login</a>
+            <a href="logoutuser.html">Logout</a>
+          </div>
+        </div>
       </nav>
     );
   },
