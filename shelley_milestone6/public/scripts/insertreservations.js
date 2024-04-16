@@ -55,7 +55,7 @@ var Reservationform = React.createClass({
     var playeremailSS = this.state.playeremailSS.trim();
 
     // Check to see if inputs are missing
-    if (!reservationdateSS || !reservationtimeSS || playeremailSS || playerpwSS) {
+    if (!reservationdateSS || !reservationtimeSS || !playeremailSS || !playerpwSS) {
       alert("Field Missing");
       return;
     }
