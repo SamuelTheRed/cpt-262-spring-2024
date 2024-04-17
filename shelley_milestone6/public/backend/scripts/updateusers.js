@@ -50,6 +50,7 @@ var UserBox = React.createClass({
         this.setState({ datalog: datalog });
         this.setState({ viewthepage: this.state.datalog[0].dbuser_role });
         console.log("Logged in:" + this.state.viewthepage);
+        this.loadUsersFromServer();
       }.bind(this),
       error: function (xhr, status, err) {
         console.error(this.props.url, status, err.toString());
@@ -59,7 +60,6 @@ var UserBox = React.createClass({
   // On load run function
   componentDidMount: function () {
     this.loadAllowLogin();
-    this.loadUsersFromServer();
     // setInterval(this.loadUsersFromServer, this.props.pollInterval);
   },
 

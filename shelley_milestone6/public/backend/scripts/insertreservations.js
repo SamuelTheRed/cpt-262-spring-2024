@@ -42,7 +42,7 @@ var ReservationBox = React.createClass({
   },
   // Render the Box onto HTML Page
   render: function () {
-    if (this.state.viewthepage != "Manager") {
+    if (this.state.viewthepage != "Manager" && this.state.viewthepage != "Front-Desk") {
       console.log("This: " + this.state.viewthepage);
       return <div>You do not have access to this page</div>;
     } else {

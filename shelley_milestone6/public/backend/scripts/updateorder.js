@@ -48,6 +48,7 @@ var OrderBox = React.createClass({
         this.setState({ datalog: datalog });
         this.setState({ viewthepage: this.state.datalog[0].dbuser_role });
         console.log("Logged in:" + this.state.viewthepage);
+        this.loadOrdersFromServer();
       }.bind(this),
       error: function (xhr, status, err) {
         console.error(this.props.url, status, err.toString());
@@ -57,7 +58,6 @@ var OrderBox = React.createClass({
   // On load run function
   componentDidMount: function () {
     this.loadAllowLogin();
-    this.loadOrdersFromServer();
     // setInterval(this.loadOrdersFromServer, this.props.pollInterval);
   },
 

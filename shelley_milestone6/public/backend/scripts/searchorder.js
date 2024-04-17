@@ -1,12 +1,12 @@
 var OrderBox = React.createClass({
   getInitialState: function () {
-    return { orddataSS: [], itmdataSS: [], datalog: [], viewthepage: "" };
+    return { data: [], itmdataSS: [], datalog: [], viewthepage: "" };
   },
   loadOrdersFromServer: function () {
-    console.log(orderidSS.value);
+    console.log("id3:" + orderidSS.value);
     $.ajax({
       url: "/getorder",
-      orddataSS: {
+      data: {
         orderidSS: orderidSS.value,
         orderdatetimeSS: orderdatetimeSS.value,
         orderplayerSS: orderplayerSS.value,
@@ -14,8 +14,9 @@ var OrderBox = React.createClass({
       },
       dataType: "json",
       cache: false,
-      success: function (orddata) {
-        this.setState({ orddataSS: orddata });
+      success: function (data) {
+        this.setState({ data: data });
+        console.log("data:" + data);
       }.bind(this),
       error: function (xhr, status, err) {
         console.error(this.props.url, status, err.toString());
@@ -26,7 +27,7 @@ var OrderBox = React.createClass({
     console.log(orderitemidSS.value);
     $.ajax({
       url: "/getorderitem",
-      itmdataSS: {
+      data: {
         orderitemidSS: orderitemidSS.value,
         orderitemproductSS: orderitemproductSS.value,
         orderitemorderSS: orderitemorderSS.value,
@@ -52,6 +53,8 @@ var OrderBox = React.createClass({
         this.setState({ datalog: datalog });
         this.setState({ viewthepage: this.state.datalog[0].dbuser_role });
         console.log("Logged in:" + this.state.viewthepage);
+        this.loadOrdersFromServer();
+        this.loadOrderItemsFromServer();
       }.bind(this),
       error: function (xhr, status, err) {
         console.error(this.props.url, status, err.toString());
@@ -61,12 +64,10 @@ var OrderBox = React.createClass({
   // On load run function
   componentDidMount: function () {
     this.loadAllowLogin();
-    this.loadOrdersFromServer();
-    this.loadOrderItemsFromServer();
   },
 
   render: function () {
-    if (this.state.viewthepage != "Manager") {
+    if (this.state.viewthepage != "Manager" && this.state.viewthepage != "Assistant") {
       console.log("This: " + this.state.viewthepage);
       return <div>You do not have access to this page</div>;
     } else {
@@ -119,13 +120,17 @@ var Orderform = React.createClass({
       orderuserSS: "",
     };
   },
-  handleSubmit: function (e) {
+  handleOrdSubmit: function (e) {
     e.preventDefault();
+    console.log("id:" + this.state.orderidSS);
 
     var orderidSS = this.state.orderidSS.trim();
     var orderdatetimeSS = this.state.orderdatetimeSS.trim();
     var orderplayerSS = this.state.orderplayerSS.trim();
     var orderuserSS = this.state.orderuserSS.trim();
+
+    
+    console.log("id2:" + orderidSS);
 
     this.props.onOrderSubmit({
       orderidSS: orderidSS,
@@ -134,14 +139,14 @@ var Orderform = React.createClass({
       orderuserSS: orderuserSS,
     });
   },
-  handleChange: function (event) {
+  handleOrdChange: function (event) {
     this.setState({
       [event.target.id]: event.target.value,
     });
   },
   render: function () {
     return (
-      <form onSubmit={this.handleSubmit}>
+      <form onSubmit={this.handleOrdSubmit}>
         <h2>Search Through Orders</h2>
         <table>
           <tbody>
@@ -153,7 +158,7 @@ var Orderform = React.createClass({
                   name="orderidSS"
                   id="orderidSS"
                   value={this.state.orderidSS}
-                  onChange={this.handleChange}
+                  onChange={this.handleOrdChange}
                 />
               </td>
             </tr>
@@ -164,7 +169,7 @@ var Orderform = React.createClass({
                   name="orderdatetimeSS"
                   id="orderdatetimeSS"
                   value={this.state.orderdatetimeSS}
-                  onChange={this.handleChange}
+                  onChange={this.handleOrdChange}
                 />
               </td>
             </tr>
@@ -175,7 +180,7 @@ var Orderform = React.createClass({
                   name="orderplayerSS"
                   id="orderplayerSS"
                   value={this.state.orderplayerSS}
-                  onChange={this.handleChange}
+                  onChange={this.handleOrdChange}
                 />
               </td>
             </tr>
@@ -186,7 +191,7 @@ var Orderform = React.createClass({
                   name="orderuserSS"
                   id="orderuserSS"
                   value={this.state.orderuserSS}
-                  onChange={this.handleChange}
+                  onChange={this.handleOrdChange}
                 />
               </td>
             </tr>
@@ -238,7 +243,7 @@ var OrderItemform = React.createClass({
       orderitemquantitySS: "",
     };
   },
-  handleSubmit: function (e) {
+  handleItmSubmit: function (e) {
     e.preventDefault();
 
     var orderitemidSS = this.state.orderitemidSS.trim();
@@ -260,7 +265,7 @@ var OrderItemform = React.createClass({
   },
   render: function () {
     return (
-      <form onSubmit={this.handleSubmit}>
+      <form onSubmit={this.handleItmSubmit}>
         <h2>Search Through OrderItems</h2>
         <table>
           <tbody>
@@ -318,7 +323,6 @@ var OrderItemform = React.createClass({
 });
 var OrderItemList = React.createClass({
   render: function () {
-    console.log(this.props.data);
     var orderItemNodes = this.props.data.map(function (orderitem) {
       //map the data to individual
       return (
@@ -327,7 +331,7 @@ var OrderItemList = React.createClass({
           orditmid={orderitem.dborderitem_id}
           orditmproduct={orderitem.dbproduct_name}
           orditmorder={orderitem.dborder_id}
-          orditmquantity={orderitem.dbordeeritem_quantity}
+          orditmquantity={orderitem.dborderitem_quantity}
         ></OrderItem>
       );
     });

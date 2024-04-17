@@ -33,6 +33,7 @@ var PurchaseBox = React.createClass({
         this.setState({ datalog: datalog });
         this.setState({ viewthepage: this.state.datalog[0].dbuser_role });
         console.log("Logged in:" + this.state.viewthepage);
+        this.loadPurchasesFromServer();
       }.bind(this),
       error: function (xhr, status, err) {
         console.error(this.props.url, status, err.toString());
@@ -42,11 +43,10 @@ var PurchaseBox = React.createClass({
   // On load run function
   componentDidMount: function () {
     this.loadAllowLogin();
-    this.loadPurchasesFromServer();
   },
 
   render: function () {
-    if (this.state.viewthepage != "Manager") {
+    if (this.state.viewthepage != "Manager" && this.state.viewthepage != "Assistant") {
       console.log("This: " + this.state.viewthepage);
       return <div>You do not have access to this page</div>;
     } else {

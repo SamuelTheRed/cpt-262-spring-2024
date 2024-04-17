@@ -35,6 +35,7 @@ var ReservationBox = React.createClass({
         this.setState({ datalog: datalog });
         this.setState({ viewthepage: this.state.datalog[0].dbuser_role });
         console.log("Logged in:" + this.state.viewthepage);
+        this.loadReservationsFromServer();
       }.bind(this),
       error: function (xhr, status, err) {
         console.error(this.props.url, status, err.toString());
@@ -44,11 +45,10 @@ var ReservationBox = React.createClass({
   // On load run function
   componentDidMount: function () {
     this.loadAllowLogin();
-    this.loadReservationsFromServer();
   },
   // Render Reservation Box
   render: function () {
-    if (this.state.viewthepage != "Manager") {
+    if (this.state.viewthepage != "Manager" && this.state.viewthepage != "Front-Desk" && this.state.viewthepage != "Assistant") {
       console.log("This: " + this.state.viewthepage);
       return <div>You do not have access to this page</div>;
     } else {

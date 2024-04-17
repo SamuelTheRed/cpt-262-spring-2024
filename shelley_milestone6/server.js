@@ -205,6 +205,7 @@ app.get("/getuser/", function (req, res) {
 // Search Order
 app.get("/getorder/", function (req, res) {
   var oid = req.query.orderidSS;
+  console.log("id4: " + oid);
   var odatetime = req.query.orderdatetimeSS;
   var oplayer = req.query.orderplayerSS;
   var ouser = req.query.orderuserSS;
@@ -235,28 +236,10 @@ app.get("/getorder/", function (req, res) {
     res.send(JSON.stringify(data));
   });
 });
-// Get Single Orders
-app.get("/getsingleord/", function (req, res) {
-  var okey = req.query.upordkeySS;
-
-  var sqlsel = "select * from Orders where dborder_id = ?";
-  var inserts = [okey];
-
-  var sql = mysql.format(sqlsel, inserts);
-
-  con.query(sql, function (err, data) {
-    if (err) {
-      console.error(err);
-      process.exit(1);
-    }
-
-    res.send(JSON.stringify(data));
-  });
-});
 // Search Order Item
 app.get("/getorderitem/", function (req, res) {
   var oiid = req.query.orderitemidSS;
-  var oiproduct = req.query.orderitordroductSS;
+  var oiproduct = req.query.orderitemproductSS;
   var oiorder = req.query.orderitemorderSS;
   var oiquantity = req.query.orderitemquantitySS;
 
@@ -264,7 +247,7 @@ app.get("/getorderitem/", function (req, res) {
     "SELECT * FROM `OrderItems` AS i INNER JOIN `Products` AS p ON " +
     "i.dbproduct_id=p.dbproduct_id LEFT JOIN `Orders` AS o ON i.dborder_id=o.dborder_id " +
     "WHERE dborderitem_id LIKE ? AND dbproduct_name LIKE ? AND o.dborder_id LIKE ? " +
-    "AND dborderitem_id LIKE ? ";
+    "AND dborderitem_quantity LIKE ? ";
 
   var inserts = [
     "%" + oiid + "%",
@@ -614,7 +597,24 @@ app.post("/user", function (req, res) {
   Update Page GET API Calls
 
 */
+// Get Single Orders
+app.get("/getsingleord/", function (req, res) {
+  var okey = req.query.upordkeySS;
 
+  var sqlsel = "select * from Orders where dborder_id = ?";
+  var inserts = [okey];
+
+  var sql = mysql.format(sqlsel, inserts);
+
+  con.query(sql, function (err, data) {
+    if (err) {
+      console.error(err);
+      process.exit(1);
+    }
+
+    res.send(JSON.stringify(data));
+  });
+});
 // Get Single Player
 app.get("/getsingleplr/", function (req, res) {
   var pid = req.query.upplridSS;
@@ -840,7 +840,7 @@ app.post("/loginusr/", function (req, res) {
             });
             // Add cookie to user for page viewing validation
             res.cookie("token", token, { maxAge: jwtExpirySeconds * 1000 });
-            res.send({ redirect: "insertorder.html" });
+            res.send({ redirect: "searchorder.html" });
           }
         }
       );

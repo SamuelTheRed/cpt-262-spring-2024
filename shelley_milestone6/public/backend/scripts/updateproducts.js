@@ -50,6 +50,7 @@ var ProductBox = React.createClass({
         this.setState({ datalog: datalog });
         this.setState({ viewthepage: this.state.datalog[0].dbuser_role });
         console.log("Logged in:" + this.state.viewthepage);
+        this.loadProductsFromServer();
       }.bind(this),
       error: function (xhr, status, err) {
         console.error(this.props.url, status, err.toString());
@@ -59,7 +60,6 @@ var ProductBox = React.createClass({
   // On load run function
   componentDidMount: function () {
     this.loadAllowLogin();
-    this.loadProductsFromServer();
     // setInterval(this.loadProductsFromServer, this.props.pollInterval);
   },
 
