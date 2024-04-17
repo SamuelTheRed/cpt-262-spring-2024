@@ -1,4 +1,28 @@
 var PlayerBox = React.createClass({
+  // Get Login Status
+  getInitialState: function () {
+    return { data: [], viewthepage: "" };
+  },
+  // Check Status
+  loadAllowLogin: function () {
+    $.ajax({
+      url: "/getloggedin",
+      dataType: "json",
+      cache: false,
+      success: function (datalog) {
+        this.setState({ data: datalog });
+        this.setState({ viewthepage: this.state.data[0].dbuser_role });
+        console.log("Logged in:" + this.state.viewthepage);
+      }.bind(this),
+      error: function (xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this),
+    });
+  },
+  // On load run function
+  componentDidMount: function () {
+    this.loadAllowLogin();
+  },
   handlePlayerSubmit: function (player) {
     $.ajax({
       url: "/player",
@@ -16,12 +40,17 @@ var PlayerBox = React.createClass({
     window.location.reload(true);
   },
   render: function () {
-    return (
-      <div className="PlayerBox">
-        <h1>Players</h1>
-        <Playerform onPlayerSubmit={this.handlePlayerSubmit} />
-      </div>
-    );
+    if (this.state.viewthepage != "Manager") {
+      console.log("This: " + this.state.viewthepage);
+      return <div>You do not have access to this page</div>;
+    } else {
+      return (
+        <div className="PlayerBox">
+          <h1>Players</h1>
+          <Playerform onPlayerSubmit={this.handlePlayerSubmit} />
+        </div>
+      );
+    }
   },
 });
 
@@ -58,7 +87,13 @@ var Playerform = React.createClass({
       alert("Bad Phone Number");
       return;
     }
-    if (!playerfirstnameSS || !playerlastnameSS || !playeremailSS || !playerphoneSS || playerpwSS.length < 6) {
+    if (
+      !playerfirstnameSS ||
+      !playerlastnameSS ||
+      !playeremailSS ||
+      !playerphoneSS ||
+      playerpwSS.length < 6
+    ) {
       console.log("Field Missing");
       alert("Field Missing");
       return;

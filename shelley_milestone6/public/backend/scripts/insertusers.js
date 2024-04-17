@@ -1,5 +1,29 @@
 // Create User Box
 var UserBox = React.createClass({
+  // Get Login Status
+  getInitialState: function () {
+    return { data: [], viewthepage: "" };
+  },
+  // Check Status
+  loadAllowLogin: function () {
+    $.ajax({
+      url: "/getloggedin",
+      dataType: "json",
+      cache: false,
+      success: function (datalog) {
+        this.setState({ data: datalog });
+        this.setState({ viewthepage: this.state.data[0].dbuser_role });
+        console.log("Logged in:" + this.state.viewthepage);
+      }.bind(this),
+      error: function (xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this),
+    });
+  },
+  // On load run function
+  componentDidMount: function () {
+    this.loadAllowLogin();
+  },
   handleUserSubmit: function (user) {
     $.ajax({
       url: "/user",
@@ -16,12 +40,17 @@ var UserBox = React.createClass({
     window.location.reload(true);
   },
   render: function () {
-    return (
-      <div className="UserBox">
-        <h1>Users</h1>
-        <Userform onUserSubmit={this.handleUserSubmit} />
-      </div>
-    );
+    if (this.state.viewthepage != "Manager") {
+      console.log("This: " + this.state.viewthepage);
+      return <div>You do not have access to this page</div>;
+    } else {
+      return (
+        <div className="UserBox">
+          <h1>Users</h1>
+          <Userform onUserSubmit={this.handleUserSubmit} />
+        </div>
+      );
+    }
   },
 });
 
@@ -58,7 +87,13 @@ var Userform = React.createClass({
       alert("Bad Phone Number");
       return;
     }
-    if (!userfirstnameSS || !userlastnameSS || !useremailSS || !userphoneSS || userpwSS.length < 6) {
+    if (
+      !userfirstnameSS ||
+      !userlastnameSS ||
+      !useremailSS ||
+      !userphoneSS ||
+      userpwSS.length < 6
+    ) {
       console.log("Field Missing");
       return;
     }

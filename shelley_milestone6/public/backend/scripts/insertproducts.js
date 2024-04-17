@@ -1,4 +1,28 @@
 var ProductBox = React.createClass({
+  // Get Login Status
+  getInitialState: function () {
+    return { data: [], viewthepage: "" };
+  },
+  // Check Status
+  loadAllowLogin: function () {
+    $.ajax({
+      url: "/getloggedin",
+      dataType: "json",
+      cache: false,
+      success: function (datalog) {
+        this.setState({ data: datalog });
+        this.setState({ viewthepage: this.state.data[0].dbuser_role });
+        console.log("Logged in:" + this.state.viewthepage);
+      }.bind(this),
+      error: function (xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this),
+    });
+  },
+  // On load run function
+  componentDidMount: function () {
+    this.loadAllowLogin();
+  },
   handleProductSubmit: function (product) {
     $.ajax({
       url: "/product",
@@ -10,17 +34,22 @@ var ProductBox = React.createClass({
       }.bind(this),
       error: function (xhr, status, err) {
         console.error(this.props.url, status, err.toString());
-      }.bind(this)
+      }.bind(this),
     });
     window.location.reload(true);
   },
   render: function () {
-    return (
-      <div className="ProductBox">
-        <h1>Products</h1>
-        <Productform onProductSubmit={this.handleProductSubmit} />
-      </div>
-    );
+    if (this.state.viewthepage != "Manager") {
+      console.log("This: " + this.state.viewthepage);
+      return <div>You do not have access to this page</div>;
+    } else {
+      return (
+        <div className="ProductBox">
+          <h1>Products</h1>
+          <Productform onProductSubmit={this.handleProductSubmit} />
+        </div>
+      );
+    }
   },
 });
 
@@ -30,7 +59,7 @@ var Productform = React.createClass({
       productnameSS: "",
       productdescriptionSS: "",
       productpriceSS: "",
-      productquantitySS: ""
+      productquantitySS: "",
     };
   },
   handleSubmit: function (e) {
@@ -50,7 +79,7 @@ var Productform = React.createClass({
       productnameSS: productnameSS,
       productdescriptionSS: productdescriptionSS,
       productpriceSS: productpriceSS,
-      productquantitySS: productquantitySS
+      productquantitySS: productquantitySS,
     });
   },
   validateEmail: function (value) {

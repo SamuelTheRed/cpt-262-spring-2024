@@ -1,8 +1,10 @@
 // Create Order Box
 var OrderBox = React.createClass({
+  // Get Login Status
   getInitialState: function () {
     return { data: [], viewthepage: "" };
   },
+  // Check Status
   loadAllowLogin: function () {
     $.ajax({
       url: "/getloggedin",
@@ -17,6 +19,10 @@ var OrderBox = React.createClass({
         console.error(this.props.url, status, err.toString());
       }.bind(this),
     });
+  },
+  // On load run function
+  componentDidMount: function () {
+    this.loadAllowLogin();
   },
   // Submit information to database
   handleOrderSubmit: function (order) {
@@ -54,7 +60,7 @@ var OrderBox = React.createClass({
   },
   render: function () {
     if (this.state.viewthepage != "Manager") {
-      console.log(this.state.viewthepage);
+      console.log("This: " + this.state.viewthepage);
       return <div>You do not have access to this page</div>;
     } else {
       return (

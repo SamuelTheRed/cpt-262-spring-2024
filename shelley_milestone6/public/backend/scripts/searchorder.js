@@ -1,6 +1,6 @@
 var OrderBox = React.createClass({
   getInitialState: function () {
-    return { orddataSS: [], itmdataSS: [] };
+    return { orddataSS: [], itmdataSS: [], datalog: [], viewthepage: "" };
   },
   loadOrdersFromServer: function () {
     console.log(orderidSS.value);
@@ -42,48 +42,71 @@ var OrderBox = React.createClass({
       }.bind(this),
     });
   },
+  // Check Status
+  loadAllowLogin: function () {
+    $.ajax({
+      url: "/getloggedin",
+      dataType: "json",
+      cache: false,
+      success: function (datalog) {
+        this.setState({ datalog: datalog });
+        this.setState({ viewthepage: this.state.datalog[0].dbuser_role });
+        console.log("Logged in:" + this.state.viewthepage);
+      }.bind(this),
+      error: function (xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this),
+    });
+  },
+  // On load run function
   componentDidMount: function () {
+    this.loadAllowLogin();
     this.loadOrdersFromServer();
     this.loadOrderItemsFromServer();
   },
 
   render: function () {
-    return (
-      <div id="theresults">
-        <div id="theleft">
-          <h1>Orders</h1>
-          <Orderform onOrderSubmit={this.loadOrdersFromServer} />
-          <br />
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Date Time</th>
-                <th>Player</th>
-                <th>User</th>
-              </tr>
-            </thead>
-            <OrderList data={this.state.data} />
-          </table>
+    if (this.state.viewthepage != "Manager") {
+      console.log("This: " + this.state.viewthepage);
+      return <div>You do not have access to this page</div>;
+    } else {
+      return (
+        <div id="theresults">
+          <div id="theleft">
+            <h1>Orders</h1>
+            <Orderform onOrderSubmit={this.loadOrdersFromServer} />
+            <br />
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Date Time</th>
+                  <th>Player</th>
+                  <th>User</th>
+                </tr>
+              </thead>
+              <OrderList data={this.state.data} />
+            </table>
+          </div>
+          <div id="theright">
+            <h1>Orders Items</h1>
+            <OrderItemform onOrderItemSubmit={this.loadOrderItemsFromServer} />
+            <br />
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Product</th>
+                  <th>Order</th>
+                  <th>Quantity</th>
+                </tr>
+              </thead>
+              <OrderItemList data={this.state.itmdataSS} />
+            </table>
+          </div>
         </div>
-        <div id="theright">
-          <h1>Orders Items</h1>
-          <OrderItemform onOrderItemSubmit={this.loadOrderItemsFromServer} />
-          <br />
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Product</th>
-                <th>Order</th>
-                <th>Quantity</th>
-              </tr>
-            </thead>
-            <OrderItemList data={this.state.itmdataSS} />
-          </table>
-        </div>
-      </div>
-    );
+      );
+    }
   },
 });
 
@@ -198,7 +221,7 @@ var Order = React.createClass({
     return (
       <tr>
         <td>{this.props.ordid}</td>
-        <td>{this.props.orddatetime.slice(0,16)}</td>
+        <td>{this.props.orddatetime.slice(0, 16)}</td>
         <td>{this.props.ordplayer}</td>
         <td>{this.props.orduser}</td>
       </tr>

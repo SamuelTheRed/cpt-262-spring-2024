@@ -87,7 +87,7 @@ app.get("/getreservation/", function (req, res) {
     "`dbuser_firstname` FROM `Reservations` AS r INNER JOIN `Players` AS p ON " +
     "r.dbplayer_id=p.dbplayer_id LEFT JOIN `Users` AS u ON r.dbuser_id=u.dbuser_id " +
     "WHERE dbreservation_id LIKE ? AND dbreservation_datetime LIKE ? AND dbplayer_email LIKE ? " +
-    "AND dbuser_firstname LIKE ? ORDER BY dbreservation_datetime DESC ";
+    "AND dbuser_firstname LIKE ? ORDER BY dbreservation_datetime DESC";
 
   var inserts = [
     "%" + rid + "%",
@@ -773,8 +773,8 @@ app.get("/getloggedin/", function (req, res) {
   } else {
     try {
       payload = jwt.verify(validtoken, jwtKey);
-      console.log("payload new:", payload.empkey);
-      viewpage = payload.empkey;
+      console.log("payload new:", payload.usrkey);
+      viewpage = payload.usrkey;
 
       var sqlsel = "select * from Users where dbuser_role = ?";
       var inserts = [viewpage];

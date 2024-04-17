@@ -1,6 +1,6 @@
 var PurchaseBox = React.createClass({
   getInitialState: function () {
-    return { data: [] };
+    return { data: [], datalog: [], viewthepage: "" };
   },
   // Load all purchases items from the database
   loadPurchasesFromServer: function () {
@@ -23,36 +23,58 @@ var PurchaseBox = React.createClass({
       }.bind(this),
     });
   },
-  // When site is loaded, load purchases
+  // Check Status
+  loadAllowLogin: function () {
+    $.ajax({
+      url: "/getloggedin",
+      dataType: "json",
+      cache: false,
+      success: function (datalog) {
+        this.setState({ datalog: datalog });
+        this.setState({ viewthepage: this.state.datalog[0].dbuser_role });
+        console.log("Logged in:" + this.state.viewthepage);
+      }.bind(this),
+      error: function (xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this),
+    });
+  },
+  // On load run function
   componentDidMount: function () {
+    this.loadAllowLogin();
     this.loadPurchasesFromServer();
   },
 
   render: function () {
-    return (
-      <div>
-        {/* Page Title */}
-        <div className="page_title">
-          <h1>Purchases</h1>
+    if (this.state.viewthepage != "Manager") {
+      console.log("This: " + this.state.viewthepage);
+      return <div>You do not have access to this page</div>;
+    } else {
+      return (
+        <div>
+          {/* Page Title */}
+          <div className="page_title">
+            <h1>Purchases</h1>
+          </div>
+          {/* Purchase Form */}
+          <Purchaseform onPurchaseSubmit={this.loadPurchasesFromServer} />
+          <br />
+          <div className="result_table">
+            {/* Result Table */}
+            <table>
+              <thead>
+                <tr className="result_headers">
+                  <th>ID</th>
+                  <th>Information</th>
+                  <th>Datetime</th>
+                </tr>
+              </thead>
+              <PurchaseList data={this.state.data} />
+            </table>
+          </div>
         </div>
-        {/* Purchase Form */}
-        <Purchaseform onPurchaseSubmit={this.loadPurchasesFromServer} />
-        <br />
-        <div className="result_table">
-          {/* Result Table */}
-          <table>
-            <thead>
-              <tr className="result_headers">
-                <th>ID</th>
-                <th>Information</th>
-                <th>Datetime</th>
-              </tr>
-            </thead>
-            <PurchaseList data={this.state.data} />
-          </table>
-        </div>
-      </div>
-    );
+      );
+    }
   },
 });
 
@@ -149,7 +171,7 @@ var Purchase = React.createClass({
       <tr>
         <td>{this.props.purid}</td>
         <td>{this.props.purinformation}</td>
-        <td>{this.props.purdatetime.slice(0,16)}</td>
+        <td>{this.props.purdatetime.slice(0, 16)}</td>
       </tr>
     );
   },

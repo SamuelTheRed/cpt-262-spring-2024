@@ -208,7 +208,7 @@ div#content {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  margin-bottom: 150px;
+  margin-bottom: 50px;
 }
 #content div.table_area {
   display: flex;

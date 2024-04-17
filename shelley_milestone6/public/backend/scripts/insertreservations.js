@@ -1,5 +1,29 @@
 // Create Reservation Box
 var ReservationBox = React.createClass({
+  // Get Login Status
+  getInitialState: function () {
+    return { data: [], viewthepage: "" };
+  },
+  // Check Status
+  loadAllowLogin: function () {
+    $.ajax({
+      url: "/getloggedin",
+      dataType: "json",
+      cache: false,
+      success: function (datalog) {
+        this.setState({ data: datalog });
+        this.setState({ viewthepage: this.state.data[0].dbuser_role });
+        console.log("Logged in:" + this.state.viewthepage);
+      }.bind(this),
+      error: function (xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this),
+    });
+  },
+  // On load run function
+  componentDidMount: function () {
+    this.loadAllowLogin();
+  },
   // Submit information to database
   handleReservationSubmit: function (reservation) {
     $.ajax({
@@ -18,14 +42,19 @@ var ReservationBox = React.createClass({
   },
   // Render the Box onto HTML Page
   render: function () {
-    return (
-      <div className="ReservationBox">
-        <div className="page_title">
-          <h1>Reservations</h1>
+    if (this.state.viewthepage != "Manager") {
+      console.log("This: " + this.state.viewthepage);
+      return <div>You do not have access to this page</div>;
+    } else {
+      return (
+        <div className="ReservationBox">
+          <div className="page_title">
+            <h1>Reservations</h1>
+          </div>
+          <Reservationform onReservationSubmit={this.handleReservationSubmit} />
         </div>
-        <Reservationform onReservationSubmit={this.handleReservationSubmit} />
-      </div>
-    );
+      );
+    }
   },
 });
 
@@ -74,7 +103,7 @@ var Reservationform = React.createClass({
       }.bind(this),
     });
   },
-  // Check to see if items from database are mounted 
+  // Check to see if items from database are mounted
   componentDidMount: function () {
     this.loadPlrData();
     this.loadUsrData();
@@ -213,8 +242,8 @@ var InputError = React.createClass({
   },
 });
 
-// Create a new class for DateInput component 
-// to allow the user/player to enter in a Date   
+// Create a new class for DateInput component
+// to allow the user/player to enter in a Date
 var DateInput = React.createClass({
   getInitialState: function () {
     return {
@@ -259,7 +288,7 @@ var DateInput = React.createClass({
       errorVisible = true;
     }
 
-    // Set the value 
+    // Set the value
     this.setState({
       value: value,
       isEmpty: jQuery.isEmptyObject(value),
@@ -413,5 +442,5 @@ var UserList = React.createClass({
   },
 });
 
-// Place Entire file into content to display on HTML page 
+// Place Entire file into content to display on HTML page
 ReactDOM.render(<ReservationBox />, document.getElementById("content"));

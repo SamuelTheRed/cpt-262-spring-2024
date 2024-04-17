@@ -1,6 +1,6 @@
 var OrderBox = React.createClass({
   getInitialState: function () {
-    return { data: [] };
+    return { data: [], datalog: [], viewthepage: "" };
   },
   loadOrdersFromServer: function () {
     console.log(orderidSS.value);
@@ -38,38 +38,63 @@ var OrderBox = React.createClass({
     });
     window.location.reload(true);
   },
+  // Check Status
+  loadAllowLogin: function () {
+    $.ajax({
+      url: "/getloggedin",
+      dataType: "json",
+      cache: false,
+      success: function (datalog) {
+        this.setState({ datalog: datalog });
+        this.setState({ viewthepage: this.state.datalog[0].dbuser_role });
+        console.log("Logged in:" + this.state.viewthepage);
+      }.bind(this),
+      error: function (xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this),
+    });
+  },
+  // On load run function
   componentDidMount: function () {
+    this.loadAllowLogin();
     this.loadOrdersFromServer();
     // setInterval(this.loadOrdersFromServer, this.props.pollInterval);
   },
 
   render: function () {
-    return (
-      <div>
-        <h1>Update Orders</h1>
-        <Orderform onOrderSubmit={this.loadOrdersFromServer} />
-        <br />
-        <div id="theresults">
-          <div id="theleft">
-            <table>
-              <thead>
-                <tr>
-                  <th>Key</th>
-                  <th>ID</th>
-                  <th>Date Time</th>
-                  <th>Player</th>
-                  <th>User</th>
-                </tr>
-              </thead>
-              <OrderList data={this.state.data} />
-            </table>
-          </div>
-          <div id="theright">
-            <OrderUpdateform onUpdateSubmit={this.updateSingleEmpFromServer} />
+    if (this.state.viewthepage != "Manager") {
+      console.log("This: " + this.state.viewthepage);
+      return <div>You do not have access to this page</div>;
+    } else {
+      return (
+        <div>
+          <h1>Update Orders</h1>
+          <Orderform onOrderSubmit={this.loadOrdersFromServer} />
+          <br />
+          <div id="theresults">
+            <div id="theleft">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Key</th>
+                    <th>ID</th>
+                    <th>Date Time</th>
+                    <th>Player</th>
+                    <th>User</th>
+                  </tr>
+                </thead>
+                <OrderList data={this.state.data} />
+              </table>
+            </div>
+            <div id="theright">
+              <OrderUpdateform
+                onUpdateSubmit={this.updateSingleEmpFromServer}
+              />
+            </div>
           </div>
         </div>
-      </div>
-    );
+      );
+    }
   },
 });
 

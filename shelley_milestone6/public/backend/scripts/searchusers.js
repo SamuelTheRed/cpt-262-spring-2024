@@ -1,6 +1,6 @@
 var UserBox = React.createClass({
   getInitialState: function () {
-    return { data: [] };
+    return { data: [], datalog: [], viewthepage: "" };
   },
   loadUsersFromServer: function () {
     console.log(useridSS.value);
@@ -24,31 +24,54 @@ var UserBox = React.createClass({
       }.bind(this),
     });
   },
+  // Check Status
+  loadAllowLogin: function () {
+    $.ajax({
+      url: "/getloggedin",
+      dataType: "json",
+      cache: false,
+      success: function (datalog) {
+        this.setState({ datalog: datalog });
+        this.setState({ viewthepage: this.state.datalog[0].dbuser_role });
+        console.log("Logged in:" + this.state.viewthepage);
+      }.bind(this),
+      error: function (xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this),
+    });
+  },
+  // On load run function
   componentDidMount: function () {
+    this.loadAllowLogin();
     this.loadUsersFromServer();
   },
 
   render: function () {
-    return (
-      <div>
-        <h1>Users</h1>
-        <Userform onUserSubmit={this.loadUsersFromServer} />
-        <br />
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>First Name</th>
-              <th>Last Name</th>
-              <th>Email</th>
-              <th>Phone</th>
-              <th>Role Tier</th>
-            </tr>
-          </thead>
-          <UserList data={this.state.data} />
-        </table>
-      </div>
-    );
+    if (this.state.viewthepage != "Manager") {
+      console.log("This: " + this.state.viewthepage);
+      return <div>You do not have access to this page</div>;
+    } else {
+      return (
+        <div>
+          <h1>Users</h1>
+          <Userform onUserSubmit={this.loadUsersFromServer} />
+          <br />
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Role Tier</th>
+              </tr>
+            </thead>
+            <UserList data={this.state.data} />
+          </table>
+        </div>
+      );
+    }
   },
 });
 

@@ -1,4 +1,28 @@
 var PurchaseBox = React.createClass({
+  // Get Login Status
+  getInitialState: function () {
+    return { data: [], viewthepage: "" };
+  },
+  // Check Status
+  loadAllowLogin: function () {
+    $.ajax({
+      url: "/getloggedin",
+      dataType: "json",
+      cache: false,
+      success: function (datalog) {
+        this.setState({ data: datalog });
+        this.setState({ viewthepage: this.state.data[0].dbuser_role });
+        console.log("Logged in:" + this.state.viewthepage);
+      }.bind(this),
+      error: function (xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this),
+    });
+  },
+  // On load run function
+  componentDidMount: function () {
+    this.loadAllowLogin();
+  },
   handlePurchaseSubmit: function (purchase) {
     $.ajax({
       url: "/purchase",
@@ -15,12 +39,17 @@ var PurchaseBox = React.createClass({
     window.location.reload(true);
   },
   render: function () {
-    return (
-      <div className="PurchaseBox">
-        <h1>Purchases</h1>
-        <Purchaseform onPurchaseSubmit={this.handlePurchaseSubmit} />
-      </div>
-    );
+    if (this.state.viewthepage != "Manager") {
+      console.log("This: " + this.state.viewthepage);
+      return <div>You do not have access to this page</div>;
+    } else {
+      return (
+        <div className="PurchaseBox">
+          <h1>Purchases</h1>
+          <Purchaseform onPurchaseSubmit={this.handlePurchaseSubmit} />
+        </div>
+      );
+    }
   },
 });
 
@@ -30,7 +59,7 @@ var Purchaseform = React.createClass({
       purchaseinformationSS: "",
       purchasedateSS: "",
       purchasetimeSS: "",
-      orddataSS: []
+      orddataSS: [],
     };
   },
   // Handle the change when user interact with radio button
@@ -74,7 +103,7 @@ var Purchaseform = React.createClass({
       purchaseinformationSS: purchaseinformationSS,
       purchasedateSS: purchasedateSS,
       purchasetimeSS: purchasetimeSS,
-      orderidSS: orderidSS
+      orderidSS: orderidSS,
     });
   },
   validateEmail: function (value) {

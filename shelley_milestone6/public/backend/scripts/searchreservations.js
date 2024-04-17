@@ -1,7 +1,7 @@
 // Create Reservation Box
 var ReservationBox = React.createClass({
   getInitialState: function () {
-    return { data: [] };
+    return { data: [], datalog: [], viewthepage: "" };
   },
   // Load all reservation items from the database
   loadReservationsFromServer: function () {
@@ -25,39 +25,61 @@ var ReservationBox = React.createClass({
       }.bind(this),
     });
   },
-  // When site is loaded, load reservations
+  // Check Status
+  loadAllowLogin: function () {
+    $.ajax({
+      url: "/getloggedin",
+      dataType: "json",
+      cache: false,
+      success: function (datalog) {
+        this.setState({ datalog: datalog });
+        this.setState({ viewthepage: this.state.datalog[0].dbuser_role });
+        console.log("Logged in:" + this.state.viewthepage);
+      }.bind(this),
+      error: function (xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this),
+    });
+  },
+  // On load run function
   componentDidMount: function () {
+    this.loadAllowLogin();
     this.loadReservationsFromServer();
   },
   // Render Reservation Box
   render: function () {
-    return (
-      <div>
-        {/* Page Title */}
-        <div className="page_title">
-          <h1>Reservations</h1>
+    if (this.state.viewthepage != "Manager") {
+      console.log("This: " + this.state.viewthepage);
+      return <div>You do not have access to this page</div>;
+    } else {
+      return (
+        <div>
+          {/* Page Title */}
+          <div className="page_title">
+            <h1>Reservations</h1>
+          </div>
+          {/* Reservation Form */}
+          <Reservationform
+            onReservationSubmit={this.loadReservationsFromServer}
+          />
+          <br />
+          <div className="result_table">
+            {/* Result Table */}
+            <table>
+              <thead>
+                <tr className="result_headers">
+                  <th>ID</th>
+                  <th>Date Time</th>
+                  <th>Player</th>
+                  <th>User</th>
+                </tr>
+              </thead>
+              <ReservationList data={this.state.data} />
+            </table>
+          </div>
         </div>
-        {/* Reservation Form */}
-        <Reservationform
-          onReservationSubmit={this.loadReservationsFromServer}
-        />
-        <br />
-        <div className="result_table">
-          {/* Result Table */}
-          <table>
-            <thead>
-              <tr className="result_headers">
-                <th>ID</th>
-                <th>Date Time</th>
-                <th>Player</th>
-                <th>User</th>
-              </tr>
-            </thead>
-            <ReservationList data={this.state.data} />
-          </table>
-        </div>
-      </div>
-    );
+      );
+    }
   },
 });
 
@@ -189,7 +211,7 @@ var Reservation = React.createClass({
     return (
       <tr>
         <td>{this.props.resid}</td>
-        <td>{this.props.resdatetime.slice(0,16)}</td> 
+        <td>{this.props.resdatetime.slice(0, 16)}</td>
         <td>{this.props.resplayer}</td>
         <td>{this.props.resuser}</td>
       </tr>

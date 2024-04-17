@@ -1,6 +1,6 @@
 var ProductBox = React.createClass({
   getInitialState: function () {
-    return { data: [] };
+    return { data: [], datalog: [], viewthepage: "" };
   },
   // Load all product items from the database
   loadProductsFromServer: function () {
@@ -40,39 +40,62 @@ var ProductBox = React.createClass({
     });
     window.location.reload(true);
   },
+  // Check Status
+  loadAllowLogin: function () {
+    $.ajax({
+      url: "/getloggedin",
+      dataType: "json",
+      cache: false,
+      success: function (datalog) {
+        this.setState({ datalog: datalog });
+        this.setState({ viewthepage: this.state.datalog[0].dbuser_role });
+        console.log("Logged in:" + this.state.viewthepage);
+      }.bind(this),
+      error: function (xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this),
+    });
+  },
+  // On load run function
   componentDidMount: function () {
+    this.loadAllowLogin();
     this.loadProductsFromServer();
     // setInterval(this.loadProductsFromServer, this.props.pollInterval);
   },
 
   render: function () {
-    return (
-      <div>
-        <h1>Update Products</h1>
-        <Productform onProductSubmit={this.loadProductsFromServer} />
-        <br />
-        <div id="theresults">
-          <div id="theleft">
-            <table>
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Name</th>
-                  <th>Price</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <ProductList data={this.state.data} />
-            </table>
-          </div>
-          <div id="theright">
-            <ProductUpdateform
-              onUpdateSubmit={this.updateSinglePdcFromServer}
-            />
+    if (this.state.viewthepage != "Manager") {
+      console.log("This: " + this.state.viewthepage);
+      return <div>You do not have access to this page</div>;
+    } else {
+      return (
+        <div>
+          <h1>Update Products</h1>
+          <Productform onProductSubmit={this.loadProductsFromServer} />
+          <br />
+          <div id="theresults">
+            <div id="theleft">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <ProductList data={this.state.data} />
+              </table>
+            </div>
+            <div id="theright">
+              <ProductUpdateform
+                onUpdateSubmit={this.updateSinglePdcFromServer}
+              />
+            </div>
           </div>
         </div>
-      </div>
-    );
+      );
+    }
   },
 });
 
@@ -193,11 +216,11 @@ var Productform = React.createClass({
 var ProductUpdateform = React.createClass({
   getInitialState: function () {
     return {
-        upproductidSS: "",
-        upproductnameSS: "",
-        upproductdescriptionSS: "",
-        upproductpriceSS: "",
-        upproductquantitySS: "",
+      upproductidSS: "",
+      upproductnameSS: "",
+      upproductdescriptionSS: "",
+      upproductpriceSS: "",
+      upproductquantitySS: "",
     };
   },
   handleUpOptionChange: function (e) {
@@ -215,11 +238,11 @@ var ProductUpdateform = React.createClass({
     var upproductquantitySS = uppdcquantitySS.value;
 
     this.props.onUpdateSubmit({
-        upproductidSS: upproductidSS,
-        upproductnameSS: upproductnameSS,
-        upproductdescriptionSS: upproductdescriptionSS,
-        upproductpriceSS: upproductpriceSS,
-        upproductquantitySS: upproductquantitySS,
+      upproductidSS: upproductidSS,
+      upproductnameSS: upproductnameSS,
+      upproductdescriptionSS: upproductdescriptionSS,
+      upproductpriceSS: upproductpriceSS,
+      upproductquantitySS: upproductquantitySS,
     });
   },
   handleUpChange: function (event) {
@@ -234,54 +257,54 @@ var ProductUpdateform = React.createClass({
           <form onSubmit={this.handleUpSubmit}>
             <table>
               <tbody>
-              <tr>
-                <th>Product Name</th>
-                <td>
-                  <input
-                    type="text"
-                    name="uppdcnameSS"
-                    id="uppdcnameSS"
-                    value={this.state.uppdcnameSS}
-                    onChange={this.handleChange}
-                  />
-                </td>
-              </tr>
-              <tr>
-                <th>Product Description</th>
-                <td>
-                  <input
-                    type="text"
-                    name="uppdcdescriptionSS"
-                    id="uppdcdescriptionSS"
-                    value={this.state.uppdcdescriptionSS}
-                    onChange={this.handleChange}
-                  />
-                </td>
-              </tr>
-              <tr>
-                <th>Product Price</th>
-                <td>
-                  <input
-                    type="text"
-                    name="uppdcpriceSS"
-                    id="uppdcpriceSS"
-                    value={this.state.uppdcpriceSS}
-                    onChange={this.handleChange}
-                  />
-                </td>
-              </tr>
-              <tr>
-                <th>Product Quantity</th>
-                <td>
-                  <input
-                    type="text"
-                    name="uppdcquantitySS"
-                    id="uppdcquantitySS"
-                    value={this.state.uppdcquantitySS}
-                    onChange={this.handleChange}
-                  />
-                </td>
-              </tr>
+                <tr>
+                  <th>Product Name</th>
+                  <td>
+                    <input
+                      type="text"
+                      name="uppdcnameSS"
+                      id="uppdcnameSS"
+                      value={this.state.uppdcnameSS}
+                      onChange={this.handleChange}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <th>Product Description</th>
+                  <td>
+                    <input
+                      type="text"
+                      name="uppdcdescriptionSS"
+                      id="uppdcdescriptionSS"
+                      value={this.state.uppdcdescriptionSS}
+                      onChange={this.handleChange}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <th>Product Price</th>
+                  <td>
+                    <input
+                      type="text"
+                      name="uppdcpriceSS"
+                      id="uppdcpriceSS"
+                      value={this.state.uppdcpriceSS}
+                      onChange={this.handleChange}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <th>Product Quantity</th>
+                  <td>
+                    <input
+                      type="text"
+                      name="uppdcquantitySS"
+                      id="uppdcquantitySS"
+                      value={this.state.uppdcquantitySS}
+                      onChange={this.handleChange}
+                    />
+                  </td>
+                </tr>
               </tbody>
             </table>
             <br />

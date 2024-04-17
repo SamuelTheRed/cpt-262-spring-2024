@@ -1,9 +1,9 @@
 // Create Product Box
 var ProductBox = React.createClass({
   getInitialState: function () {
-    return { data: [] };
+    return { data: [], datalog: [], viewthepage: "" };
   },
-// Load all product items from the database
+  // Load all product items from the database
   loadProductsFromServer: function () {
     console.log(productidSS.value);
     $.ajax({
@@ -25,38 +25,60 @@ var ProductBox = React.createClass({
       }.bind(this),
     });
   },
-  // When site is loaded, load products
+  // Check Status
+  loadAllowLogin: function () {
+    $.ajax({
+      url: "/getloggedin",
+      dataType: "json",
+      cache: false,
+      success: function (datalog) {
+        this.setState({ datalog: datalog });
+        this.setState({ viewthepage: this.state.datalog[0].dbuser_role });
+        console.log("Logged in:" + this.state.viewthepage);
+      }.bind(this),
+      error: function (xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this),
+    });
+  },
+  // On load run function
   componentDidMount: function () {
+    this.loadAllowLogin();
     this.loadProductsFromServer();
   },
   // Render Product Box
   render: function () {
-    return (
-      <div>
-        {/* Page Title */}
-        <div className="page_title">
-          <h1>Products</h1>
+    if (this.state.viewthepage != "Manager") {
+      console.log("This: " + this.state.viewthepage);
+      return <div>You do not have access to this page</div>;
+    } else {
+      return (
+        <div>
+          {/* Page Title */}
+          <div className="page_title">
+            <h1>Products</h1>
+          </div>
+          {/* Product Form */}
+          <Productform onProductSubmit={this.loadProductsFromServer} />
+          <br />
+          <div className="result_table">
+            {/* Result Table */}
+            <table>
+              <thead>
+                <tr className="result_headers">
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Price</th>
+                  <th>Quantity</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <ProductList data={this.state.data} />
+            </table>
+          </div>
         </div>
-        {/* Product Form */}
-        <Productform onProductSubmit={this.loadProductsFromServer} />
-        <br />
-        <div className="result_table">
-          {/* Result Table */}
-        <table>
-          <thead>
-            <tr className="result_headers">
-              <th>ID</th>
-              <th>Name</th>
-              <th>Price</th>
-              <th>Quantity</th>
-              <th>Description</th>
-            </tr>
-          </thead>
-          <ProductList data={this.state.data} />
-        </table>
-        </div>
-      </div>
-    );
+      );
+    }
   },
 });
 

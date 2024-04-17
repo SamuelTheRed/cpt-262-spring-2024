@@ -1,6 +1,6 @@
 var PlayerBox = React.createClass({
   getInitialState: function () {
-    return { data: [] };
+    return { data: [], datalog: [], viewthepage: "" };
   },
   loadPlayersFromServer: function () {
     console.log(playeridSS.value);
@@ -40,37 +40,62 @@ var PlayerBox = React.createClass({
     });
     window.location.reload(true);
   },
+  // Check Status
+  loadAllowLogin: function () {
+    $.ajax({
+      url: "/getloggedin",
+      dataType: "json",
+      cache: false,
+      success: function (datalog) {
+        this.setState({ datalog: datalog });
+        this.setState({ viewthepage: this.state.datalog[0].dbuser_role });
+        console.log("Logged in:" + this.state.viewthepage);
+      }.bind(this),
+      error: function (xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this),
+    });
+  },
+  // On load run function
   componentDidMount: function () {
+    this.loadAllowLogin();
     this.loadPlayersFromServer();
     // setInterval(this.loadPlayersFromServer, this.props.pollInterval);
   },
 
   render: function () {
-    return (
-      <div>
-        <h1>Update Players</h1>
-        <Playerform onPlayerSubmit={this.loadPlayersFromServer} />
-        <br />
-        <div id="theresults">
-          <div id="theleft">
-            <table>
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>First Name</th>
-                  <th>Email</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <PlayerList data={this.state.data} />
-            </table>
-          </div>
-          <div id="theright">
-            <PlayerUpdateform onUpdateSubmit={this.updateSinglePlrFromServer} />
+    if (this.state.viewthepage != "Manager") {
+      console.log("This: " + this.state.viewthepage);
+      return <div>You do not have access to this page</div>;
+    } else {
+      return (
+        <div>
+          <h1>Update Players</h1>
+          <Playerform onPlayerSubmit={this.loadPlayersFromServer} />
+          <br />
+          <div id="theresults">
+            <div id="theleft">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>First Name</th>
+                    <th>Email</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <PlayerList data={this.state.data} />
+              </table>
+            </div>
+            <div id="theright">
+              <PlayerUpdateform
+                onUpdateSubmit={this.updateSinglePlrFromServer}
+              />
+            </div>
           </div>
         </div>
-      </div>
-    );
+      );
+    }
   },
 });
 
@@ -209,7 +234,7 @@ var PlayerUpdateform = React.createClass({
       upplayeremailSS: "",
       upplayerphoneSS: "",
       upplayerrewardsSS: "",
-      updata: []
+      updata: [],
     };
   },
   handleUpOptionChange: function (e) {
@@ -233,7 +258,7 @@ var PlayerUpdateform = React.createClass({
       upplayerlastnameSS: upplayerlastnameSS,
       upplayeremailSS: upplayeremailSS,
       upplayerphoneSS: upplayerphoneSS,
-      upplayerrewardsSS: upplayerrewardsSS
+      upplayerrewardsSS: upplayerrewardsSS,
     });
   },
   handleUpChange: function (event) {
