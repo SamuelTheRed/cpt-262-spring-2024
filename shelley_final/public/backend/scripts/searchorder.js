@@ -1,0 +1,356 @@
+var OrderBox = React.createClass({
+  getInitialState: function () {
+    return { data: [], itmdataSS: [], datalog: [], viewthepage: "" };
+  },
+  loadOrdersFromServer: function () {
+    console.log("id3:" + orderidSS.value);
+    $.ajax({
+      url: "/getorder",
+      data: {
+        orderidSS: orderidSS.value,
+        orderdatetimeSS: orderdatetimeSS.value,
+        orderplayerSS: orderplayerSS.value,
+        orderuserSS: orderuserSS.value,
+      },
+      dataType: "json",
+      cache: false,
+      success: function (data) {
+        this.setState({ data: data });
+        console.log("data:" + data);
+      }.bind(this),
+      error: function (xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this),
+    });
+  },
+  loadOrderItemsFromServer: function () {
+    console.log(orderitemidSS.value);
+    $.ajax({
+      url: "/getorderitem",
+      data: {
+        orderitemidSS: orderitemidSS.value,
+        orderitemproductSS: orderitemproductSS.value,
+        orderitemorderSS: orderitemorderSS.value,
+        orderitemquantitySS: orderitemquantitySS.value,
+      },
+      dataType: "json",
+      cache: false,
+      success: function (data) {
+        this.setState({ itmdataSS: data });
+      }.bind(this),
+      error: function (xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this),
+    });
+  },
+  // Check Status
+  loadAllowLogin: function () {
+    $.ajax({
+      url: "/getloggedin",
+      dataType: "json",
+      cache: false,
+      success: function (datalog) {
+        this.setState({ datalog: datalog });
+        this.setState({ viewthepage: this.state.datalog[0].dbuser_role });
+        console.log("Logged in:" + this.state.viewthepage);
+        this.loadOrdersFromServer();
+        this.loadOrderItemsFromServer();
+      }.bind(this),
+      error: function (xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this),
+    });
+  },
+  // On load run function
+  componentDidMount: function () {
+    this.loadAllowLogin();
+  },
+
+  render: function () {
+    if (this.state.viewthepage != "Manager" && this.state.viewthepage != "Assistant") {
+      console.log("This: " + this.state.viewthepage);
+      return <div>You do not have access to this page</div>;
+    } else {
+      return (
+        <div id="theresults">
+          <div id="theleft">
+            <h1>Orders</h1>
+            <Orderform onOrderSubmit={this.loadOrdersFromServer} />
+            <br />
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Date Time</th>
+                  <th>Player</th>
+                  <th>User</th>
+                </tr>
+              </thead>
+              <OrderList data={this.state.data} />
+            </table>
+          </div>
+          <div id="theright">
+            <h1>Orders Items</h1>
+            <OrderItemform onOrderItemSubmit={this.loadOrderItemsFromServer} />
+            <br />
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Product</th>
+                  <th>Order</th>
+                  <th>Quantity</th>
+                </tr>
+              </thead>
+              <OrderItemList data={this.state.itmdataSS} />
+            </table>
+          </div>
+        </div>
+      );
+    }
+  },
+});
+
+var Orderform = React.createClass({
+  getInitialState: function () {
+    return {
+      orderidSS: "",
+      orderdatetimeSS: "",
+      orderplayerSS: "",
+      orderuserSS: "",
+    };
+  },
+  handleOrdSubmit: function (e) {
+    e.preventDefault();
+    console.log("id:" + this.state.orderidSS);
+
+    var orderidSS = this.state.orderidSS.trim();
+    var orderdatetimeSS = this.state.orderdatetimeSS.trim();
+    var orderplayerSS = this.state.orderplayerSS.trim();
+    var orderuserSS = this.state.orderuserSS.trim();
+
+    
+    console.log("id2:" + orderidSS);
+
+    this.props.onOrderSubmit({
+      orderidSS: orderidSS,
+      orderdatetimeSS: orderdatetimeSS,
+      orderplayerSS: orderplayerSS,
+      orderuserSS: orderuserSS,
+    });
+  },
+  handleOrdChange: function (event) {
+    this.setState({
+      [event.target.id]: event.target.value,
+    });
+  },
+  render: function () {
+    return (
+      <form onSubmit={this.handleOrdSubmit}>
+        <h2>Search Through Orders</h2>
+        <table>
+          <tbody>
+            <tr>
+              <th>Order ID</th>
+              <td>
+                <input
+                  type="text"
+                  name="orderidSS"
+                  id="orderidSS"
+                  value={this.state.orderidSS}
+                  onChange={this.handleOrdChange}
+                />
+              </td>
+            </tr>
+            <tr>
+              <th>Order Date Time</th>
+              <td>
+                <input
+                  name="orderdatetimeSS"
+                  id="orderdatetimeSS"
+                  value={this.state.orderdatetimeSS}
+                  onChange={this.handleOrdChange}
+                />
+              </td>
+            </tr>
+            <tr>
+              <th>Order Player</th>
+              <td>
+                <input
+                  name="orderplayerSS"
+                  id="orderplayerSS"
+                  value={this.state.orderplayerSS}
+                  onChange={this.handleOrdChange}
+                />
+              </td>
+            </tr>
+            <tr>
+              <th>Order User</th>
+              <td>
+                <input
+                  name="orderuserSS"
+                  id="orderuserSS"
+                  value={this.state.orderuserSS}
+                  onChange={this.handleOrdChange}
+                />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <input type="submit" value="Search Order" />
+      </form>
+    );
+  },
+});
+var OrderList = React.createClass({
+  render: function () {
+    var orderNodes = this.props.data.map(function (order) {
+      //map the data to individual
+      return (
+        <Order
+          key={order.dborder_id}
+          ordid={order.dborder_id}
+          orddatetime={order.dborder_datetime}
+          ordplayer={order.dbplayer_lastname}
+          orduser={order.dbuser_firstname}
+        ></Order>
+      );
+    });
+
+    //print all the nodes in the list
+    return <tbody>{orderNodes}</tbody>;
+  },
+});
+var Order = React.createClass({
+  render: function () {
+    return (
+      <tr>
+        <td>{this.props.ordid}</td>
+        <td>{this.props.orddatetime.slice(0, 16)}</td>
+        <td>{this.props.ordplayer}</td>
+        <td>{this.props.orduser}</td>
+      </tr>
+    );
+  },
+});
+
+var OrderItemform = React.createClass({
+  getInitialState: function () {
+    return {
+      orderitemidSS: "",
+      orderitemproductSS: "",
+      orderitemorderSS: "",
+      orderitemquantitySS: "",
+    };
+  },
+  handleItmSubmit: function (e) {
+    e.preventDefault();
+
+    var orderitemidSS = this.state.orderitemidSS.trim();
+    var orderitemproductSS = this.state.orderitemproductSS.trim();
+    var orderitemorderSS = this.state.orderitemorderSS.trim();
+    var orderitemquantitySS = this.state.orderitemquantitySS.trim();
+
+    this.props.onOrderItemSubmit({
+      orderitemidSS: orderitemidSS,
+      orderitemproductSS: orderitemproductSS,
+      orderitemorderSS: orderitemorderSS,
+      orderitemquantitySS: orderitemquantitySS,
+    });
+  },
+  handleChange: function (event) {
+    this.setState({
+      [event.target.id]: event.target.value,
+    });
+  },
+  render: function () {
+    return (
+      <form onSubmit={this.handleItmSubmit}>
+        <h2>Search Through OrderItems</h2>
+        <table>
+          <tbody>
+            <tr>
+              <th>OrderItem ID</th>
+              <td>
+                <input
+                  type="text"
+                  name="orderitemidSS"
+                  id="orderitemidSS"
+                  value={this.state.orderitemidSS}
+                  onChange={this.handleChange}
+                />
+              </td>
+            </tr>
+            <tr>
+              <th>Order Item Product Name</th>
+              <td>
+                <input
+                  name="orderitemproductSS"
+                  id="orderitemproductSS"
+                  value={this.state.orderitemproductSS}
+                  onChange={this.handleChange}
+                />
+              </td>
+            </tr>
+            <tr>
+              <th>Order ID</th>
+              <td>
+                <input
+                  name="orderitemorderSS"
+                  id="orderitemorderSS"
+                  value={this.state.orderitemorderSS}
+                  onChange={this.handleChange}
+                />
+              </td>
+            </tr>
+            <tr>
+              <th>Order Item Quantity</th>
+              <td>
+                <input
+                  name="orderitemquantitySS"
+                  id="orderitemquantitySS"
+                  value={this.state.orderitemquantitySS}
+                  onChange={this.handleChange}
+                />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <input type="submit" value="Search Order Item" />
+      </form>
+    );
+  },
+});
+var OrderItemList = React.createClass({
+  render: function () {
+    var orderItemNodes = this.props.data.map(function (orderitem) {
+      //map the data to individual
+      return (
+        <OrderItem
+          key={orderitem.dborderitem_id}
+          orditmid={orderitem.dborderitem_id}
+          orditmproduct={orderitem.dbproduct_name}
+          orditmorder={orderitem.dborder_id}
+          orditmquantity={orderitem.dborderitem_quantity}
+        ></OrderItem>
+      );
+    });
+
+    //print all the nodes in the list
+    return <tbody>{orderItemNodes}</tbody>;
+  },
+});
+var OrderItem = React.createClass({
+  render: function () {
+    return (
+      <tr>
+        <td>{this.props.orditmid}</td>
+        <td>{this.props.orditmproduct}</td>
+        <td>{this.props.orditmorder}</td>
+        <td>{this.props.orditmquantity}</td>
+      </tr>
+    );
+  },
+});
+
+ReactDOM.render(<OrderBox />, document.getElementById("content"));

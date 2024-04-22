@@ -1,0 +1,135 @@
+* {
+  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+}
+
+body {
+  background-color: #7a4f25;
+  color: white;
+  margin: 0%;
+}
+
+div.logo {
+  width: 100%;
+  height: 30px;
+  background-color: #ffe;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 0px;
+}
+  .logo img {
+    height: 30px;
+  }
+
+nav {
+  height: fit-content;
+  padding: 10px 0px;
+  width: 100%;
+  background-color: #000a;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+  div.itemdropdown {
+    position: relative;
+    display: inline-block;
+  }
+  .itemdropdown:hover .item-actions {
+    display: block;
+  }
+  .itemdropdown:hover .itembtn {
+    background-color: #fff1;
+  }
+  
+    button.itembtn {
+      background-color: #fff2;
+      padding: 4px 8px;
+      margin: 5px;
+      border: none;
+      border-radius: 5pt;
+      text-decoration: none;
+      color: white;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    div.item-actions {
+      display: none;
+      position: absolute;
+      z-index: 1;
+      background-color: #fff3;
+      border-top-right-radius: 10px;
+      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 10px;
+    }
+    
+      .item-actions a {
+        background-color: #432c;
+        padding: 4px 8px;
+        margin: 5px;
+        border-radius: 5pt;
+        text-decoration: none;
+        color: white;
+        height: 20px;
+        text-wrap: nowrap;
+        display: block;
+      }
+        .item-actions a:hover {
+          background-color: #654c;
+        }
+
+main,
+div#content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 10px;
+}
+main img {
+  max-width: 600px;
+}
+
+div#content {
+  background-color: #fffa;
+  padding: 10px;
+  color: rgb(68, 0, 0);
+}
+  #content input {
+    border-radius: 5pt;
+  }
+  #content div.contact {
+    padding: 20px;
+    margin-top: 30px;
+    border: rgb(68, 0, 0) solid 1px;
+    border-radius: 5pt;
+}
+
+table,
+th,
+td {
+  border: 1px solid rgba(255, 255, 255, 0.155);
+}
+
+div {
+  text-align: center;
+}
+
+#theform {
+  display: inline-block;
+}
+
+#theresults {
+  display: inline-block;
+}
+
+#theleft {
+  float: left;
+  padding-right: 20px;
+}
+
+#theright {
+  float: right;
+}
