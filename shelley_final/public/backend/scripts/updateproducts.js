@@ -38,7 +38,9 @@ var ProductBox = React.createClass({
         console.error(this.props.url, status, err.toString());
       }.bind(this),
     });
-    window.location.reload(true);
+    setTimeout(function(){
+      window.location.reload(true);
+    }, 500);
   },
   // Check Status
   loadAllowLogin: function () {

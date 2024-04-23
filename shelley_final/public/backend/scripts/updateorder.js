@@ -2,27 +2,28 @@ var OrderBox = React.createClass({
   getInitialState: function () {
     return { data: [], datalog: [], viewthepage: "" };
   },
-  loadOrdersFromServer: function () {
-    console.log(orderidSS.value);
+  // Load all order items from the database
+  loadOrderItemsFromServer: function () {
+    console.log(orderitemidSS.value);
     $.ajax({
-      url: "/getorder",
-      orddataSS: {
-        orderidSS: orderidSS.value,
-        orderdatetimeSS: orderdatetimeSS.value,
-        orderplayerSS: orderplayerSS.value,
-        orderuserSS: orderuserSS.value,
+      url: "/getorderitem",
+      data: {
+        orderitemidSS: orderitemidSS.value,
+        orderitemproductSS: orderitemproductSS.value,
+        orderitemorderSS: orderitemorderSS.value,
+        orderitemquantitySS: orderitemquantitySS.value,
       },
       dataType: "json",
       cache: false,
-      success: function (orddata) {
-        this.setState({ orddataSS: orddata });
+      success: function (data) {
+        this.setState({ data: data });
       }.bind(this),
       error: function (xhr, status, err) {
         console.error(this.props.url, status, err.toString());
       }.bind(this),
     });
   },
-  updateSingleEmpFromServer: function (order) {
+  updateSingleOrdFromServer: function (order) {
     $.ajax({
       url: "/updatesingleord",
       dataType: "json",
@@ -36,7 +37,9 @@ var OrderBox = React.createClass({
         console.error(this.props.url, status, err.toString());
       }.bind(this),
     });
-    window.location.reload(true);
+    setTimeout(function(){
+      window.location.reload(true);
+    }, 500);
   },
   // Check Status
   loadAllowLogin: function () {
@@ -48,7 +51,7 @@ var OrderBox = React.createClass({
         this.setState({ datalog: datalog });
         this.setState({ viewthepage: this.state.datalog[0].dbuser_role });
         console.log("Logged in:" + this.state.viewthepage);
-        this.loadOrdersFromServer();
+        this.loadOrderItemsFromServer();
       }.bind(this),
       error: function (xhr, status, err) {
         console.error(this.props.url, status, err.toString());
@@ -58,7 +61,7 @@ var OrderBox = React.createClass({
   // On load run function
   componentDidMount: function () {
     this.loadAllowLogin();
-    // setInterval(this.loadOrdersFromServer, this.props.pollInterval);
+    // setInterval(this.loadOrderItemsFromServer, this.props.pollInterval);
   },
 
   render: function () {
@@ -69,26 +72,25 @@ var OrderBox = React.createClass({
       return (
         <div>
           <h1>Update Orders</h1>
-          <Orderform onOrderSubmit={this.loadOrdersFromServer} />
+          <OrderItemform onOrderItemSubmit={this.loadOrderItemsFromServer} />
           <br />
           <div id="theresults">
             <div id="theleft">
               <table>
                 <thead>
                   <tr>
-                    <th>Key</th>
                     <th>ID</th>
-                    <th>Date Time</th>
-                    <th>Player</th>
-                    <th>User</th>
+                    <th>Product</th>
+                    <th>OrderID</th>
+                    <th></th>
                   </tr>
                 </thead>
-                <OrderList data={this.state.data} />
+                <OrderItemList data={this.state.data} />
               </table>
             </div>
             <div id="theright">
               <OrderUpdateform
-                onUpdateSubmit={this.updateSingleEmpFromServer}
+                onUpdateSubmit={this.updateSingleOrdFromServer}
               />
             </div>
           </div>
@@ -98,34 +100,28 @@ var OrderBox = React.createClass({
   },
 });
 
-var Orderform = React.createClass({
+var OrderItemform = React.createClass({
   getInitialState: function () {
     return {
-      orderkeySS: "",
-      orderidSS: "",
-      orderdatetimeSS: "",
-      orderplayerSS: "",
-      orderuserSS: "",
+      orderitemidSS: "",
+      orderitemproductSS: "",
+      orderitemorderSS: "",
+      orderitemquantitySS: "",
     };
   },
-  handleOptionChange: function (e) {
-    this.setState({
-      selectedOption: e.target.value,
-    });
-  },
-  handleSubmit: function (e) {
+  handleItmSubmit: function (e) {
     e.preventDefault();
 
-    var orderidSS = this.state.orderidSS.trim();
-    var orderdatetimeSS = this.state.orderdatetimeSS.trim();
-    var orderplayerSS = this.state.orderplayerSS.trim();
-    var orderuserSS = this.state.orderuserSS.trim();
+    var orderitemidSS = this.state.orderitemidSS.trim();
+    var orderitemproductSS = this.state.orderitemproductSS.trim();
+    var orderitemorderSS = this.state.orderitemorderSS.trim();
+    var orderitemquantitySS = this.state.orderitemquantitySS.trim();
 
-    this.props.onOrderSubmit({
-      orderidSS: orderidSS,
-      orderdatetimeSS: orderdatetimeSS,
-      orderplayerSS: orderplayerSS,
-      orderuserSS: orderuserSS,
+    this.props.onOrderItemSubmit({
+      orderitemidSS: orderitemidSS,
+      orderitemproductSS: orderitemproductSS,
+      orderitemorderSS: orderitemorderSS,
+      orderitemquantitySS: orderitemquantitySS,
     });
   },
   handleChange: function (event) {
@@ -136,59 +132,59 @@ var Orderform = React.createClass({
   render: function () {
     return (
       <div>
-        <div id="theform">
-          <form onSubmit={this.handleSubmit}>
-            <h2>Search Through Orders</h2>
+        <div className="theform">
+          <form onSubmit={this.handleItmSubmit}>
+            <h2>Search Through OrderItems</h2>
             <table>
               <tbody>
+                <tr>
+                  <th>OrderItem ID</th>
+                  <td>
+                    <input
+                      type="text"
+                      name="orderitemidSS"
+                      id="orderitemidSS"
+                      value={this.state.orderitemidSS}
+                      onChange={this.handleChange}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <th>Order Item Product Id</th>
+                  <td>
+                    <input
+                      name="orderitemproductSS"
+                      id="orderitemproductSS"
+                      value={this.state.orderitemproductSS}
+                      onChange={this.handleChange}
+                    />
+                  </td>
+                </tr>
                 <tr>
                   <th>Order ID</th>
                   <td>
                     <input
-                      type="text"
-                      name="orderidSS"
-                      id="orderidSS"
-                      value={this.state.orderidSS}
+                      name="orderitemorderSS"
+                      id="orderitemorderSS"
+                      value={this.state.orderitemorderSS}
                       onChange={this.handleChange}
                     />
                   </td>
                 </tr>
                 <tr>
-                  <th>Order Date Time</th>
+                  <th>Order Item Quantity</th>
                   <td>
                     <input
-                      name="orderdatetimeSS"
-                      id="orderdatetimeSS"
-                      value={this.state.orderdatetimeSS}
-                      onChange={this.handleChange}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>Order Player</th>
-                  <td>
-                    <input
-                      name="orderplayerSS"
-                      id="orderplayerSS"
-                      value={this.state.orderplayerSS}
-                      onChange={this.handleChange}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>Order User</th>
-                  <td>
-                    <input
-                      name="orderuserSS"
-                      id="orderuserSS"
-                      value={this.state.orderuserSS}
+                      name="orderitemquantitySS"
+                      id="orderitemquantitySS"
+                      value={this.state.orderitemquantitySS}
                       onChange={this.handleChange}
                     />
                   </td>
                 </tr>
               </tbody>
             </table>
-            <input type="submit" value="Search Order" />
+            <input type="submit" value="Search Order Item" />
           </form>
         </div>
         <div>
@@ -205,11 +201,10 @@ var Orderform = React.createClass({
 var OrderUpdateform = React.createClass({
   getInitialState: function () {
     return {
-      uporderkeySS: "",
-      uporderidSS: "",
-      uporderdateSS: "",
-      uporderplayerSS: "",
-      uporderuserSS: "",
+      uporderitemidSS: "",
+      uporderitemproductSS: "",
+      uporderitemorderSS: "",
+      uporderitemquantitySS: "",
     };
   },
   handleUpOptionChange: function (e) {
@@ -220,18 +215,16 @@ var OrderUpdateform = React.createClass({
   handleUpSubmit: function (e) {
     e.preventDefault();
 
-    var uporderkeySS = upordkeySS.value;
-    var uporderidSS = upordidSS.value;
-    var uporderplayerSS = upordplayerSS.value;
-    var uporderdateSS = uporddateSS.value;
-    var uporderuserSS = uporduserSS.value;
+    var uporderitemidSS = uporditmidSS.value;
+    var uporderitemproductSS = uporditmproductSS.value;
+    var uporderitemorderSS = uporditmorderSS.value;
+    var uporderitemquantitySS = uporditemquantitySS.value;
 
     this.props.onUpdateSubmit({
-      uporderkeySS: uporderkeySS,
-      uporderidSS: uporderidSS,
-      uporderdateSS: uporderdateSS,
-      uporderplayerSS: uporderplayerSS,
-      uporderuserSS: uporderuserSS,
+      uporderitemidSS: uporderitemidSS,
+      uporderitemproductSS: uporderitemproductSS,
+      uporderitemorderSS: uporderitemorderSS,
+      uporderitemquantitySS: uporderitemquantitySS,
     });
   },
   handleUpChange: function (event) {
@@ -247,46 +240,37 @@ var OrderUpdateform = React.createClass({
             <table>
               <tbody>
                 <tr>
+                  <th>Order Product</th>
+                  <td>
+                    <input
+                      type="text"
+                      name="uporditmproductSS"
+                      id="uporditmproductSS"
+                      value={this.state.uporditmproductSS}
+                      onChange={this.state.handleUpChange}
+                    />
+                  </td>
+                </tr>
+                <tr>
                   <th>Order ID</th>
                   <td>
                     <input
                       type="text"
-                      name="upordidSS"
-                      id="upordidSS"
-                      value={this.state.upordidSS}
+                      name="uporditmorderSS"
+                      id="uporditmorderSS"
+                      value={this.state.uporditmorderSS}
                       onChange={this.state.handleUpChange}
                     />
                   </td>
                 </tr>
                 <tr>
-                  <th>Order Date</th>
+                  <th>Order Item Quantity</th>
                   <td>
                     <input
-                      name="uporddateSS"
-                      id="uporddateSS"
-                      value={this.state.uporddateSS}
-                      onChange={this.state.handleUpChange}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>Order Player</th>
-                  <td>
-                    <input
-                      name="upordplayerSS"
-                      id="upordplayerSS"
-                      value={this.state.upordplayerSS}
-                      onChange={this.state.handleUpChange}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>Order User</th>
-                  <td>
-                    <input
-                      name="uporduserSS"
-                      id="uporduserSS"
-                      value={this.state.uporduserSS}
+                      type="text"
+                      name="uporditemquantitySS"
+                      id="uporditemquantitySS"
+                      value={this.state.uporditemquantitySS}
                       onChange={this.state.handleUpChange}
                     />
                   </td>
@@ -296,8 +280,8 @@ var OrderUpdateform = React.createClass({
             <br />
             <input
               type="hidden"
-              name="upordkeySS"
-              id="upordkeySS"
+              name="uporditmidSS"
+              id="uporditmidSS"
               onChange={this.handleUpChange}
             />
             <input type="submit" value="Update Order" />
@@ -308,54 +292,55 @@ var OrderUpdateform = React.createClass({
   },
 });
 
-var OrderList = React.createClass({
+var OrderItemList = React.createClass({
   render: function () {
-    var orderNodes = this.props.data.map(function (order) {
+    var orderItemNodes = this.props.data.map(function (orderitem) {
+      //map the data to individual
       return (
-        <Order
-          key={order.dborder_id}
-          ordkey={order.dborder_id}
-          ordid={order.dborder_id}
-          orddate={order.dborder_datetime}
-          ordplayer={order.dbplayer_id}
-        ></Order>
+        <OrderItem
+          key={orderitem.dborderitem_id}
+          orditmid={orderitem.dborderitem_id}
+          orditmproduct={orderitem.dbproduct_name}
+          orditmorder={orderitem.dborder_id}
+          orditmquantity={orderitem.dborderitem_quantity}
+        ></OrderItem>
       );
     });
 
     //print all the nodes in the list
-    return <tbody>{orderNodes}</tbody>;
+    return <tbody>{orderItemNodes}</tbody>;
   },
 });
 
-var Order = React.createClass({
+var OrderItem = React.createClass({
   getInitialState: function () {
     return {
-      upordkey: "",
+      uporditmidSS: "",
       singledata: [],
     };
   },
   updateRecord: function (e) {
     e.preventDefault();
-    var theupordkey = this.props.ordkey;
+    var theuporditmid = this.props.orditmid;
 
-    this.loadSingleEmp(theupordkey);
+    this.loadSingleOrd(theuporditmid);
   },
-  loadSingleEmp: function (theupordkey) {
+  loadSingleOrd: function (theuporditmid) {
     $.ajax({
-      url: "/getsingleord",
+      url: "/getsingleorditm",
       data: {
-        upordkey: theupordkey,
+        uporditmidSS: theuporditmid,
       },
       dataType: "json",
       cache: false,
       success: function (data) {
         this.setState({ singledata: data });
         console.log(this.state.singledata);
-        var populateEmp = this.state.singledata.map(function (order) {
-          upordkeySS.value = theupordkey;
-          upordplayerSS.value = order.dbplayer_id;
-          upordidSS.value = order.dborder_id;
-          uporduserSS.value = order.dbuser_id;
+        var populateOrd = this.state.singledata.map(function (order) {
+          uporditmidSS.value = theuporditmid;
+          uporditmproductSS.value = order.dbproduct_id;
+          uporditmorderSS.value = order.dborder_id;
+          uporditemquantitySS.value = order.dborderitem_quantity;
         });
       }.bind(this),
       error: function (xhr, status, err) {
@@ -367,10 +352,9 @@ var Order = React.createClass({
   render: function () {
     return (
       <tr>
-        <td>{this.props.ordkey}</td>
-        <td>{this.props.ordid}</td>
-        <td>{this.props.orddate}</td>
-        <td>{this.props.ordplayer}</td>
+        <td>{this.props.orditmid}</td>
+        <td>{this.props.orditmproduct}</td>
+        <td>{this.props.orditmorder}</td>
         <td>
           <form onSubmit={this.updateRecord}>
             <input type="submit" value="Update Record" />

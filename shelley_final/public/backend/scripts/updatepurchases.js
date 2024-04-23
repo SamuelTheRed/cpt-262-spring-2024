@@ -2,12 +2,10 @@ var PurchaseBox = React.createClass({
   getInitialState: function () {
     return { data: [], datalog: [], viewthepage: "" };
   },
-  // Load all purchases items from the database
   loadPurchasesFromServer: function () {
     console.log(purchaseidSS.value);
     $.ajax({
       url: "/getpurchase",
-      // Stores the data
       data: {
         purchaseidSS: purchaseidSS.value,
         purchaseinformationSS: statusnum.value,
@@ -37,7 +35,9 @@ var PurchaseBox = React.createClass({
         console.error(this.props.url, status, err.toString());
       }.bind(this),
     });
-    window.location.reload(true);
+    setTimeout(function(){
+      window.location.reload(true);
+    }, 500);
   },
   // Check Status
   loadAllowLogin: function () {
@@ -77,10 +77,8 @@ var PurchaseBox = React.createClass({
               <table>
                 <thead>
                   <tr>
-                    <th>Key</th>
                     <th>ID</th>
-                    <th>Name</th>
-                    <th>Email</th>
+                    <th>Status</th>
                     <th></th>
                   </tr>
                 </thead>
@@ -102,14 +100,9 @@ var PurchaseBox = React.createClass({
 var Purchaseform = React.createClass({
   getInitialState: function () {
     return {
-      purchasekey: "",
-      purchaseid: "",
-      purchasename: "",
-      purchaseemail: "",
-      purchasephone: "",
-      purchasesalary: "",
-      purchaseMailer: "",
-      data: [],
+      purchaseidSS: "",
+      purchaseinformationSS: "",
+      purchasedatetimeSS: "",
     };
   },
   handleOptionChange: function (e) {
@@ -117,42 +110,17 @@ var Purchaseform = React.createClass({
       selectedOption: e.target.value,
     });
   },
-  loadPurTypes: function () {
-    $.ajax({
-      url: "/getpurtypes",
-      dataType: "json",
-      cache: false,
-      success: function (data) {
-        this.setState({ data: data });
-      }.bind(this),
-      error: function (xhr, status, err) {
-        console.error(this.props.url, status, err.toString());
-      }.bind(this),
-    });
-  },
-  componentDidMount: function () {
-    this.loadPurTypes();
-  },
-
   handleSubmit: function (e) {
     e.preventDefault();
 
-    var purchaseid = this.state.purchaseid.trim();
-    var purchaseemail = this.state.purchaseemail.trim();
-    var purchasename = this.state.purchasename.trim();
-    var purchasephone = this.state.purchasephone.trim();
-    var purchasesalary = this.state.purchasesalary;
-    var purchasemailer = this.state.selectedOption;
-    var purchasetype = purtype.value;
+    var purchaseidSS = this.state.purchaseidSS.trim();
+    var purchaseinformationSS = this.state.purchaseinformationSS.trim();
+    var purchasedatetimeSS = this.state.purchasedatetimeSS.trim();
 
     this.props.onPurchaseSubmit({
-      purchaseid: purchaseid,
-      purchasename: purchasename,
-      purchaseemail: purchaseemail,
-      purchasephone: purchasephone,
-      purchasesalary: purchasesalary,
-      purchasemailer: purchasemailer,
-      purchasetype: purchasetype,
+      purchaseidSS: purchaseidSS,
+      purchaseinformationSS: purchaseinformationSS,
+      purchasedatetimeSS: purchasedatetimeSS,
     });
   },
   handleChange: function (event) {
@@ -165,7 +133,7 @@ var Purchaseform = React.createClass({
       <div>
         <div id="theform">
           <form onSubmit={this.handleSubmit}>
-            <h2>Purchases</h2>
+            <h2>Search Through Purchases</h2>
             <table>
               <tbody>
                 <tr>
@@ -173,86 +141,28 @@ var Purchaseform = React.createClass({
                   <td>
                     <input
                       type="text"
-                      name="purchaseid"
-                      id="purchaseid"
-                      value={this.state.purchaseid}
+                      name="purchaseidSS"
+                      id="purchaseidSS"
+                      value={this.state.purchaseidSS}
                       onChange={this.handleChange}
                     />
                   </td>
                 </tr>
                 <tr>
-                  <th>Purchase Name</th>
+                  <th>Purchase Status</th>
+                  <td>
+                    <StatusList data={this.state.data} />
+                  </td>
+                </tr>
+                <tr>
+                  <th>Purchase Date Time Fulfilled</th>
                   <td>
                     <input
-                      name="purchasename"
-                      id="purchasename"
-                      value={this.state.purchasename}
+                      name="purchasedatetimeSS"
+                      id="purchasedatetimeSS"
+                      value={this.state.purchasedatetimeSS}
                       onChange={this.handleChange}
                     />
-                  </td>
-                </tr>
-                <tr>
-                  <th>Purchase Email</th>
-                  <td>
-                    <input
-                      name="purchaseemail"
-                      id="purchaseemail"
-                      value={this.state.purchaseemail}
-                      onChange={this.handleChange}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>Purchase Phone</th>
-                  <td>
-                    <input
-                      name="purchasephone"
-                      id="purchasephone"
-                      value={this.state.purchasephone}
-                      onChange={this.handleChange}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>Purchase Salary</th>
-                  <td>
-                    <input
-                      name="purchasesalary"
-                      id="purchasesalary"
-                      value={this.state.purchasesalary}
-                      onChange={this.handleChange}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>Join Mailing List</th>
-                  <td>
-                    <input
-                      type="radio"
-                      name="purmailer"
-                      id="purmaileryes"
-                      value="1"
-                      checked={this.state.selectedOption === "1"}
-                      onChange={this.handleOptionChange}
-                      className="form-check-input"
-                    />{" "}
-                    YES
-                    <input
-                      type="radio"
-                      name="purmailer"
-                      id="purmailerno"
-                      value="0"
-                      checked={this.state.selectedOption === "0"}
-                      onChange={this.handleOptionChange}
-                      className="form-check-input"
-                    />{" "}
-                    NO
-                  </td>
-                </tr>
-                <tr>
-                  <th>Purchase Type</th>
-                  <td>
-                    <SelectList data={this.state.data} />
                   </td>
                 </tr>
               </tbody>
@@ -274,14 +184,9 @@ var Purchaseform = React.createClass({
 var PurchaseUpdateform = React.createClass({
   getInitialState: function () {
     return {
-      uppurchasekey: "",
-      uppurchaseid: "",
-      uppurchasename: "",
-      uppurchaseemail: "",
-      uppurchasephone: "",
-      uppurchasesalary: "",
-      uppurchaseMailer: "",
-      upselectedOption: "",
+      uppurchaseidSS: "",
+      uppurchasestatusSS: "",
+      uppurchasedatetimeSS: "",
       updata: [],
     };
   },
@@ -290,43 +195,17 @@ var PurchaseUpdateform = React.createClass({
       upselectedOption: e.target.value,
     });
   },
-  loadPurTypes: function () {
-    $.ajax({
-      url: "/getpurtypes",
-      dataType: "json",
-      cache: false,
-      success: function (data) {
-        this.setState({ updata: data });
-      }.bind(this),
-      error: function (xhr, status, err) {
-        console.error(this.props.url, status, err.toString());
-      }.bind(this),
-    });
-  },
-  componentDidMount: function () {
-    this.loadPurTypes();
-  },
   handleUpSubmit: function (e) {
     e.preventDefault();
 
-    var uppurchasekey = uppurkey.value;
-    var uppurchaseid = uppurid.value;
-    var uppurchaseemail = uppuremail.value;
-    var uppurchasename = uppurname.value;
-    var uppurchasephone = uppurphone.value;
-    var uppurchasesalary = uppursalary.value;
-    var uppurchasemailer = this.state.upselectedOption;
-    var uppurchasetype = uppurtype.value;
+    var uppurchaseidSS = uppuridSS.value
+    var uppurchasestatusSS = upstatusnum.value;
+    var uppurchasedatetimeSS = uppurdatetimeSS.value;
 
     this.props.onUpdateSubmit({
-      uppurchasekey: uppurchasekey,
-      uppurchaseid: uppurchaseid,
-      uppurchasename: uppurchasename,
-      uppurchaseemail: uppurchaseemail,
-      uppurchasephone: uppurchasephone,
-      uppurchasesalary: uppurchasesalary,
-      uppurchasemailer: uppurchasemailer,
-      uppurchasetype: uppurchasetype,
+      uppurchaseidSS: uppurchaseidSS,
+      uppurchasestatusSS: uppurchasestatusSS,
+      uppurchasedatetimeSS: uppurchasedatetimeSS,
     });
   },
   handleUpChange: function (event) {
@@ -342,90 +221,20 @@ var PurchaseUpdateform = React.createClass({
             <table>
               <tbody>
                 <tr>
-                  <th>Purchase ID</th>
+                  <th>Purchase Status</th>
+                  <td>
+                    <UpStatusList data={this.state.updata} />
+                  </td>
+                </tr>
+                <tr>
+                  <th>Purchase Date Time Fulfilled</th>
                   <td>
                     <input
-                      type="text"
-                      name="uppurid"
-                      id="uppurid"
-                      value={this.state.uppurid}
+                      name="uppurdatetimeSS"
+                      id="uppurdatetimeSS"
+                      value={this.state.uppurdatetimeSS}
                       onChange={this.state.handleUpChange}
                     />
-                  </td>
-                </tr>
-                <tr>
-                  <th>Purchase Name</th>
-                  <td>
-                    <input
-                      name="uppurname"
-                      id="uppurname"
-                      value={this.state.uppurname}
-                      onChange={this.state.handleUpChange}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>Purchase Email</th>
-                  <td>
-                    <input
-                      name="uppuremail"
-                      id="uppuremail"
-                      value={this.state.uppuremail}
-                      onChange={this.state.handleUpChange}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>Purchase Phone</th>
-                  <td>
-                    <input
-                      name="uppurphone"
-                      id="uppurphone"
-                      value={this.state.uppurphone}
-                      onChange={this.state.handleUpChange}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>Purchase Salary</th>
-                  <td>
-                    <input
-                      name="uppursalary"
-                      id="uppursalary"
-                      value={this.state.uppursalary}
-                      onChange={this.state.handleUpChange}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>Join Mailing List</th>
-                  <td>
-                    <input
-                      type="radio"
-                      name="uppurmailer"
-                      id="uppurmaileryes"
-                      value="1"
-                      checked={this.state.upselectedOption === "1"}
-                      onChange={this.handleUpOptionChange}
-                      className="form-check-input"
-                    />
-                    Yes
-                    <input
-                      type="radio"
-                      name="uppurmailer"
-                      id="uppurmailerno"
-                      value="0"
-                      checked={this.state.upselectedOption === "0"}
-                      onChange={this.handleUpOptionChange}
-                      className="form-check-input"
-                    />
-                    No
-                  </td>
-                </tr>
-                <tr>
-                  <th>Purchase Type</th>
-                  <td>
-                    <SelectUpdateList data={this.state.updata} />
                   </td>
                 </tr>
               </tbody>
@@ -433,8 +242,8 @@ var PurchaseUpdateform = React.createClass({
             <br />
             <input
               type="hidden"
-              name="uppurkey"
-              id="uppurkey"
+              name="uppuridSS"
+              id="uppuridSS"
               onChange={this.handleUpChange}
             />
             <input type="submit" value="Update Purchase" />
@@ -450,11 +259,10 @@ var PurchaseList = React.createClass({
     var purchaseNodes = this.props.data.map(function (purchase) {
       return (
         <Purchase
-          key={purchase.dbpurchasekey}
-          purkey={purchase.dbpurchasekey}
-          purid={purchase.dbpurchaseid}
-          purname={purchase.dbpurchasename}
-          puremail={purchase.dbpurchaseemail}
+          key={purchase.dborder_id}
+          purid={purchase.dborder_id}
+          purstatus={purchase.dbpurchase_status}
+          purdatetime={purchase.dbpurchase_datetimefulfilled}
         ></Purchase>
       );
     });
@@ -467,21 +275,21 @@ var PurchaseList = React.createClass({
 var Purchase = React.createClass({
   getInitialState: function () {
     return {
-      uppurkey: "",
+      uppuridSS: "",
       singledata: [],
     };
   },
   updateRecord: function (e) {
     e.preventDefault();
-    var theuppurkey = this.props.purkey;
+    var theuppurid = this.props.purid;
 
-    this.loadSinglePur(theuppurkey);
+    this.loadSinglePur(theuppurid);
   },
-  loadSinglePur: function (theuppurkey) {
+  loadSinglePur: function (theuppurid) {
     $.ajax({
       url: "/getsinglepur",
       data: {
-        uppurkey: theuppurkey,
+        uppuridSS: theuppurid,
       },
       dataType: "json",
       cache: false,
@@ -489,18 +297,9 @@ var Purchase = React.createClass({
         this.setState({ singledata: data });
         console.log(this.state.singledata);
         var populatePur = this.state.singledata.map(function (purchase) {
-          uppurkey.value = theuppurkey;
-          uppuremail.value = purchase.dbpurchaseemail;
-          uppurid.value = purchase.dbpurchaseid;
-          uppurphone.value = purchase.dbpurchasephone;
-          uppursalary.value = purchase.dbpurchasesalary;
-          uppurname.value = purchase.dbpurchasename;
-          if (purchase.dbpurchasemailer == 1) {
-            uppurmaileryes.checked = true;
-          } else {
-            uppurmailerno.checked = true;
-          }
-          uppurtype.value = purchase.dbpurchasetype;
+          uppuridSS.value = theuppurid;
+          upstatusnum.value = purchase.dbpurchase_status;
+          uppurdatetimeSS.value = purchase.dbpurchase_datetimefulfilled;
         });
       }.bind(this),
       error: function (xhr, status, err) {
@@ -510,18 +309,10 @@ var Purchase = React.createClass({
   },
 
   render: function () {
-    if (this.props.purmailer == 1) {
-      var themailer = "YES";
-    } else {
-      var themailer = "NO";
-    }
-
     return (
       <tr>
-        <td>{this.props.purkey}</td>
         <td>{this.props.purid}</td>
-        <td>{this.props.purname}</td>
-        <td>{this.props.puremail}</td>
+        <td>{this.props.purstatus}</td>
         <td>
           <form onSubmit={this.updateRecord}>
             <input type="submit" value="Update Record" />
@@ -532,37 +323,39 @@ var Purchase = React.createClass({
   },
 });
 
-var SelectList = React.createClass({
+var StatusList = React.createClass({
   render: function () {
-    var optionNodes = this.props.data.map(function (purTypes) {
-      return (
-        <option key={purTypes.dbpurtypeid} value={purTypes.dbpurtypeid}>
-          {purTypes.dbpurtypename}
-        </option>
-      );
-    });
     return (
-      <select name="purtype" id="purtype">
-        <option value="0"></option>
-        {optionNodes}
+      <select name="statusnum" id="statusnum">
+      <option key="" value=""></option>
+        <option key="1" value="Pending">
+          Pending
+        </option>
+        <option key="2" value="Fulfilled">
+          Fulfilled
+        </option>
+        <option key="3" value="Cancelled">
+          Cancelled
+        </option>
       </select>
     );
   },
 });
 
-var SelectUpdateList = React.createClass({
+var UpStatusList = React.createClass({
   render: function () {
-    var optionNodes = this.props.data.map(function (purTypes) {
-      return (
-        <option key={purTypes.dbpurtypeid} value={purTypes.dbpurtypeid}>
-          {purTypes.dbpurtypename}
-        </option>
-      );
-    });
     return (
-      <select name="uppurtype" id="uppurtype">
-        <option value="0"></option>
-        {optionNodes}
+      <select name="upstatusnum" id="upstatusnum">
+      <option key="" value=""></option>
+        <option key="1" value="Pending">
+          Pending
+        </option>
+        <option key="2" value="Fulfilled">
+          Fulfilled
+        </option>
+        <option key="3" value="Cancelled">
+          Cancelled
+        </option>
       </select>
     );
   },

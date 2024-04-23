@@ -9,12 +9,12 @@ var ReservationBox = React.createClass({
       data: reservation,
       success: function (data) {
         this.setState({ data: data });
+        window.location.reload(true);
       }.bind(this),
       error: function (xhr, status, err) {
         console.error(this.props.url, status, err.toString());
       }.bind(this),
     });
-    window.location.reload(true);
   },
   // Render the Box onto HTML Page
   render: function () {

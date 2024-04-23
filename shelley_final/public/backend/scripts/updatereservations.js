@@ -3,26 +3,15 @@ var ReservationBox = React.createClass({
     return { data: [], datalog: [], viewthepage: "" };
   },
   loadReservationsFromServer: function () {
-    var emailervalue = 2;
-    if (resmaileryes.checked) {
-      emailervalue = 1;
-    }
-    if (resmailerno.checked) {
-      emailervalue = 0;
-    }
-    console.log(emailervalue);
+    console.log(reservationidSS.value);
     $.ajax({
-      url: "/getres",
+      url: "/getreservation",
       data: {
-        reservationid: reservationid.value,
-        reservationname: reservationname.value,
-        reservationemail: reservationemail.value,
-        reservationphone: reservationphone.value,
-        reservationsalary: reservationsalary.value,
-        reservationmailer: emailervalue,
-        reservationtype: restype.value,
+        reservationidSS: reservationidSS.value,
+        reservationdatetimeSS: reservationdatetimeSS.value,
+        reservationplayerSS: reservationplayerSS.value,
+        reservationuserSS: reservationuserSS.value,
       },
-
       dataType: "json",
       cache: false,
       success: function (data) {
@@ -33,7 +22,7 @@ var ReservationBox = React.createClass({
       }.bind(this),
     });
   },
-  updateSingleEmpFromServer: function (reservation) {
+  updateSingleResFromServer: function (reservation) {
     $.ajax({
       url: "/updatesingleres",
       dataType: "json",
@@ -47,7 +36,9 @@ var ReservationBox = React.createClass({
         console.error(this.props.url, status, err.toString());
       }.bind(this),
     });
-    window.location.reload(true);
+    setTimeout(function(){
+      window.location.reload(true);
+    }, 500);
   },
   // Check Status
   loadAllowLogin: function () {
@@ -73,26 +64,23 @@ var ReservationBox = React.createClass({
   },
 
   render: function () {
-    if (this.state.viewthepage != "Manager" && this.state.viewthepage != "Front-Desk") {
+    if (this.state.viewthepage != "Manager") {
       console.log("This: " + this.state.viewthepage);
       return <div>You do not have access to this page</div>;
     } else {
       return (
         <div>
           <h1>Update Reservations</h1>
-          <Reservationform2
-            onReservationSubmit={this.loadReservationsFromServer}
-          />
+          <Reservationform onReservationSubmit={this.loadReservationsFromServer} />
           <br />
           <div id="theresults">
             <div id="theleft">
               <table>
                 <thead>
                   <tr>
-                    <th>Key</th>
                     <th>ID</th>
-                    <th>Name</th>
-                    <th>Email</th>
+                    <th>Date Time</th>
+                    <th>Player</th>
                     <th></th>
                   </tr>
                 </thead>
@@ -101,7 +89,7 @@ var ReservationBox = React.createClass({
             </div>
             <div id="theright">
               <ReservationUpdateform
-                onUpdateSubmit={this.updateSingleEmpFromServer}
+                onUpdateSubmit={this.updateSingleResFromServer}
               />
             </div>
           </div>
@@ -111,17 +99,13 @@ var ReservationBox = React.createClass({
   },
 });
 
-var Reservationform2 = React.createClass({
+var Reservationform = React.createClass({
   getInitialState: function () {
     return {
-      reservationkey: "",
-      reservationid: "",
-      reservationname: "",
-      reservationemail: "",
-      reservationphone: "",
-      reservationsalary: "",
-      reservationMailer: "",
-      data: [],
+      reservationidSS: "",
+      reservationdatetimeSS: "",
+      reservationplayerSS: "",
+      reservationuserSS: "",
     };
   },
   handleOptionChange: function (e) {
@@ -129,42 +113,19 @@ var Reservationform2 = React.createClass({
       selectedOption: e.target.value,
     });
   },
-  loadEmpTypes: function () {
-    $.ajax({
-      url: "/getrestypes",
-      dataType: "json",
-      cache: false,
-      success: function (data) {
-        this.setState({ data: data });
-      }.bind(this),
-      error: function (xhr, status, err) {
-        console.error(this.props.url, status, err.toString());
-      }.bind(this),
-    });
-  },
-  componentDidMount: function () {
-    this.loadEmpTypes();
-  },
-
   handleSubmit: function (e) {
     e.preventDefault();
 
-    var reservationid = this.state.reservationid.trim();
-    var reservationemail = this.state.reservationemail.trim();
-    var reservationname = this.state.reservationname.trim();
-    var reservationphone = this.state.reservationphone.trim();
-    var reservationsalary = this.state.reservationsalary;
-    var reservationmailer = this.state.selectedOption;
-    var reservationtype = restype.value;
+    var reservationidSS = this.state.reservationidSS.trim();
+    var reservationdatetimeSS = this.state.reservationdatetimeSS.trim();
+    var reservationplayerSS = this.state.reservationplayerSS.trim();
+    var reservationuserSS = this.state.reservationuserSS.trim();
 
     this.props.onReservationSubmit({
-      reservationid: reservationid,
-      reservationname: reservationname,
-      reservationemail: reservationemail,
-      reservationphone: reservationphone,
-      reservationsalary: reservationsalary,
-      reservationmailer: reservationmailer,
-      reservationtype: reservationtype,
+      reservationidSS: reservationidSS,
+      reservationdatetimeSS: reservationdatetimeSS,
+      reservationplayerSS: reservationplayerSS,
+      reservationuserSS: reservationuserSS,
     });
   },
   handleChange: function (event) {
@@ -177,7 +138,7 @@ var Reservationform2 = React.createClass({
       <div>
         <div id="theform">
           <form onSubmit={this.handleSubmit}>
-            <h2>Reservations</h2>
+            <h2>Search Through Reservations</h2>
             <table>
               <tbody>
                 <tr>
@@ -185,86 +146,44 @@ var Reservationform2 = React.createClass({
                   <td>
                     <input
                       type="text"
-                      name="reservationid"
-                      id="reservationid"
-                      value={this.state.reservationid}
+                      name="reservationidSS"
+                      id="reservationidSS"
+                      value={this.state.reservationidSS}
                       onChange={this.handleChange}
                     />
                   </td>
                 </tr>
                 <tr>
-                  <th>Reservation Name</th>
+                  <th>Reservation Date Time</th>
                   <td>
                     <input
-                      name="reservationname"
-                      id="reservationname"
-                      value={this.state.reservationname}
+                      name="reservationdatetimeSS"
+                      id="reservationdatetimeSS"
+                      value={this.state.reservationdatetimeSS}
                       onChange={this.handleChange}
                     />
                   </td>
                 </tr>
                 <tr>
-                  <th>Reservation Email</th>
+                  <th>Reservation Player</th>
                   <td>
                     <input
-                      name="reservationemail"
-                      id="reservationemail"
-                      value={this.state.reservationemail}
+                      name="reservationplayerSS"
+                      id="reservationplayerSS"
+                      value={this.state.reservationplayerSS}
                       onChange={this.handleChange}
                     />
                   </td>
                 </tr>
                 <tr>
-                  <th>Reservation Phone</th>
+                  <th>Reservation User</th>
                   <td>
                     <input
-                      name="reservationphone"
-                      id="reservationphone"
-                      value={this.state.reservationphone}
+                      name="reservationuserSS"
+                      id="reservationuserSS"
+                      value={this.state.reservationuserSS}
                       onChange={this.handleChange}
                     />
-                  </td>
-                </tr>
-                <tr>
-                  <th>Reservation Salary</th>
-                  <td>
-                    <input
-                      name="reservationsalary"
-                      id="reservationsalary"
-                      value={this.state.reservationsalary}
-                      onChange={this.handleChange}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>Join Mailing List</th>
-                  <td>
-                    <input
-                      type="radio"
-                      name="resmailer"
-                      id="resmaileryes"
-                      value="1"
-                      checked={this.state.selectedOption === "1"}
-                      onChange={this.handleOptionChange}
-                      className="form-check-input"
-                    />{" "}
-                    YES
-                    <input
-                      type="radio"
-                      name="resmailer"
-                      id="resmailerno"
-                      value="0"
-                      checked={this.state.selectedOption === "0"}
-                      onChange={this.handleOptionChange}
-                      className="form-check-input"
-                    />{" "}
-                    NO
-                  </td>
-                </tr>
-                <tr>
-                  <th>Reservation Type</th>
-                  <td>
-                    <SelectList data={this.state.data} />
                   </td>
                 </tr>
               </tbody>
@@ -286,15 +205,10 @@ var Reservationform2 = React.createClass({
 var ReservationUpdateform = React.createClass({
   getInitialState: function () {
     return {
-      upreservationkey: "",
-      upreservationid: "",
-      upreservationname: "",
-      upreservationemail: "",
-      upreservationphone: "",
-      upreservationsalary: "",
-      upreservationMailer: "",
-      upselectedOption: "",
-      updata: [],
+      upreservationidSS: "",
+      upreservationdatetimeSS: "",
+      upreservationplayerSS: "",
+      upreservationuserSS: "",
     };
   },
   handleUpOptionChange: function (e) {
@@ -302,43 +216,19 @@ var ReservationUpdateform = React.createClass({
       upselectedOption: e.target.value,
     });
   },
-  loadEmpTypes: function () {
-    $.ajax({
-      url: "/getrestypes",
-      dataType: "json",
-      cache: false,
-      success: function (data) {
-        this.setState({ updata: data });
-      }.bind(this),
-      error: function (xhr, status, err) {
-        console.error(this.props.url, status, err.toString());
-      }.bind(this),
-    });
-  },
-  componentDidMount: function () {
-    this.loadEmpTypes();
-  },
   handleUpSubmit: function (e) {
     e.preventDefault();
 
-    var upreservationkey = upreskey.value;
-    var upreservationid = upresid.value;
-    var upreservationemail = upresemail.value;
-    var upreservationname = upresname.value;
-    var upreservationphone = upresphone.value;
-    var upreservationsalary = upressalary.value;
-    var upreservationmailer = this.state.upselectedOption;
-    var upreservationtype = uprestype.value;
+    var upreservationidSS = upresidSS.value;
+    var upreservationuserSS = upresuserSS.value;
+    var upreservationdatetimeSS = upresdatetimeSS.value;
+    var upreservationplayerSS = upresplayerSS.value;
 
     this.props.onUpdateSubmit({
-      upreservationkey: upreservationkey,
-      upreservationid: upreservationid,
-      upreservationname: upreservationname,
-      upreservationemail: upreservationemail,
-      upreservationphone: upreservationphone,
-      upreservationsalary: upreservationsalary,
-      upreservationmailer: upreservationmailer,
-      upreservationtype: upreservationtype,
+      upreservationidSS: upreservationidSS,
+      upreservationdatetimeSS: upreservationdatetimeSS,
+      upreservationplayerSS: upreservationplayerSS,
+      upreservationuserSS: upreservationuserSS,
     });
   },
   handleUpChange: function (event) {
@@ -354,90 +244,36 @@ var ReservationUpdateform = React.createClass({
             <table>
               <tbody>
                 <tr>
-                  <th>Reservation ID</th>
+                  <th>Reservation Date Time</th>
                   <td>
                     <input
-                      type="text"
-                      name="upresid"
-                      id="upresid"
-                      value={this.state.upresid}
+                      name="upresdatetimeSS"
+                      id="upresdatetimeSS"
+                      value={this.state.upresdatetimeSS}
                       onChange={this.state.handleUpChange}
                     />
                   </td>
                 </tr>
                 <tr>
-                  <th>Reservation Name</th>
+                  <th>Reservation Player</th>
                   <td>
                     <input
-                      name="upresname"
-                      id="upresname"
-                      value={this.state.upresname}
+                      name="upresplayerSS"
+                      id="upresplayerSS"
+                      value={this.state.upresplayerSS}
                       onChange={this.state.handleUpChange}
                     />
                   </td>
                 </tr>
                 <tr>
-                  <th>Reservation Email</th>
+                  <th>Reservation User</th>
                   <td>
                     <input
-                      name="upresemail"
-                      id="upresemail"
-                      value={this.state.upresemail}
+                      name="upresuserSS"
+                      id="upresuserSS"
+                      value={this.state.upresuserSS}
                       onChange={this.state.handleUpChange}
                     />
-                  </td>
-                </tr>
-                <tr>
-                  <th>Reservation Phone</th>
-                  <td>
-                    <input
-                      name="upresphone"
-                      id="upresphone"
-                      value={this.state.upresphone}
-                      onChange={this.state.handleUpChange}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>Reservation Salary</th>
-                  <td>
-                    <input
-                      name="upressalary"
-                      id="upressalary"
-                      value={this.state.upressalary}
-                      onChange={this.state.handleUpChange}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>Join Mailing List</th>
-                  <td>
-                    <input
-                      type="radio"
-                      name="upresmailer"
-                      id="upresmaileryes"
-                      value="1"
-                      checked={this.state.upselectedOption === "1"}
-                      onChange={this.handleUpOptionChange}
-                      className="form-check-input"
-                    />
-                    Yes
-                    <input
-                      type="radio"
-                      name="upresmailer"
-                      id="upresmailerno"
-                      value="0"
-                      checked={this.state.upselectedOption === "0"}
-                      onChange={this.handleUpOptionChange}
-                      className="form-check-input"
-                    />
-                    No
-                  </td>
-                </tr>
-                <tr>
-                  <th>Reservation Type</th>
-                  <td>
-                    <SelectUpdateList data={this.state.updata} />
                   </td>
                 </tr>
               </tbody>
@@ -445,8 +281,8 @@ var ReservationUpdateform = React.createClass({
             <br />
             <input
               type="hidden"
-              name="upreskey"
-              id="upreskey"
+              name="upresidSS"
+              id="upresidSS"
               onChange={this.handleUpChange}
             />
             <input type="submit" value="Update Reservation" />
@@ -462,11 +298,11 @@ var ReservationList = React.createClass({
     var reservationNodes = this.props.data.map(function (reservation) {
       return (
         <Reservation
-          key={reservation.dbreservationkey}
-          reskey={reservation.dbreservationkey}
-          resid={reservation.dbreservationid}
-          resname={reservation.dbreservationname}
-          resemail={reservation.dbreservationemail}
+          key={reservation.dbreservation_id}
+          resid={reservation.dbreservation_id}
+          resdatetime={reservation.dbreservation_datetime}
+          resplayer={reservation.dbplayer_email}
+          resuser={reservation.dbuser_firstname}
         ></Reservation>
       );
     });
@@ -479,40 +315,32 @@ var ReservationList = React.createClass({
 var Reservation = React.createClass({
   getInitialState: function () {
     return {
-      upreskey: "",
+      upresidSS: "",
       singledata: [],
     };
   },
   updateRecord: function (e) {
     e.preventDefault();
-    var theupreskey = this.props.reskey;
+    var theupresid = this.props.resid;
 
-    this.loadSingleEmp(theupreskey);
+    this.loadSingleRes(theupresid);
   },
-  loadSingleEmp: function (theupreskey) {
+  loadSingleRes: function (theupresid) {
     $.ajax({
       url: "/getsingleres",
       data: {
-        upreskey: theupreskey,
+        upresidSS: theupresid,
       },
       dataType: "json",
       cache: false,
       success: function (data) {
         this.setState({ singledata: data });
         console.log(this.state.singledata);
-        var populateEmp = this.state.singledata.map(function (reservation) {
-          upreskey.value = theupreskey;
-          upresemail.value = reservation.dbreservationemail;
-          upresid.value = reservation.dbreservationid;
-          upresphone.value = reservation.dbreservationphone;
-          upressalary.value = reservation.dbreservationsalary;
-          upresname.value = reservation.dbreservationname;
-          if (reservation.dbreservationmailer == 1) {
-            upresmaileryes.checked = true;
-          } else {
-            upresmailerno.checked = true;
-          }
-          uprestype.value = reservation.dbreservationtype;
+        var populateRes = this.state.singledata.map(function (reservation) {
+          upresidSS.value = theupresid;
+          upresdatetimeSS.value = reservation.dbreservation_datetime;
+          upresplayerSS.value = reservation.dbplayer_id;
+          upresuserSS.value = reservation.dbuser_id;
         });
       }.bind(this),
       error: function (xhr, status, err) {
@@ -522,60 +350,17 @@ var Reservation = React.createClass({
   },
 
   render: function () {
-    if (this.props.resmailer == 1) {
-      var themailer = "YES";
-    } else {
-      var themailer = "NO";
-    }
-
     return (
       <tr>
-        <td>{this.props.reskey}</td>
         <td>{this.props.resid}</td>
-        <td>{this.props.resname}</td>
-        <td>{this.props.resemail}</td>
+        <td>{this.props.resdatetime}</td>
+        <td>{this.props.resplayer}</td>
         <td>
           <form onSubmit={this.updateRecord}>
             <input type="submit" value="Update Record" />
           </form>
         </td>
       </tr>
-    );
-  },
-});
-
-var SelectList = React.createClass({
-  render: function () {
-    var optionNodes = this.props.data.map(function (resTypes) {
-      return (
-        <option key={resTypes.dbrestypeid} value={resTypes.dbrestypeid}>
-          {resTypes.dbrestypename}
-        </option>
-      );
-    });
-    return (
-      <select name="restype" id="restype">
-        <option value="0"></option>
-        {optionNodes}
-      </select>
-    );
-  },
-});
-
-var SelectUpdateList = React.createClass({
-  render: function () {
-    var optionNodes = this.props.data.map(function (resTypes) {
-      return (
-        <option key={resTypes.dbrestypeid} value={resTypes.dbrestypeid}>
-          {resTypes.dbrestypename}
-        </option>
-      );
-    });
-    return (
-      <select name="uprestype" id="uprestype">
-        <option value="0"></option>
-        {optionNodes}
-      </select>
     );
   },
 });
